@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncPoint365.Service", "SyncPoint365.Service\SyncPoint365.Service.csproj", "{953762A8-B63A-4B32-8D02-1A317CA43034}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncPoint365.Service.Common", "SyncPoint365.Service.Interfaces\SyncPoint365.Service.Common.csproj", "{ADB4FEB2-519C-46DA-BD53-775C547E9291}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncPoint365.Repository", "SyncPoint365.Repository\SyncPoint365.Repository.csproj", "{7D039058-F3E8-465A-A953-41E50C1A070B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncPoint365.Repository.Common", "SyncPoint365.Repository.Interfaces\SyncPoint365.Repository.Common.csproj", "{FA89521E-13E4-47B3-B1D8-35D174DBDA3C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncPoint365.Core", "SyncPoint365.Core\SyncPoint365.Core.csproj", "{B7452954-E2C1-4639-8C76-6B16793730B1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncPoint365.API", "SyncPoint365.API\SyncPoint365.API.csproj", "{EE5373C3-AAC4-4A08-980F-C18C2083FB37}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{953762A8-B63A-4B32-8D02-1A317CA43034}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{953762A8-B63A-4B32-8D02-1A317CA43034}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{953762A8-B63A-4B32-8D02-1A317CA43034}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{953762A8-B63A-4B32-8D02-1A317CA43034}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADB4FEB2-519C-46DA-BD53-775C547E9291}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADB4FEB2-519C-46DA-BD53-775C547E9291}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADB4FEB2-519C-46DA-BD53-775C547E9291}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADB4FEB2-519C-46DA-BD53-775C547E9291}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D039058-F3E8-465A-A953-41E50C1A070B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D039058-F3E8-465A-A953-41E50C1A070B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D039058-F3E8-465A-A953-41E50C1A070B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D039058-F3E8-465A-A953-41E50C1A070B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA89521E-13E4-47B3-B1D8-35D174DBDA3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA89521E-13E4-47B3-B1D8-35D174DBDA3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA89521E-13E4-47B3-B1D8-35D174DBDA3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA89521E-13E4-47B3-B1D8-35D174DBDA3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7452954-E2C1-4639-8C76-6B16793730B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7452954-E2C1-4639-8C76-6B16793730B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7452954-E2C1-4639-8C76-6B16793730B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7452954-E2C1-4639-8C76-6B16793730B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE5373C3-AAC4-4A08-980F-C18C2083FB37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE5373C3-AAC4-4A08-980F-C18C2083FB37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE5373C3-AAC4-4A08-980F-C18C2083FB37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE5373C3-AAC4-4A08-980F-C18C2083FB37}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EF460A4C-101F-48E9-A721-E149097AB207}
+	EndGlobalSection
+EndGlobal
