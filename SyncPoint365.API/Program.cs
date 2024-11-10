@@ -1,5 +1,3 @@
-using Microsoft.OpenApi.Models;
-using SyncPoint365.API;
 using SyncPoint365.Repository;
 using SyncPoint365.Service;
 using System.Text.Json.Serialization;
@@ -23,6 +21,7 @@ namespace SyncPoint365.API
             builder.Services.AddMapping();
             builder.Services.AddInfrastructure();
             builder.Services.AddApplication();
+            builder.Services.AddValidators();
 
             builder.Services.AddSwaggerGen();
             builder.Services.AddCors(options =>

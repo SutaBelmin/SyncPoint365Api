@@ -2,7 +2,7 @@
 
 namespace SyncPoint365.Core.DTOs.Users
 {
-    public class UserAddDTO : BaseAddDTO
+    public class UserUpdateDTO  : BaseUpdateDTO
     {
         public string FirstName { get; set; } = default!;
         public string LastName { get; set; } = default!;

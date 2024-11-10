@@ -4,6 +4,6 @@ namespace SyncPoint365.Repository.Common.Interfaces
 {
     public interface IUsersRepository : IBaseRepository<User>
     {
-        Task<User?> GetByUserId(int id, CancellationToken cancellationToken = default);
+        Task<User?> GetByUserIdAsync(int id, CancellationToken cancellationToken = default);
     }
 }

@@ -9,9 +9,10 @@ namespace SyncPoint365.Service.Mapping
         public UserProfile()
         {
             CreateMap<User, UserDTO>()
-                .ForMember(d => d.FullName, o => o.MapFrom(e => e.FirstName + " " + e.LastName));
+               .ForMember(d => d.FullName, o => o.MapFrom(e => e.FirstName + " " + e.LastName));
 
             CreateMap<UserAddDTO, User>();
+            CreateMap<UserUpdateDTO, User>();
         }
     }
 }

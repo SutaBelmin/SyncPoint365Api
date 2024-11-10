@@ -10,7 +10,7 @@ namespace SyncPoint365.Repository.Repositories
         {
         }
 
-        public async Task<User?> GetByUserId(int id, CancellationToken cancellationToken = default)
+        public async Task<User?> GetByUserIdAsync(int id, CancellationToken cancellationToken = default)
         {
             return await DbSet.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }

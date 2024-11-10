@@ -2,7 +2,8 @@
 
 namespace SyncPoint365.Service.Common.Interfaces
 {
-    public interface IUsersService : IBaseService<UserDTO>
+    public interface IUsersService : IBaseService<UserDTO, UserAddDTO, UserUpdateDTO>
     {
+       
     }
 }
