@@ -8,7 +8,7 @@ namespace SyncPoint365.Service.Validators
     {
         public CountriesAddValidator()
         {
-            RuleFor(c => c.Name).NotNull().NotEmpty().WithMessage("First name is not valid");
+            RuleFor(c => c.Name).NotNull().NotEmpty().WithMessage("Name is required");
         }
     }
 
@@ -16,7 +16,7 @@ namespace SyncPoint365.Service.Validators
     {
         public CountriesUpdateValidator()
         {
-            RuleFor(c => c.Name).NotNull().NotEmpty().WithMessage("First name is not valid");
+            RuleFor(c => c.Name).NotNull().NotEmpty().WithMessage("Name is required");
         }
     }
 }
