@@ -27,6 +27,9 @@ namespace SyncPoint365.API
             builder.Services.AddInfrastructure();
             builder.Services.AddApplication();
             builder.Services.AddValidators();
+            
+            
+                        
 
             builder.Services.AddSwaggerGen();
             builder.Services.AddCors(options =>
