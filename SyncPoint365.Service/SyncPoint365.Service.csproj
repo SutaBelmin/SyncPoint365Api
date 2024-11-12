@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SyncPoint365.Repository.Interfaces\SyncPoint365.Repository.Common.csproj" />
+    <ProjectReference Include="..\SyncPoint365.Repository\SyncPoint365.Repository.csproj" />
     <ProjectReference Include="..\SyncPoint365.Service.Interfaces\SyncPoint365.Service.Common.csproj" />
   </ItemGroup>
 

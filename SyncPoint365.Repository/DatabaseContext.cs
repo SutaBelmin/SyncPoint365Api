@@ -10,5 +10,6 @@ namespace SyncPoint365.Repository
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Countries> Countries { get; set; }
     }
 }
