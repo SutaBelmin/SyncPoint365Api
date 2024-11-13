@@ -9,6 +9,7 @@ namespace SyncPoint365.Repository
         public static void AddInfrastructure(this IServiceCollection services)
         {
             services.AddScoped<IUsersRepository, UsersRepository>();
+            services.AddScoped<ICountriesRepository, CountriesRepository>();
         }
     }
 }
