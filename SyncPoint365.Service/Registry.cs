@@ -13,11 +13,11 @@ namespace SyncPoint365.Service
     {
         public static void AddValidators(this IServiceCollection services)
         {
-            services.AddScoped<IValidator<UserAddDTO>, UserAddValidator>();                 
+            services.AddScoped<IValidator<UserAddDTO>, UserAddValidator>();
             services.AddScoped<IValidator<UserUpdateDTO>, UserUpdateValidator>();
 
-            services.AddScoped<IValidator<CountriesAddDTO>, CountriesAddValidator>();
-            services.AddScoped<IValidator<CountriesUpdateDTO>, CountriesUpdateValidator>();
+            services.AddScoped<IValidator<CountryAddDTO>, CountryAddValidator>();
+            services.AddScoped<IValidator<CountryUpdateDTO>, CountryUpdateValidator>();
         }
 
         public static void AddApplication(this IServiceCollection services)

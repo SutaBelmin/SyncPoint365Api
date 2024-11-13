@@ -1,20 +1,19 @@
 ﻿using FluentValidation;
 using SyncPoint365.Core.DTOs.Countries;
-using SyncPoint365.Core.DTOs.Users;
 
 namespace SyncPoint365.Service.Validators
 {
-    public class CountriesAddValidator : AbstractValidator<CountriesAddDTO>
+    public class CountryAddValidator : AbstractValidator<CountryAddDTO>
     {
-        public CountriesAddValidator()
+        public CountryAddValidator()
         {
             RuleFor(c => c.Name).NotNull().NotEmpty().WithMessage("Name is required");
         }
     }
 
-    public class CountriesUpdateValidator : AbstractValidator<CountriesUpdateDTO>
+    public class CountryUpdateValidator : AbstractValidator<CountryUpdateDTO>
     {
-        public CountriesUpdateValidator()
+        public CountryUpdateValidator()
         {
             RuleFor(c => c.Name).NotNull().NotEmpty().WithMessage("Name is required");
         }
