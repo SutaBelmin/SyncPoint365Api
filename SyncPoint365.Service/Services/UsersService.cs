@@ -4,16 +4,19 @@ using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Service.Common.Interfaces;
 using SyncPoint365.Repository.Common.Interfaces;
+using System.Collections.Generic;
 
 namespace SyncPoint365.Service.Services
 {
     public class UsersService : BaseService<User, UserDTO, UserAddDTO, UserUpdateDTO>, IUsersService
     {
         private readonly IUsersRepository _repository;
+        protected readonly IMapper _mapper;
 
         public UsersService(IUsersRepository repository, IMapper mapper, IValidator<UserAddDTO> addValidator, IValidator<UserUpdateDTO> updateValidator) : base(repository, mapper, addValidator, updateValidator)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         public override async Task AddAsync(UserAddDTO dto, CancellationToken cancellationToken = default)
@@ -24,6 +27,13 @@ namespace SyncPoint365.Service.Services
 
             await Repository.AddAsync(entity, cancellationToken);
             await Repository.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<UserDTO>> GetUsersListAsync(CancellationToken cancellationToken = default)
+        {
+            var users = await _repository.GetUsersListAsync();
+
+            return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
     }
 }
