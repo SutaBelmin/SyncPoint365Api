@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SyncPoint365.Repository;
 
@@ -11,9 +12,11 @@ using SyncPoint365.Repository;
 namespace SyncPoint365.Repository.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241113081150_AbsenceRequestTypeCreate")]
+    partial class AbsenceRequestTypeCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,44 +25,7 @@ namespace SyncPoint365.Repository.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-              modelBuilder.Entity("SyncPoint365.Core.Entities.Country", b =>
-                {
-
-                    b.Property<int>("Id")
-
-                        .ValueGeneratedOnAdd()
-
-                        .HasColumnType("int");
- 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
- 
-                    b.Property<DateTime>("DateCreated")
-
-                        .HasColumnType("datetime2");
- 
-                    b.Property<DateTime>("DateUpdated")
-
-                        .HasColumnType("datetime2");
- 
-                    b.Property<string>("DisplayName")
-
-                        .IsRequired()
-
-                        .HasColumnType("nvarchar(max)");
- 
-                    b.Property<string>("Name")
-
-                        .IsRequired()
-
-                        .HasColumnType("nvarchar(max)");
- 
-                    b.HasKey("Id");
- 
-                    b.ToTable("Countries");
-
-                });
-
-             modelBuilder.Entity("SyncPoint365.Core.Entities.AbsenceRequestType", b =>
+            modelBuilder.Entity("SyncPoint365.Core.Entities.AbsenceRequestType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
