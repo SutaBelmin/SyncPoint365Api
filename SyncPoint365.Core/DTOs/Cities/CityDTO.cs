@@ -10,10 +10,10 @@ namespace SyncPoint365.Core.DTOs.Cities
     public class CityDTO : BaseDTO
     { 
         public string Name { get; set; } = default!;
-        public string ShortName { get; set; } = default!;
-        public int PostalCode { get; set; }
+        public string DisplayName { get; set; } = default!;
+        public int? PostalCode { get; set; }
 
-        public CountryDTO Country { get; set; }
+        public CountryDTO Country { get; set; } = default!;
         public int CountryId { get; set; }
     }
 }

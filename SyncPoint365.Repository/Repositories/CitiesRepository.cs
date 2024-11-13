@@ -18,7 +18,9 @@ namespace SyncPoint365.Repository.Repositories
 
         public async Task<IEnumerable<City>> GetCitiesListAsync(CancellationToken cancellationToken = default)
         {
-            return await DbSet.ToListAsync();
+            return await DbSet
+                .Include(x=> x.Country)
+                .ToListAsync();
         }
     }
 }
