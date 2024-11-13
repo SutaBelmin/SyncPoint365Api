@@ -5,6 +5,6 @@ namespace SyncPoint365.Service.Common.Interfaces
 {
     public interface IUsersService : IBaseService<UserDTO, UserAddDTO, UserUpdateDTO>
     {
-        Task<IEnumerable<UserDTO>> GetUsersAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<UserDTO>> GetUsersListAsync(CancellationToken cancellationToken = default);
     }
 }

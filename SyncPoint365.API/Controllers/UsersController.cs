@@ -20,7 +20,7 @@ namespace SyncPoint365.API.Controllers
         [Route("Get-Users", Name = "SyncPoint365-GetUsers")]
         public async Task<IActionResult> GetUsersListAsync(CancellationToken cancellationToken = default) 
         { 
-            var data =await _usersService.GetUsersAsync();
+            var data = await _usersService.GetUsersListAsync();
 
             if(data == null) 
                 return NotFound();

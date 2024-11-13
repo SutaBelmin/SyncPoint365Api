@@ -29,7 +29,7 @@ namespace SyncPoint365.Service.Services
             await Repository.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<UserDTO>> GetUsersAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<UserDTO>> GetUsersListAsync(CancellationToken cancellationToken = default)
         {
             var users = await _repository.GetUsersListAsync();
 
