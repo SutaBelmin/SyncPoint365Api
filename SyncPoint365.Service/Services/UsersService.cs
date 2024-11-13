@@ -2,9 +2,8 @@
 using FluentValidation;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Entities;
-using SyncPoint365.Service.Common.Interfaces;
 using SyncPoint365.Repository.Common.Interfaces;
-using System.Collections.Generic;
+using SyncPoint365.Service.Common.Interfaces;
 
 namespace SyncPoint365.Service.Services
 {

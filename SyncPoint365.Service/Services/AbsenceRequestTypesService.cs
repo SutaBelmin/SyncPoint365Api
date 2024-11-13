@@ -10,6 +10,7 @@ namespace SyncPoint365.Service.Services
     public class AbsenceRequestTypesService : BaseService<AbsenceRequestType, AbsenceRequestTypeDTO, AbsenceRequestTypeAddDTO, AbsenceRequestTypeUpdateDTO>, IAbsenceRequestTypesService
     {
         private readonly IAbsenceRequestTypesRepository _repository;
+        protected readonly IMapper _mapper;
         public AbsenceRequestTypesService(IAbsenceRequestTypesRepository repository,
             IMapper mapper,
             IValidator<AbsenceRequestTypeAddDTO> addValidator,
@@ -17,7 +18,25 @@ namespace SyncPoint365.Service.Services
             : base(repository, mapper, addValidator, updateValidator)
         {
             _repository = repository;
+            _mapper = mapper;
+        }
 
+        public override async Task AddAsync(AbsenceRequestTypeAddDTO dto, CancellationToken cancellationToken = default)
+        {
+            await AddValidator.ValidateAndThrowAsync(dto, cancellationToken);
+
+            var entity = Mapper.Map<AbsenceRequestType>(dto);
+
+            await Repository.AddAsync(entity, cancellationToken);
+            await Repository.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<AbsenceRequestTypeDTO>> GetAbsenceRequestTypesAsync(CancellationToken cancellationToken = default)
+        {
+            var absenceRequestTypes = await _repository.GetAbsenceRequestTypesListAsync();
+
+            return _mapper.Map<IEnumerable<AbsenceRequestTypeDTO>>(absenceRequestTypes);
         }
     }
 }
+

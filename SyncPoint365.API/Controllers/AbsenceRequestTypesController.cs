@@ -13,5 +13,17 @@ namespace SyncPoint365.API.Controllers
         {
             _absenceRequestTypeService = service;
         }
+
+        [HttpGet]
+        [Route("Get-AbsenceRequestTypes", Name = "SyncPoint365-GetAbsenceRequestTypes")]
+        public async Task<IActionResult> GetAbsenceRequestTypesListAsync(CancellationToken cancellationToken = default)
+        {
+            var items = await _absenceRequestTypeService.GetAbsenceRequestTypesAsync();
+
+            if (items == null)
+                return NotFound();
+
+            return Ok(items);
+        }
     }
 }
