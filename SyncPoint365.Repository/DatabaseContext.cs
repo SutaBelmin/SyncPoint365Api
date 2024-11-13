@@ -12,5 +12,6 @@ namespace SyncPoint365.Repository
         public DbSet<User> Users { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<AbsenceRequestType> AbsenceRequestTypes { get; set; }
+        public DbSet<City> Cities { get; set; }
     }
 }
