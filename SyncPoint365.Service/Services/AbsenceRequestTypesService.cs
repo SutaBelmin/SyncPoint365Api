@@ -21,17 +21,7 @@ namespace SyncPoint365.Service.Services
             _mapper = mapper;
         }
 
-        public override async Task AddAsync(AbsenceRequestTypeAddDTO dto, CancellationToken cancellationToken = default)
-        {
-            await AddValidator.ValidateAndThrowAsync(dto, cancellationToken);
-
-            var entity = Mapper.Map<AbsenceRequestType>(dto);
-
-            await Repository.AddAsync(entity, cancellationToken);
-            await Repository.SaveChangesAsync(cancellationToken);
-        }
-
-        public async Task<IEnumerable<AbsenceRequestTypeDTO>> GetAbsenceRequestTypesAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<AbsenceRequestTypeDTO>> GetAbsenceRequestTypesListAsync(CancellationToken cancellationToken = default)
         {
             var absenceRequestTypes = await _repository.GetAbsenceRequestTypesListAsync();
 

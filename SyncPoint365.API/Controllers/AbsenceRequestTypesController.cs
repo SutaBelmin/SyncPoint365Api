@@ -15,10 +15,10 @@ namespace SyncPoint365.API.Controllers
         }
 
         [HttpGet]
-        [Route("Get-AbsenceRequestTypes", Name = "SyncPoint365-GetAbsenceRequestTypes")]
+        [Route("list", Name = "SyncPoint365-GetAbsenceRequestTypesList")]
         public async Task<IActionResult> GetAbsenceRequestTypesListAsync(CancellationToken cancellationToken = default)
         {
-            var items = await _absenceRequestTypeService.GetAbsenceRequestTypesAsync();
+            var items = await _absenceRequestTypeService.GetAbsenceRequestTypesListAsync();
 
             if (items == null)
                 return NotFound();

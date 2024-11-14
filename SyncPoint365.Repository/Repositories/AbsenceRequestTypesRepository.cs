@@ -10,11 +10,6 @@ namespace SyncPoint365.Repository.Repositories
         {
         }
 
-        public async Task<AbsenceRequestType?> GetByAbsenceRequestTypeIdAsync(int id, CancellationToken cancellationToken = default)
-        {
-            return await DbSet.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
-        }
-
         public async Task<IEnumerable<AbsenceRequestType>> GetAbsenceRequestTypesListAsync(CancellationToken cancellationToken = default)
         {
             return await DbSet.ToListAsync();
