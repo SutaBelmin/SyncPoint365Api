@@ -5,5 +5,7 @@
         public string Name { get; set; } = default!;
         public string DisplayName { get; set; } = default!;
 
+        public virtual ICollection<City> Cities { get; set; } = default!;
+
     }
 }

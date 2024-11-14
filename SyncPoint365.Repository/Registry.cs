@@ -11,6 +11,7 @@ namespace SyncPoint365.Repository
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<ICountriesRepository, CountriesRepository>();
             services.AddScoped<IAbsenceRequestTypesRepository, AbsenceRequestTypesRepository>();
+            services.AddScoped<ICitiesRepository, CitiesRepository>();
         }
     }
 }
