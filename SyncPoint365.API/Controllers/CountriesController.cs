@@ -16,7 +16,7 @@ namespace SyncPoint365.API.Controllers
         }
 
         [HttpGet]
-        [Route("Get-Countries", Name = "SyncPoint365-GetCountriesList")]
+        [Route("List", Name = "SyncPoint365-GetCountriesList")]
         public async Task<IActionResult> GetCountriesListAsync(CancellationToken cancellationToken = default)
         {
             var data = await _countriesService.GetCountriesListAsync();
