@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SyncPoint365.Core.DTOs.Cities;
 using SyncPoint365.Service.Common.Interfaces;
-using SyncPoint365.Service.Services;
 
 namespace SyncPoint365.API.Controllers
 {
@@ -18,7 +16,7 @@ namespace SyncPoint365.API.Controllers
 
 
         [HttpGet]
-        [Route("Get-Cities", Name = "SyncPoint365-GetCities")]
+        [Route("List", Name = "SyncPoint365-GetCitiesList")]
         public async Task<IActionResult> GetCitiesListAsync(CancellationToken cancellationToken = default)
         {
             var data = await _citiesService.GetCitiesListAsync();
