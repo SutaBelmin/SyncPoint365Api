@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using SyncPoint365.Core.DTOs.AbsenceRequestTypes;
+using SyncPoint365.Core.DTOs.Countries;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Service.Common.Interfaces;
 using SyncPoint365.Service.Mapping;
@@ -15,9 +16,10 @@ namespace SyncPoint365.Service
         {
             services.AddScoped<IValidator<UserAddDTO>, UserAddValidator>();
             services.AddScoped<IValidator<UserUpdateDTO>, UserUpdateValidator>();
-            services.AddScoped<IValidator<UserUpdateDTO>, UserUpdateValidator>();
             services.AddScoped<IValidator<AbsenceRequestTypeAddDTO>, AbsenceRequestTypeAddValidator>();
             services.AddScoped<IValidator<AbsenceRequestTypeUpdateDTO>, AbsenceRequestTypeUpdateValidator>();
+            services.AddScoped<IValidator<CountryAddDTO>, CountryAddValidator>();
+            services.AddScoped<IValidator<CountryUpdateDTO>, CountryUpdateValidator>();
 
         }
 
@@ -25,6 +27,7 @@ namespace SyncPoint365.Service
         {
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IAbsenceRequestTypesService, AbsenceRequestTypesService>();
+            services.AddScoped<ICountriesService, CountriesService>();
         }
 
         public static void AddMapping(this IServiceCollection services)

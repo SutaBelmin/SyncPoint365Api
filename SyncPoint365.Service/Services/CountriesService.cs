@@ -17,6 +17,11 @@ namespace SyncPoint365.Service.Services
             _repository = repository;
             _mapper = mapper;
         }
+        public async Task<IEnumerable<CountryDTO>> GetCountriesListAsync(CancellationToken cancellationToken = default)
+        {
+            var countries = await _repository.GetCountriesListAsync();
 
+            return _mapper.Map<IEnumerable<CountryDTO>>(countries);
+        }
     }
 }
