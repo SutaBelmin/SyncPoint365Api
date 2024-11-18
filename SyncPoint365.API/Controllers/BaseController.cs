@@ -1,8 +1,9 @@
-﻿using X.PagedList;
-using FluentValidation;
-using SyncPoint365.Core.DTOs;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using SyncPoint365.Core.DTOs;
+using SyncPoint365.Core.Helpers;
 using SyncPoint365.Service.Common.Interfaces;
+using X.PagedList;
 
 namespace SyncPoint365.API.Controllers
 {
@@ -21,9 +22,9 @@ namespace SyncPoint365.API.Controllers
         }
 
         [HttpGet("Paged/{page}")]
-        public async Task<IActionResult> GetPagedListAsync(string? query = null, int page = 1, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetPagedListAsync(string? query = null, int page = 1, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var pagedList = await Service.GetAsync(query, page, cancellationToken: cancellationToken);
+            var pagedList = await Service.GetAsync(query, page, pageSize, cancellationToken: cancellationToken);
 
             return Ok(GetPagedResult(pagedList));
         }

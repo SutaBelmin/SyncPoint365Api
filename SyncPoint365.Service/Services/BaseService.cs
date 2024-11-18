@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using X.PagedList;
 using FluentValidation;
 using SyncPoint365.Core.DTOs;
 using SyncPoint365.Core.Entities;
-using SyncPoint365.Service.Common.Interfaces;
+using SyncPoint365.Core.Helpers;
 using SyncPoint365.Repository.Common.Interfaces;
+using SyncPoint365.Service.Common.Interfaces;
+using X.PagedList;
 
 namespace SyncPoint365.Service.Services
 {
@@ -27,9 +28,9 @@ namespace SyncPoint365.Service.Services
             UpdateValidator = updateValidator;
         }
 
-        public virtual async Task<IPagedList<TDTO>> GetAsync(string? query = null, int page = 1, CancellationToken cancellationToken = default)
+        public virtual async Task<IPagedList<TDTO>> GetAsync(string? query = null, int page = 1, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var pagedList = await Repository.GetAsync(query, page, cancellationToken);
+            var pagedList = await Repository.GetAsync(query, page, pageSize, cancellationToken);
             var entities = pagedList.ToList();
             var dtos = Mapper.Map<List<TDTO>>(entities);
 

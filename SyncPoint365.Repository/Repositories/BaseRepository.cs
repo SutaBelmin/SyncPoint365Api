@@ -1,15 +1,14 @@
-﻿using X.PagedList;
+﻿using Microsoft.EntityFrameworkCore;
 using SyncPoint365.Core.Entities;
-using Microsoft.EntityFrameworkCore;
+using SyncPoint365.Core.Helpers;
 using SyncPoint365.Repository.Common.Interfaces;
+using X.PagedList;
 
 namespace SyncPoint365.Repository.Repositories
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity>
     where TEntity : BaseEntity
     {
-        protected const int PageSize = 10;
-
         protected readonly DatabaseContext DatabaseContext;
         protected readonly DbSet<TEntity> DbSet;
 
@@ -19,12 +18,12 @@ namespace SyncPoint365.Repository.Repositories
             DbSet = DatabaseContext.Set<TEntity>();
         }
 
-        public virtual Task<IPagedList<TEntity>> GetAsync(string? query = null, int page = 1, CancellationToken cancellationToken = default)
+        public virtual Task<IPagedList<TEntity>> GetAsync(string? query = null, int page = 1, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             if (page == -1)
                 return DbSet.ToPagedListAsync(1, int.MaxValue);
             else
-                return DbSet.ToPagedListAsync(page, PageSize);
+                return DbSet.ToPagedListAsync(page, pageSize);
         }
 
         public virtual Task<TEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
