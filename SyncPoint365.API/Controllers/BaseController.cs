@@ -22,7 +22,7 @@ namespace SyncPoint365.API.Controllers
         }
 
         [HttpGet("Paged/{page}")]
-        public async Task<IActionResult> GetPagedListAsync(string? query = null, int page = 1, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetPagedListAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             var pagedList = await Service.GetAsync(query, page, pageSize, cancellationToken: cancellationToken);
 

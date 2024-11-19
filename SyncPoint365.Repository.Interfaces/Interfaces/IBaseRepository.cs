@@ -8,7 +8,7 @@ namespace SyncPoint365.Repository.Common.Interfaces
     public interface IBaseRepository<TEntity>
        where TEntity : BaseEntity
     {
-        Task<IPagedList<TEntity>> GetAsync(string? query = null, int page = 1, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default);
+        Task<IPagedList<TEntity>> GetAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default);
 
         Task<TEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task AddAsync(TEntity entity, CancellationToken cancellationToken = default);

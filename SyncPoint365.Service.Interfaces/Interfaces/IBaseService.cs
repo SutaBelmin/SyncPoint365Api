@@ -9,7 +9,7 @@ namespace SyncPoint365.Service.Common.Interfaces
         where TAddDTO : BaseAddDTO
         where TUpdateDTO : BaseUpdateDTO
     {
-        Task<IPagedList<TDTO>> GetAsync(string? query = null, int page = 1, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default);
+        Task<IPagedList<TDTO>> GetAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default);
         Task<TDTO?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task AddAsync(TAddDTO dto, CancellationToken cancellationToken = default);
         Task UpdateAsync(TUpdateDTO dto, CancellationToken cancellationToken = default);

@@ -28,7 +28,7 @@ namespace SyncPoint365.Service.Services
             UpdateValidator = updateValidator;
         }
 
-        public virtual async Task<IPagedList<TDTO>> GetAsync(string? query = null, int page = 1, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public virtual async Task<IPagedList<TDTO>> GetAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             var pagedList = await Repository.GetAsync(query, page, pageSize, cancellationToken);
             var entities = pagedList.ToList();

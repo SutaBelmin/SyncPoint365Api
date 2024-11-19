@@ -18,7 +18,7 @@ namespace SyncPoint365.Repository.Repositories
             DbSet = DatabaseContext.Set<TEntity>();
         }
 
-        public virtual Task<IPagedList<TEntity>> GetAsync(string? query = null, int page = 1, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public virtual Task<IPagedList<TEntity>> GetAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             if (page == -1)
                 return DbSet.ToPagedListAsync(1, int.MaxValue);
