@@ -34,5 +34,7 @@ namespace SyncPoint365.Service.Services
 
             return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
+
+
     }
 }

@@ -10,7 +10,7 @@ namespace SyncPoint365.API.Controllers
     {
         private readonly IUsersService _usersService;
 
-        public UsersController(IUsersService usersService) : base(usersService) 
+        public UsersController(IUsersService usersService) : base(usersService)
         {
             this._usersService = usersService;
         }
@@ -18,14 +18,16 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("Get-Users", Name = "SyncPoint365-GetUsers")]
-        public async Task<IActionResult> GetUsersListAsync(CancellationToken cancellationToken = default) 
-        { 
+        public async Task<IActionResult> GetUsersListAsync(CancellationToken cancellationToken = default)
+        {
             var data = await _usersService.GetUsersListAsync();
 
-            if(data == null) 
+            if (data == null)
                 return NotFound();
 
             return Ok(data);
         }
+
+
     }
 }
