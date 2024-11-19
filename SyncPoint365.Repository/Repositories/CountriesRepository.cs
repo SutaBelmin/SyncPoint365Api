@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SyncPoint365.Core.Entities;
+using SyncPoint365.Core.Helpers;
 using SyncPoint365.Repository.Common.Interfaces;
+using X.PagedList;
 
 namespace SyncPoint365.Repository.Repositories
 {
@@ -14,5 +16,22 @@ namespace SyncPoint365.Repository.Repositories
         {
             return await DbSet.ToListAsync();
         }
+
+        public async Task<IEnumerable<Country>> SearchCountriesByNameAsync(string name, CancellationToken cancellationToken = default)
+        {
+            return await DbSet.Where(c => c.Name.ToLower().Contains(name.ToLower())).ToListAsync(cancellationToken);
+        }
+        public override async Task<IPagedList<Country>> GetAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        {
+            IQueryable<Country> queryable = DbSet;
+
+            if (!string.IsNullOrEmpty(query))
+            {
+                queryable = queryable.Where(c => c.Name.Contains(query));
+            }
+            int totalSetCount = await queryable.CountAsync(cancellationToken);
+            return await queryable.ToPagedListAsync(page, pageSize, totalSetCount, cancellationToken);
+        }
+
     }
 }

@@ -5,5 +5,6 @@ namespace SyncPoint365.Repository.Common.Interfaces
     public interface ICountriesRepository : IBaseRepository<Country>
     {
         Task<IEnumerable<Country>> GetCountriesListAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<Country>> SearchCountriesByNameAsync(string name, CancellationToken cancellationToken = default);
     }
 }

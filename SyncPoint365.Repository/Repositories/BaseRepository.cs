@@ -33,11 +33,14 @@ namespace SyncPoint365.Repository.Repositories
 
         public virtual async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
+            entity.DateUpdated = DateTime.UtcNow;
+            entity.DateCreated = DateTime.UtcNow;
             await DbSet.AddAsync(entity, cancellationToken);
         }
 
         public virtual void Update(TEntity entity, CancellationToken cancellationToken = default)
         {
+            entity.DateUpdated = DateTime.UtcNow;
             DatabaseContext.ChangeTracker.Clear();
             DbSet.Update(entity);
         }
