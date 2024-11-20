@@ -16,11 +16,6 @@ namespace SyncPoint365.Repository.Repositories
         {
             return await DbSet.ToListAsync();
         }
-
-        public async Task<IEnumerable<Country>> SearchCountriesByNameAsync(string name, CancellationToken cancellationToken = default)
-        {
-            return await DbSet.Where(c => c.Name.ToLower().Contains(name.ToLower())).ToListAsync(cancellationToken);
-        }
         public override async Task<IPagedList<Country>> GetAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             IQueryable<Country> queryable = DbSet;
