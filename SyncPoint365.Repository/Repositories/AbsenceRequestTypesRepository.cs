@@ -16,24 +16,32 @@ namespace SyncPoint365.Repository.Repositories
             return await DbSet.ToListAsync();
         }
 
-        public Task<IPagedList<AbsenceRequestType>> GetPagedAbsenceRequestTypesListAsync(bool isActive, string? query, int page, int pageSize, CancellationToken cancellationToken)
+        public Task<IPagedList<AbsenceRequestType>> GetPagedAbsenceRequestTypesListAsync(bool? isActive, string? query, int page, int pageSize, CancellationToken cancellationToken)
         {
-            IQueryable<AbsenceRequestType> quereiable = DbSet;
+            IQueryable<AbsenceRequestType> queryable = DbSet;
+
+            if (isActive.HasValue)
+            {
+                queryable = queryable.Where(a => a.IsActive == isActive.Value);
+            }
+
+            else
+            {
+                queryable = queryable.Where(a => a.IsActive == true || a.IsActive == false);
+            }
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                quereiable = quereiable.Where(x => x.Name.ToLower().Contains(query.ToLower()));
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(query.ToLower()));
             }
-
-            quereiable = quereiable.Where(x => x.IsActive == isActive);
 
             if (page == -1)
             {
-                return quereiable.ToPagedListAsync(1, int.MaxValue);
+                return queryable.ToPagedListAsync(1, int.MaxValue);
             }
             else
             {
-                return quereiable.ToPagedListAsync(page, pageSize);
+                return queryable.ToPagedListAsync(page, pageSize);
             }
         }
     }

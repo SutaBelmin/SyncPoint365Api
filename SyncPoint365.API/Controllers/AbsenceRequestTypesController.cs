@@ -28,7 +28,7 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("paged", Name = "SyncPoint365-GetAbsenceRequestTypesListPaged")]
-        public async Task<IActionResult> GetPagedAbsenceRequestTypesListAsync(bool isActive = false, string? query = null, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetPagedAbsenceRequestTypesListAsync(bool? isActive = null, string? query = null, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             var items = await _absenceRequestTypeService.GetPagedAbsenceRequestTypesListAsync(isActive, query, page, pageSize, cancellationToken: cancellationToken);
 
