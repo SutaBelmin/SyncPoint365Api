@@ -26,7 +26,9 @@ namespace SyncPoint365.Repository.Repositories
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                queryable = queryable.Where(city => city.Name.ToLower().Contains(query.ToLower()));
+                queryable = queryable.Where(city =>
+                                 city.Name.ToLower().Contains(query.ToLower()) ||
+                                 city.DisplayName.ToLower().Contains(query.ToLower()));
             }
 
             if (countryId.HasValue)
