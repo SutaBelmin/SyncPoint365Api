@@ -22,7 +22,7 @@ namespace SyncPoint365.Repository.Repositories
 
             if (!string.IsNullOrEmpty(query))
             {
-                queryable = queryable.Where(c => c.Name.Contains(query));
+                queryable = queryable.Where(c => c.Name.Contains(query) || c.DisplayName.Contains(query));
             }
             int totalSetCount = await queryable.CountAsync(cancellationToken);
             return await queryable.ToPagedListAsync(page, pageSize, totalSetCount, cancellationToken);
