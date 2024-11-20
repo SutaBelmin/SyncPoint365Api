@@ -4,6 +4,7 @@ using SyncPoint365.Core.DTOs.AbsenceRequestTypes;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
+using X.PagedList;
 
 namespace SyncPoint365.Service.Services
 {
@@ -26,6 +27,16 @@ namespace SyncPoint365.Service.Services
             var absenceRequestTypes = await _repository.GetAbsenceRequestTypesListAsync();
 
             return _mapper.Map<IEnumerable<AbsenceRequestTypeDTO>>(absenceRequestTypes);
+        }
+
+        public async Task<IPagedList<AbsenceRequestTypeDTO>> GetPagedAbsenceRequestTypesListAsync(bool isActive, string? query, int page, int pageSize, CancellationToken cancellationToken = default)
+        {
+            var paged = await _repository.GetPagedAbsenceRequestTypesListAsync(isActive, query, page, pageSize, cancellationToken: cancellationToken);
+
+            var entities = paged.ToList();
+            var dtos = Mapper.Map<List<AbsenceRequestTypeDTO>>(entities);
+
+            return new PagedList<AbsenceRequestTypeDTO>(paged, dtos);
         }
     }
 }
