@@ -49,9 +49,10 @@ namespace SyncPoint365.Repository.Repositories
 
         public virtual async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var entries = DatabaseContext.ChangeTracker.Entries<BaseEntity>();
             try
             {
+                var entries = DatabaseContext.ChangeTracker.Entries<BaseEntity>();
+
                 foreach (var entry in entries)
                 {
                     if (entry.State == EntityState.Added)
