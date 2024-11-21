@@ -36,7 +36,7 @@ namespace SyncPoint365.Repository.Repositories
             await DbSet.AddAsync(entity, cancellationToken);
         }
 
-        public virtual void Update(TEntity entity, CancellationToken cancellationToken = default)
+        public virtual async void Update(TEntity entity, CancellationToken cancellationToken = default)
         {
             DatabaseContext.ChangeTracker.Clear();
             DbSet.Update(entity);
@@ -51,6 +51,22 @@ namespace SyncPoint365.Repository.Repositories
         {
             try
             {
+                var entries = DatabaseContext.ChangeTracker.Entries<BaseEntity>();
+
+                foreach (var entry in entries)
+                {
+                    if (entry.State == EntityState.Added)
+                    {
+                        entry.Entity.DateCreated = DateTime.UtcNow;
+                        entry.Entity.DateUpdated = DateTime.UtcNow;
+                    }
+                    else if (entry.State == EntityState.Modified)
+                    {
+                        entry.Property(e => e.DateCreated).IsModified = false;
+                        entry.Entity.DateUpdated = DateTime.UtcNow;
+                    }
+                }
+
                 await DatabaseContext.SaveChangesAsync(cancellationToken);
 
             }
@@ -59,5 +75,6 @@ namespace SyncPoint365.Repository.Repositories
                 throw;
             }
         }
+
     }
 }
