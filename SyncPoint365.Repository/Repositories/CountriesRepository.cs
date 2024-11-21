@@ -16,7 +16,7 @@ namespace SyncPoint365.Repository.Repositories
         {
             return await DbSet.ToListAsync();
         }
-        public override async Task<IPagedList<Country>> GetAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public override async Task<IPagedList<Country>> GetAsync(string? query, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             IQueryable<Country> queryable = DbSet;
 
