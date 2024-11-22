@@ -27,6 +27,5 @@ namespace SyncPoint365.Repository.Repositories
             int totalSetCount = await queryable.CountAsync(cancellationToken);
             return await queryable.ToPagedListAsync(page, pageSize, totalSetCount, cancellationToken);
         }
-
     }
 }
