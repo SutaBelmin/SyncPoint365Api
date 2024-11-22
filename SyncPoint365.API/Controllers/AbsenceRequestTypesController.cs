@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SyncPoint365.Core.DTOs.AbsenceRequestTypes;
 using SyncPoint365.Service.Common.Interfaces;
-
+using Constants = SyncPoint365.Core.Helpers.Constants;
 namespace SyncPoint365.API.Controllers
 {
     [Route("[controller]")]
@@ -24,6 +24,18 @@ namespace SyncPoint365.API.Controllers
                 return NotFound();
 
             return Ok(items);
+        }
+
+        [HttpGet]
+        [Route("paged", Name = "SyncPoint365-GetAbsenceRequestTypesPagedListAsync")]
+        public async Task<IActionResult> GetAbsenceRequestTypesPagedListAsync(bool? isActive = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        {
+            var items = await _absenceRequestTypeService.GetAbsenceRequestTypesPagedListAsync(isActive, query, page, pageSize, cancellationToken: cancellationToken);
+
+            if (items == null)
+                return NotFound();
+
+            return Ok(GetPagedResult(items));
         }
     }
 }
