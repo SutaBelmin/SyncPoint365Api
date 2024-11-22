@@ -29,9 +29,9 @@ namespace SyncPoint365.Service.Services
             return _mapper.Map<IEnumerable<AbsenceRequestTypeDTO>>(absenceRequestTypes);
         }
 
-        public async Task<IPagedList<AbsenceRequestTypeDTO>> GetPagedAbsenceRequestTypesListAsync(bool? isActive, string? query, int page, int pageSize, CancellationToken cancellationToken = default)
+        public async Task<IPagedList<AbsenceRequestTypeDTO>> GetAbsenceRequestTypesPagedListAsync(bool? isActive, string? query, int page, int pageSize, CancellationToken cancellationToken = default)
         {
-            var paged = await _repository.GetPagedAbsenceRequestTypesListAsync(isActive, query, page, pageSize, cancellationToken: cancellationToken);
+            var paged = await _repository.GetAbsenceRequestTypesPagedListAsync(isActive, query, page, pageSize, cancellationToken: cancellationToken);
 
             var entities = paged.ToList();
             var dtos = Mapper.Map<List<AbsenceRequestTypeDTO>>(entities);
