@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SyncPoint365.Core.DTOs.Cities;
+using SyncPoint365.Core.Helpers;
 using SyncPoint365.Service.Common.Interfaces;
 
 namespace SyncPoint365.API.Controllers
@@ -30,7 +31,7 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("Paged", Name = "SyncPoint365-GetCitiesPaged")]
-        public async Task<IActionResult> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             var data = await _citiesService.GetPagedCitiesAsync(countryId, query, page, pageSize, cancellationToken);
 

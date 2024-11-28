@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SyncPoint365.Core.Entities;
+using SyncPoint365.Core.Helpers;
 using SyncPoint365.Repository.Common.Interfaces;
 using X.PagedList;
 
@@ -20,7 +21,7 @@ namespace SyncPoint365.Repository.Repositories
                 .ToListAsync();
         }
 
-        public Task<IPagedList<City>> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public Task<IPagedList<City>> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             IQueryable<City> queryable = DbSet.Include(x => x.Country);
 
