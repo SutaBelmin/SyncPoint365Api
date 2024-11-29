@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Repository.Common.Interfaces;
+using X.PagedList;
 
 namespace SyncPoint365.Repository.Repositories
 {
@@ -30,5 +31,16 @@ namespace SyncPoint365.Repository.Repositories
         {
             return await DbSet.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
         }
+        public override Task<IPagedList<User>> GetAsync(string? query = null, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        {
+
+            var users = DbSet.Include(x => x.City);
+
+            if (page == -1)
+                return users.ToPagedListAsync(1, int.MaxValue);
+            else
+                return users.ToPagedListAsync(page, pageSize);
+        }
     }
 }
+

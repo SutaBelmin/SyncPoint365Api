@@ -11,5 +11,7 @@ namespace SyncPoint365.Core.Entities
         public string PasswordSalt { get; set; } = default!;
         public Role Role { get; set; }
         public bool isActive { get; set; } = default;
+        public int CityId { get; set; }
+        public virtual City City { get; set; } = default!;
     }
 }

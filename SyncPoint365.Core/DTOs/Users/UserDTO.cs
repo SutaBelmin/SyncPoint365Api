@@ -10,5 +10,7 @@ namespace SyncPoint365.Core.DTOs.Users
         public string Email { get; set; } = default!;
         public Role Role { get; set; }
         public bool isActive { get; set; }
+        public int CityId { get; set; }
+        public string CityName { get; set; } = default!;
     }
 }
