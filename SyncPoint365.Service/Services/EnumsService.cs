@@ -6,11 +6,11 @@ namespace SyncPoint365.Service.Services
 {
     public class EnumsService : IEnumsService
     {
-        public IEnumerable<SimpleItemDTO> GetRoles()
+        public IEnumerable<SelectItemDTO> GetRoles()
         {
             return Enum.GetValues(typeof(Role))
                        .Cast<Role>()
-                       .Select(role => new SimpleItemDTO((int)role, role.ToString()))
+                       .Select(role => new SelectItemDTO((int)role, role.ToString()))
                        .ToList();
         }
     }

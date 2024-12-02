@@ -4,6 +4,6 @@ namespace SyncPoint365.Service.Common.Interfaces
 {
     public interface IEnumsService
     {
-        IEnumerable<SimpleItemDTO> GetRoles();
+        IEnumerable<SelectItemDTO> GetRoles();
     }
 }

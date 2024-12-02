@@ -18,7 +18,7 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("Roles", Name = "SyncPoint365-GetRoles")]
-        public ActionResult<IEnumerable<SimpleItemDTO>> GetRoles()
+        public ActionResult<IEnumerable<SelectItemDTO>> GetRoles()
         {
             var roles = _enumsService.GetRoles();
 

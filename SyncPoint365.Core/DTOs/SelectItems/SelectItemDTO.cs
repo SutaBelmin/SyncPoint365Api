@@ -1,12 +1,12 @@
 ﻿namespace SyncPoint365.Core.DTOs.Enums
 {
-    public class SimpleItemDTO
+    public class SelectItemDTO
     {
         public int Id { get; set; }
         public string Label { get; set; }
 
 
-        public SimpleItemDTO(int id, string label)
+        public SelectItemDTO(int id, string label)
         {
             Id = id;
             Label = label;
