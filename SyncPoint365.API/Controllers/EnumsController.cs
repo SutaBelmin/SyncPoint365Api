@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SyncPoint365.Core.DTOs.Enums;
+using SyncPoint365.Core.Enums;
 using SyncPoint365.Service.Common.Interfaces;
 
 namespace SyncPoint365.API.Controllers
@@ -20,7 +21,7 @@ namespace SyncPoint365.API.Controllers
         [Route("Roles", Name = "SyncPoint365-GetRoles")]
         public ActionResult<IEnumerable<SelectItemDTO>> GetRoles()
         {
-            var roles = _enumsService.GetRoles();
+            var roles = _enumsService.GetEnumValues<Role>();
 
             if (roles == null)
             {
