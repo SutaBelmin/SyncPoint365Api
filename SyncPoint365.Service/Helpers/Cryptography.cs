@@ -50,7 +50,7 @@ namespace SyncPoint365.Service.Helpers
                 outputLength: 64
             );
 
-            return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+            return Convert.ToBase64String(saltBytes);
         }
     }
 }
