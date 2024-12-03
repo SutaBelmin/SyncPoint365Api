@@ -2,8 +2,8 @@
 {
     public enum AbsenceRequestStatus
     {
-        Active,
+        Approved,
         Pending,
-        Inactive
+        Rejected
     }
 }
