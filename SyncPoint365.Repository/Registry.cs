@@ -8,6 +8,7 @@ namespace SyncPoint365.Repository
     {
         public static void AddInfrastructure(this IServiceCollection services)
         {
+            services.AddScoped<IAbsenceRequestsRepository, AbsenceRequestsRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<ICountriesRepository, CountriesRepository>();
             services.AddScoped<IAbsenceRequestTypesRepository, AbsenceRequestTypesRepository>();

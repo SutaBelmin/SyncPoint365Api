@@ -8,7 +8,7 @@ namespace SyncPoint365.Repository
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
         }
-
+        public DbSet<AbsenceRequest> AbsenceRequests { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<AbsenceRequestType> AbsenceRequestTypes { get; set; }
