@@ -40,6 +40,7 @@ namespace SyncPoint365.Service
         public static void AddMapping(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(UserProfile));
+            services.AddAutoMapper(typeof(AbsenceRequestProfile));
         }
     }
 }

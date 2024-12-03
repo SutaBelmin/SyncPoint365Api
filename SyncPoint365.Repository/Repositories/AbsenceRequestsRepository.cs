@@ -12,7 +12,9 @@ namespace SyncPoint365.Repository.Repositories
 
         public async Task<IEnumerable<AbsenceRequest>> GetAbsenceRequestsListAsync(CancellationToken cancellationToken = default)
         {
-            return await DbSet.Include(c => c.AbsenceRequestType).ToListAsync();
+            return await DbSet.Include(c => c.AbsenceRequestType)
+                //.Include(c => c.User)
+                .ToListAsync(cancellationToken);
         }
     }
 }
