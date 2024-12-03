@@ -4,8 +4,7 @@ using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
-using System.Security.Cryptography;
-using System.Text;
+using SyncPoint365.Service.Helpers;
 
 namespace SyncPoint365.Service.Services
 {
@@ -26,7 +25,7 @@ namespace SyncPoint365.Service.Services
 
             var entity = Mapper.Map<User>(dto);
 
-            CreatePasswordHashAndSalt(dto.Password, out var passwordHash, out var passwordSalt);
+            Cryptography.CreatePasswordHashAndSalt(dto.Password, out var passwordHash, out var passwordSalt);
 
             entity.PasswordHash = passwordHash;
             entity.PasswordSalt = passwordSalt;
@@ -34,23 +33,6 @@ namespace SyncPoint365.Service.Services
             await Repository.AddAsync(entity, cancellationToken);
             await Repository.SaveChangesAsync(cancellationToken);
         }
-        private void CreatePasswordHashAndSalt(string password, out string passwordHash, out string passwordSalt)
-        {
-            byte[] saltBytes = new byte[16];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(saltBytes);
-            }
-
-            passwordSalt = Convert.ToBase64String(saltBytes);
-
-            using (var hmac = new HMACSHA512(saltBytes))
-            {
-                var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                passwordHash = Convert.ToBase64String(hashBytes);
-            }
-        }
-
 
         public async Task<IEnumerable<UserDTO>> GetUsersListAsync(CancellationToken cancellationToken = default)
         {

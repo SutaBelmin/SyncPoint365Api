@@ -1,6 +1,7 @@
 ﻿using SyncPoint365.Core.Helpers;
 using System.Security.Cryptography;
 using System.Text;
+﻿using System.Security.Cryptography;
 
 namespace SyncPoint365.Service.Helpers
 {
@@ -36,5 +37,25 @@ namespace SyncPoint365.Service.Helpers
             string hash = GenerateHash(password, storedSalt);
             return hash.Equals(storedHash);
         }
+
+         public static void CreatePasswordHashAndSalt(string password, out string passwordHash, out string passwordSalt, int iterations = 10000)
+        {
+            byte[] saltBytes = new byte[16];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(saltBytes);
+            }
+
+            passwordSalt = Convert.ToBase64String(saltBytes);
+
+
+            using (var pbkdf2 = new Rfc2898DeriveBytes(password, saltBytes, iterations, HashAlgorithmName.SHA512))
+            {
+                byte[] hashBytes = pbkdf2.GetBytes(64);
+
+                passwordHash = Convert.ToBase64String(hashBytes);
+            }
+        }
     }
 }
+       
