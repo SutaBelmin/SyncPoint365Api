@@ -25,7 +25,8 @@ namespace SyncPoint365.Service.Services
 
             var entity = Mapper.Map<User>(dto);
 
-            Cryptography.CreatePasswordHashAndSalt(dto.Password, out var passwordHash, out var passwordSalt);
+            string passwordSalt = Cryptography.GenerateSalt();
+            string passwordHash = Cryptography.HashPassword(dto.Password, passwordSalt);
 
             entity.PasswordHash = passwordHash;
             entity.PasswordSalt = passwordSalt;

@@ -38,23 +38,19 @@ namespace SyncPoint365.Service.Helpers
             return hash.Equals(storedHash);
         }
 
-         public static void CreatePasswordHashAndSalt(string password, out string passwordHash, out string passwordSalt, int iterations = 10000)
+        public static string HashPassword(string password, string salt, int iterations = 10000)
         {
-            byte[] saltBytes = new byte[16];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(saltBytes);
-            }
+            byte[] saltBytes = Convert.FromBase64String(salt);
 
-            passwordSalt = Convert.ToBase64String(saltBytes);
+            byte[] hashBytes = Rfc2898DeriveBytes.Pbkdf2(
+                password: password,
+                salt: saltBytes,
+                iterations: iterations,
+                hashAlgorithm: HashAlgorithmName.SHA512,
+                outputLength: 64
+            );
 
-
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, saltBytes, iterations, HashAlgorithmName.SHA512))
-            {
-                byte[] hashBytes = pbkdf2.GetBytes(64);
-
-                passwordHash = Convert.ToBase64String(hashBytes);
-            }
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace SyncPoint365.Core.Entities
         public string Email { get; set; } = default!;
         public string PasswordHash { get; set; } = default!;
         public string PasswordSalt { get; set; } = default!;
-        public string Gender { get; set; } = default!;
+        public Gender Gender { get; set; } = default!;
         public DateTime BirthDate { get; set; }
         public string Phone { get; set; } = default!;
         public string Address { get; set; } = default!;

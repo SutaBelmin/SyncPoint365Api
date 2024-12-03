@@ -8,7 +8,7 @@ namespace SyncPoint365.Core.DTOs.Users
         public string LastName { get; set; } = default!;
         public string FullName { get; set; } = default!;
         public string Email { get; set; } = default!;
-        public string Gender { get; set; } = default!;
+        public Gender Gender { get; set; } = default!;
         public DateTime BirthDate { get; set; }
         public string Phone { get; set; } = default!;
         public string Address { get; set; } = default!;

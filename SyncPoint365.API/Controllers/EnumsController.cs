@@ -31,5 +31,19 @@ namespace SyncPoint365.API.Controllers
             return Ok(roles);
         }
 
+        [HttpGet]
+        [Route("Genders", Name = "SyncPoint365-GetGenders")]
+        public ActionResult<IEnumerable<SelectItemDTO>> GetGenders()
+        {
+            var genders = _enumsService.GetEnumValues<Gender>();
+
+            if (genders == null)
+            {
+                return NotFound("Genders not found.");
+            }
+
+            return Ok(genders);
+        }
+
     }
 }
