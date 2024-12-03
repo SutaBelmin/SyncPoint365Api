@@ -25,5 +25,10 @@ namespace SyncPoint365.Repository.Repositories
             DbSet.Update(user);
             await SaveChangesAsync(cancellationToken);
         }
+        
+        public async Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
+        {
+            return await DbSet.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using SyncPoint365.Core.DTOs.Users;
+using SyncPoint365.Core.DTOs.Users;
 
 namespace SyncPoint365.Service.Common.Interfaces
 {
@@ -6,5 +6,6 @@ namespace SyncPoint365.Service.Common.Interfaces
     {
         Task<IEnumerable<UserDTO>> GetUsersListAsync(CancellationToken cancellationToken = default);
         Task<bool> UpdateUserStatusAsync(int id, CancellationToken cancellationToken = default);
+        Task<UserDTO> ValidateUserAsync(string email, string password, CancellationToken cancellationToken = default);
     }
 }
