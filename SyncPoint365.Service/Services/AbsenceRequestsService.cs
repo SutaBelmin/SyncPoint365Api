@@ -9,7 +9,7 @@ namespace SyncPoint365.Service.Services
 {
     public class AbsenceRequestsService : BaseService<AbsenceRequest, AbsenceRequestDTO, AbsenceRequestAddDTO, AbsenceRequestUpdateDTO>, IAbsenceRequestsService
     {
-        private readonly IAbsenceRequestsRepository _repository;
+        protected readonly IAbsenceRequestsRepository _repository;
         protected readonly IMapper _mapper;
 
         public AbsenceRequestsService(IAbsenceRequestsRepository repository,

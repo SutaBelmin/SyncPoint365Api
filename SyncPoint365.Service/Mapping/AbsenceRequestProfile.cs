@@ -8,10 +8,9 @@ namespace SyncPoint365.Service.Mapping
     {
         public AbsenceRequestProfile()
         {
+            CreateMap<AbsenceRequestDTO, AbsenceRequest>().ReverseMap();
             CreateMap<AbsenceRequestAddDTO, AbsenceRequest>().ReverseMap();
             CreateMap<AbsenceRequestUpdateDTO, AbsenceRequest>().ReverseMap();
-            CreateMap<AbsenceRequestDTO, AbsenceRequest>().ReverseMap();
-
         }
     }
 }
