@@ -71,5 +71,10 @@ namespace SyncPoint365.Service.Services
                 passwordHash = Convert.ToBase64String(hashBytes);
             }
         }
+        
+        public Task<bool> EmailExist(string email)
+        {
+            return _repository.EmailExist(email);
+        }
     }
 }
