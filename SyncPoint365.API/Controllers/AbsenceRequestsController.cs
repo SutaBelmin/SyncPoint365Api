@@ -31,10 +31,9 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("paged", Name = "SyncPoint365-GetAbsenceRequestsPagedListAsync")]
-        public async Task<IActionResult> GetAbsenceRequestTypesPagedListAsync(string? nameQuery = null, string? typeQuery = null, DateTime dateFrom = default, DateTime dateTo = default, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetAbsenceRequestTypesPagedListAsync(string? nameQuery = null, string? typeQuery = null, DateTime dateFrom = default, DateTime? dateTo = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             dateFrom = dateFrom == default ? DateTime.Today : dateFrom;
-            dateTo = dateTo == default ? new DateTime(DateTime.Today.Year, 12, 31) : dateTo;
             var items = await _absenceRequestsService.GetAbsenceRequestsPagedListAsync(nameQuery, typeQuery, dateFrom, dateTo, page, pageSize, cancellationToken: cancellationToken);
 
             if (items == null)
