@@ -22,7 +22,7 @@ namespace SyncPoint365.Repository.Repositories
         {
             var x = DbSet.Include(x => x.AbsenceRequestType).Include(c => c.User);
             return x.Where(a => ((string.IsNullOrWhiteSpace(query) || (a.User.FirstName + " " + a.User.LastName).ToLower().Contains(query.ToLower()))
-            && (a.DateTo >= dateFrom && a.DateFrom <= dateTo)))
+            && (a.DateTo <= dateTo && a.DateFrom >= dateFrom)))
                 .ToPagedListAsync(page, pageSize);
         }
     }
