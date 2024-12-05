@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SyncPoint365.Repository;
 
@@ -11,9 +12,11 @@ using SyncPoint365.Repository;
 namespace SyncPoint365.Repository.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241205091202_User_isActive")]
+    partial class User_isActive
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,50 +24,6 @@ namespace SyncPoint365.Repository.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("SyncPoint365.Core.Entities.AbsenceRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AbsenceRequestStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AbsenceRequestTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateFrom")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateReturn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateTo")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AbsenceRequestTypeId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AbsenceRequests");
-                });
 
             modelBuilder.Entity("SyncPoint365.Core.Entities.AbsenceRequestType", b =>
                 {
@@ -197,25 +156,6 @@ namespace SyncPoint365.Repository.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("SyncPoint365.Core.Entities.AbsenceRequest", b =>
-                {
-                    b.HasOne("SyncPoint365.Core.Entities.AbsenceRequestType", "AbsenceRequestType")
-                        .WithMany()
-                        .HasForeignKey("AbsenceRequestTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SyncPoint365.Core.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AbsenceRequestType");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SyncPoint365.Core.Entities.City", b =>

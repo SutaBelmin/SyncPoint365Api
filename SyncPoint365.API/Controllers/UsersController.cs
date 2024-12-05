@@ -28,6 +28,32 @@ namespace SyncPoint365.API.Controllers
             return Ok(data);
         }
 
+        [HttpPost]
+        [Route("Deactivate-Users", Name = "SyncPoint365-DeactivateUsers")]
+        public async Task<IActionResult> DeactivateUserAsync([FromBody] UserDeactivateDTO userDeactivateDTO, CancellationToken cancellationToken = default)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
+            try
+            {
+                await _usersService.ActivateDeactivateUserAsync(userDeactivateDTO, cancellationToken);
+
+                if (userDeactivateDTO.isActive == true)
+                {
+                    return Ok(new { Message = "User activated successfully!" });
+                }
+                else
+                {
+                    return Ok(new { Message = "User deactivated successfully!" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }
