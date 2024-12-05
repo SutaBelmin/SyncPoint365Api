@@ -25,11 +25,9 @@ namespace SyncPoint365.Service.Services
 
             var entity = Mapper.Map<User>(dto);
 
-            string passwordSalt = Cryptography.GenerateSalt();
-            string passwordHash = Cryptography.HashPassword(dto.Password, passwordSalt);
+            entity.PasswordSalt = Cryptography.GenerateSalt(); ;
+            entity.PasswordHash = Cryptography.GenerateHash(dto.Password, entity.PasswordSalt);
 
-            entity.PasswordHash = passwordHash;
-            entity.PasswordSalt = passwordSalt;
 
             await Repository.AddAsync(entity, cancellationToken);
             await Repository.SaveChangesAsync(cancellationToken);

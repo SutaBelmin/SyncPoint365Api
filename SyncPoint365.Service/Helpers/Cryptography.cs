@@ -27,9 +27,7 @@ namespace SyncPoint365.Service.Helpers
                 hashAlgorithm: HashAlgorithmName.SHA512,
                 outputLength: Constants.CryptographyParameters.size
             );
-
             return Convert.ToHexString(hash);
-
         }
 
         public static bool VerifyPassword(string password, string storedHash, string storedSalt)
@@ -37,21 +35,7 @@ namespace SyncPoint365.Service.Helpers
             string hash = GenerateHash(password, storedSalt);
             return hash.Equals(storedHash);
         }
-
-        public static string HashPassword(string password, string salt, int iterations = 10000)
-        {
-            byte[] saltBytes = Convert.FromBase64String(salt);
-
-            byte[] hashBytes = Rfc2898DeriveBytes.Pbkdf2(
-                password: password,
-                salt: saltBytes,
-                iterations: iterations,
-                hashAlgorithm: HashAlgorithmName.SHA512,
-                outputLength: 64
-            );
-
-            return Convert.ToBase64String(saltBytes);
-        }
+    
     }
 }
        
