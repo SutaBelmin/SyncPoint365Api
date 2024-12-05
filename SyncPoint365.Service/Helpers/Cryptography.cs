@@ -1,7 +1,6 @@
 ﻿using SyncPoint365.Core.Helpers;
 using System.Security.Cryptography;
 using System.Text;
-﻿using System.Security.Cryptography;
 
 namespace SyncPoint365.Service.Helpers
 {
