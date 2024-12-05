@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using SyncPoint365.Repository;
 using SyncPoint365.Service;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace SyncPoint365.API
@@ -35,22 +32,8 @@ namespace SyncPoint365.API
                                      .AllowAnyHeader());
             });
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-               .AddJwtBearer(options =>
-              {
-                  options.RequireHttpsMetadata = false;
-                  options.SaveToken = true;
-                  options.TokenValidationParameters = new TokenValidationParameters
-                  {
-                      ValidateIssuer = true,
-                      ValidateAudience = true,
-                      ValidateLifetime = true,
-                      ValidateIssuerSigningKey = true,
-                      ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-                      ValidAudience = builder.Configuration["JwtSettings:Audience"],
-                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]))
-                  };
-              });
+            builder.Services.AddAuthentication(builder.Configuration);
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
             app.UseCors("AllowAllOrigins");
@@ -62,6 +45,8 @@ namespace SyncPoint365.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

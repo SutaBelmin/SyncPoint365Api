@@ -10,5 +10,6 @@ namespace SyncPoint365.Repository.Common.Interfaces
 
         Task UpdateUserStatusAsync(User user, CancellationToken cancellationToken = default);
         Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default);
+
     }
 }

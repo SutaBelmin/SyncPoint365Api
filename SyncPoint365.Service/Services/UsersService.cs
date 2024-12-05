@@ -71,30 +71,5 @@ namespace SyncPoint365.Service.Services
                 passwordHash = Convert.ToBase64String(hashBytes);
             }
         }
-
-        public async Task<UserDTO> ValidateUserAsync(string email, string password, CancellationToken cancellationToken = default)
-        {
-            var user = await _repository.GetUserByEmailAsync(email, cancellationToken);
-            if (user == null)
-            {
-                throw new UnauthorizedAccessException("Invalid email or password!");
-            }
-
-            if (!VerifyPassword(password, user.PasswordHash, user.PasswordSalt))
-            {
-                throw new UnauthorizedAccessException("Invalid email or password!");
-            }
-
-            return _mapper.Map<UserDTO>(user);
-        }
-
-        public bool VerifyPassword(string password, string storedHash, string storedSalt)
-        {
-            using (var hmac = new HMACSHA512(Convert.FromBase64String(storedSalt)))
-            {
-                var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return storedHash == Convert.ToBase64String(hash);
-            }
-        }
     }
 }
