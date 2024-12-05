@@ -5,7 +5,7 @@ namespace SyncPoint365.Core.DTOs.AbsenceRequests
 {
     public class AbsenceRequestDTO : BaseDTO
     {
-        public DateTime DateFrom { get; set; } = default!;
+        public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public DateTime DateReturn { get; set; } = default!;
         public AbsenceRequestStatus AbsenceRequestStatus { get; set; }

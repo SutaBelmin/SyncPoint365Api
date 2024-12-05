@@ -18,23 +18,10 @@ namespace SyncPoint365.API.Controllers
 
 
         [HttpGet]
-        [Route("list", Name = "SyncPoint365-GetAbsenceRequestsList\"")]
-        public async Task<IActionResult> GetAbsenceRequestsListAsync(CancellationToken cancellationToken = default)
-        {
-            var items = await _absenceRequestsService.GetAbsenceRequestsListAsync(cancellationToken);
-
-            if (items == null)
-                return NotFound();
-
-            return Ok(items);
-        }
-
-        [HttpGet]
         [Route("paged", Name = "SyncPoint365-GetAbsenceRequestsPagedListAsync")]
-        public async Task<IActionResult> GetAbsenceRequestTypesPagedListAsync(string? nameQuery = null, string? typeQuery = null, DateTime dateFrom = default, DateTime? dateTo = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetAbsenceRequestTypesPagedListAsync(int? absenceRequestTypeId = null, int? userId = null, DateTime? dateFrom = null, DateTime? dateTo = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            dateFrom = dateFrom == default ? DateTime.Today : dateFrom;
-            var items = await _absenceRequestsService.GetAbsenceRequestsPagedListAsync(nameQuery, typeQuery, dateFrom, dateTo, page, pageSize, cancellationToken: cancellationToken);
+            var items = await _absenceRequestsService.GetAbsenceRequestsPagedListAsync(absenceRequestTypeId, userId, dateFrom, dateTo, page, pageSize, cancellationToken: cancellationToken);
 
             if (items == null)
                 return NotFound();
