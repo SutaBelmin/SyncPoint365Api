@@ -17,7 +17,8 @@ namespace SyncPoint365.Repository.Repositories
 
             return includes.Where(a => ((userId == null || a.UserId == userId.Value)
             && (absenceRequestTypeId == null || a.AbsenceRequestTypeId == absenceRequestTypeId.Value)
-            && (a.DateTo <= dateTo && a.DateFrom >= dateFrom)))
+            && ((!dateFrom.HasValue || a.DateFrom >= dateFrom)
+            && (!dateTo.HasValue || a.DateTo <= dateTo))))
                 .ToPagedListAsync(page, pageSize);
         }
     }
