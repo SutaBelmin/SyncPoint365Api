@@ -4,11 +4,11 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SyncPoint365.API.Config;
 using SyncPoint365.API.RESTModels;
-using SyncPoint365.Core.DTOs.Users;
+using SyncPoint365.Core.Entities;
 using SyncPoint365.Repository.Common.Interfaces;
+using SyncPoint365.Service.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace SyncPoint365.API.Controllers
@@ -18,14 +18,12 @@ namespace SyncPoint365.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUsersRepository _usersRepository;
-        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IOptions<JWTSettings> _jwtSettings;
 
         public AuthController(IUsersRepository usersRepository, IConfiguration configuration, IMapper mapper, IOptions<JWTSettings> jwtSettings)
         {
             _usersRepository = usersRepository;
-            _configuration = configuration;
             _mapper = mapper;
             _jwtSettings = jwtSettings;
         }
@@ -38,21 +36,12 @@ namespace SyncPoint365.API.Controllers
             {
                 var user = await _usersRepository.GetUserByEmailAsync(model.Email, cancellationToken);
 
-                if (user == null)
+                if (user == null || !Cryptography.VerifyPassword(model.Password, user.PasswordHash, user.PasswordSalt))
                 {
                     throw new UnauthorizedAccessException("Invalid email or password!");
                 }
 
-                if (!VerifyPassword(model.Password, user.PasswordHash, user.PasswordSalt))
-                {
-                    throw new UnauthorizedAccessException("Invalid email or password!");
-                }
-
-                var userDTO = _mapper.Map<UserDTO>(user);
-
-                var token = GenerateToken(userDTO);
-
-                return Ok(new { Message = "User authenticated successfully", User = user, Token = token });
+                return Ok(new { Message = "User authenticated successfully", User = user, Token = GenerateToken(user) });
             }
             catch (UnauthorizedAccessException)
             {
@@ -60,13 +49,13 @@ namespace SyncPoint365.API.Controllers
             }
         }
 
-        private string GenerateToken(UserDTO user)
+        private string GenerateToken(User user)
         {
             var claimsIdentity = new ClaimsIdentity(new[]
             {
                new Claim("Id",user.Id.ToString()),
-               new Claim(ClaimTypes.Name, user.Email),
-               new Claim(ClaimTypes.NameIdentifier, user.Email),
+               new Claim(ClaimTypes.Name, user.FirstName),
+               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                new Claim(ClaimTypes.Role, user.Role.ToString()),
                new Claim(ClaimTypes.Email, user.Email)
            });
@@ -77,8 +66,8 @@ namespace SyncPoint365.API.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claimsIdentity,
-                Expires = DateTime.Now.AddMinutes(_jwtSettings.Value.Duration),
-                Issuer = _jwtSettings.Value.Issue,
+                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.Value.Duration),
+                Issuer = _jwtSettings.Value.Issuer,
                 Audience = _jwtSettings.Value.Audience,
                 SigningCredentials = signingCredentials
             };
@@ -89,13 +78,5 @@ namespace SyncPoint365.API.Controllers
             return tokenHandler.WriteToken(token);
         }
 
-        private bool VerifyPassword(string password, string storedHash, string storedSalt)
-        {
-            using (var hmac = new HMACSHA512(Convert.FromBase64String(storedSalt)))
-            {
-                var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return storedHash == Convert.ToBase64String(hash);
-            }
-        }
     }
 }

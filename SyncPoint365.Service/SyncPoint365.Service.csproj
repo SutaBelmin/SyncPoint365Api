@@ -17,8 +17,4 @@
     <ProjectReference Include="..\SyncPoint365.Service.Interfaces\SyncPoint365.Service.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-
 </Project>
