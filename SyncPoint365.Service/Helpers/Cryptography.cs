@@ -8,11 +8,7 @@ namespace SyncPoint365.Service.Helpers
     {
         public static string GenerateSalt()
         {
-            byte[] salt = new byte[Constants.CryptographyParameters.size];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
+            byte[] salt = RandomNumberGenerator.GetBytes(Constants.CryptographyParameters.Size);
 
             return Convert.ToBase64String(salt);
         }
@@ -22,9 +18,9 @@ namespace SyncPoint365.Service.Helpers
             byte[] hash = Rfc2898DeriveBytes.Pbkdf2(
                 password: Encoding.UTF8.GetBytes(password),
                 salt: Encoding.UTF8.GetBytes(salt),
-                iterations: Constants.CryptographyParameters.iterations,
+                iterations: Constants.CryptographyParameters.Iterations,
                 hashAlgorithm: HashAlgorithmName.SHA512,
-                outputLength: Constants.CryptographyParameters.size
+                outputLength: Constants.CryptographyParameters.Size
             );
             return Convert.ToHexString(hash);
         }
