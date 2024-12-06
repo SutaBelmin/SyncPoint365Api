@@ -20,7 +20,7 @@ namespace SyncPoint365.Repository.Repositories
             return await DbSet.ToListAsync();
         }
 
-        public async Task ActivateDeactivateUserAsync(User user, CancellationToken cancellationToken = default)
+        public async Task UpdateUserStatusAsync(User user, CancellationToken cancellationToken = default)
         {
             DbSet.Update(user);
             await SaveChangesAsync(cancellationToken);

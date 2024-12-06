@@ -35,16 +35,18 @@ namespace SyncPoint365.Service.Services
             return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
-        public async Task ActivateDeactivateUserAsync(UserDeactivateDTO dto, CancellationToken cancellationToken = default)
+        public async Task<bool> UpdateUserStatusAsync(int id, CancellationToken cancellationToken = default)
         {
-            var user = await _repository.GetByUserIdAsync(dto.Id, cancellationToken);
+            var user = await _repository.GetByUserIdAsync(id, cancellationToken);
             if (user == null)
             {
                 throw new Exception("User not found!");
             }
 
-            user.isActive = dto.isActive;
-            await _repository.SaveChangesAsync(cancellationToken);
+            user.isActive = !user.isActive;
+            await _repository.UpdateUserStatusAsync(user, cancellationToken);
+
+            return user.isActive;
 
         }
     }
