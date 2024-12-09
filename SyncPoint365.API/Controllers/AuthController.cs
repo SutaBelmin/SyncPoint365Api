@@ -42,7 +42,7 @@ namespace SyncPoint365.API.Controllers
             }
             catch (UnauthorizedAccessException)
             {
-                return StatusCode(500);
+                return Unauthorized();
             }
         }
 
