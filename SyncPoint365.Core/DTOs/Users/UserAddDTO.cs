@@ -12,8 +12,6 @@ namespace SyncPoint365.Core.DTOs.Users
         public DateTime BirthDate { get; set; }
         public string Phone { get; set; } = default!;
         public string Address { get; set; } = default!;
-        public string PasswordHash { get; set; } = default!;
-        public string PasswordSalt { get; set; } = default!;
         public Role Role { get; set; }
         public int CityId { get; set; }
     }
