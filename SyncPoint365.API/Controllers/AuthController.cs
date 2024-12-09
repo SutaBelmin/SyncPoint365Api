@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SyncPoint365.API.Config;
@@ -18,13 +17,11 @@ namespace SyncPoint365.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUsersRepository _usersRepository;
-        private readonly IMapper _mapper;
         private readonly IOptions<JWTSettings> _jwtSettings;
 
-        public AuthController(IUsersRepository usersRepository, IConfiguration configuration, IMapper mapper, IOptions<JWTSettings> jwtSettings)
+        public AuthController(IUsersRepository usersRepository, IConfiguration configuration, IOptions<JWTSettings> jwtSettings)
         {
             _usersRepository = usersRepository;
-            _mapper = mapper;
             _jwtSettings = jwtSettings;
         }
 
@@ -38,14 +35,14 @@ namespace SyncPoint365.API.Controllers
 
                 if (user == null || !Cryptography.VerifyPassword(model.Password, user.PasswordHash, user.PasswordSalt))
                 {
-                    throw new UnauthorizedAccessException("Invalid email or password!");
+                    return Unauthorized();
                 }
 
-                return Ok(new { Message = "User authenticated successfully", User = user, Token = GenerateToken(user) });
+                return Ok(new { User = user, Token = GenerateToken(user) });
             }
             catch (UnauthorizedAccessException)
             {
-                return Unauthorized("Invalid email or password!");
+                return StatusCode(500);
             }
         }
 
