@@ -44,7 +44,7 @@ namespace SyncPoint365.Repository.Repositories
                 return users.ToPagedListAsync(page, pageSize);
         }
 
-        public async Task<bool> EmailExist(string email)
+        public async Task<bool> EmailExists(string email)
         {
             return await DbSet.AnyAsync(x => x.Email.ToLower() == email.ToLower());
         }

@@ -70,9 +70,9 @@ namespace SyncPoint365.Service.Services
             }
         }
         
-        public Task<bool> EmailExist(string email)
+        public Task<bool> EmailExists(string email)
         {
-            return _repository.EmailExist(email);
+            return _repository.EmailExists(email);
         }
     }
 }

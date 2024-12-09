@@ -12,7 +12,7 @@ namespace SyncPoint365.Repository.Common.Interfaces
 
         Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default);
         
-        Task<bool> EmailExist(string email);
+        Task<bool> EmailExists(string email);
 
     }
 }
