@@ -4,6 +4,8 @@ using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SyncPoint365.Service.Services
 {
