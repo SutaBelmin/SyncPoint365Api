@@ -8,11 +8,7 @@ namespace SyncPoint365.Service.Helpers
     {
         public static string GenerateSalt()
         {
-            byte[] salt = new byte[Constants.CryptographyParameters.size];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
+            byte[] salt = RandomNumberGenerator.GetBytes(Constants.CryptographyParameters.Size);
 
             return Convert.ToBase64String(salt);
         }
@@ -22,13 +18,11 @@ namespace SyncPoint365.Service.Helpers
             byte[] hash = Rfc2898DeriveBytes.Pbkdf2(
                 password: Encoding.UTF8.GetBytes(password),
                 salt: Encoding.UTF8.GetBytes(salt),
-                iterations: Constants.CryptographyParameters.iterations,
+                iterations: Constants.CryptographyParameters.Iterations,
                 hashAlgorithm: HashAlgorithmName.SHA512,
-                outputLength: Constants.CryptographyParameters.size
+                outputLength: Constants.CryptographyParameters.Size
             );
-
             return Convert.ToHexString(hash);
-
         }
 
         public static bool VerifyPassword(string password, string storedHash, string storedSalt)
@@ -36,5 +30,23 @@ namespace SyncPoint365.Service.Helpers
             string hash = GenerateHash(password, storedSalt);
             return hash.Equals(storedHash);
         }
+
+        public static void CreatePasswordHashAndSalt(string password, out string passwordHash, out string passwordSalt)
+        {
+            byte[] saltBytes = new byte[16];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(saltBytes);
+            }
+            passwordSalt = Convert.ToBase64String(saltBytes);
+
+            using (var hmac = new HMACSHA512(saltBytes))
+            {
+                var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                passwordHash = Convert.ToBase64String(hashBytes);
+            }
+        }
+
     }
 }
+

@@ -35,6 +35,7 @@ namespace SyncPoint365.Service
             services.AddScoped<IAbsenceRequestTypesService, AbsenceRequestTypesService>();
             services.AddScoped<ICountriesService, CountriesService>();
             services.AddScoped<ICitiesService, CitiesService>();
+            services.AddScoped<IEnumsService, EnumsService>();
         }
 
         public static void AddMapping(this IServiceCollection services)

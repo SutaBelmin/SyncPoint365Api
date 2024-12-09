@@ -4,8 +4,7 @@ using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
-using System.Security.Cryptography;
-using System.Text;
+using SyncPoint365.Service.Helpers;
 
 namespace SyncPoint365.Service.Services
 {
@@ -25,6 +24,10 @@ namespace SyncPoint365.Service.Services
             await AddValidator.ValidateAndThrowAsync(dto, cancellationToken);
 
             var entity = Mapper.Map<User>(dto);
+
+            entity.PasswordSalt = Cryptography.GenerateSalt(); ;
+            entity.PasswordHash = Cryptography.GenerateHash(dto.Password, entity.PasswordSalt);
+
 
             await Repository.AddAsync(entity, cancellationToken);
             await Repository.SaveChangesAsync(cancellationToken);
@@ -51,20 +54,9 @@ namespace SyncPoint365.Service.Services
             return user.isActive;
         }
 
-        private void CreatePasswordHashAndSalt(string password, out string passwordHash, out string passwordSalt)
+        public Task<bool> EmailExists(string email)
         {
-            byte[] saltBytes = new byte[16];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(saltBytes);
-            }
-            passwordSalt = Convert.ToBase64String(saltBytes);
-
-            using (var hmac = new HMACSHA512(saltBytes))
-            {
-                var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                passwordHash = Convert.ToBase64String(hashBytes);
-            }
+            return _repository.EmailExists(email);
         }
     }
 }
