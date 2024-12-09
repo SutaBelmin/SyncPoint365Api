@@ -10,5 +10,6 @@ namespace SyncPoint365.Core.Entities
         public string PasswordHash { get; set; } = default!;
         public string PasswordSalt { get; set; } = default!;
         public Role Role { get; set; }
+        public bool isActive { get; set; } = default;
     }
 }

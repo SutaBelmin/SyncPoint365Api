@@ -1,5 +1,4 @@
-﻿using SyncPoint365.Core.DTOs.Users;
-using SyncPoint365.Core.Entities;
+﻿using SyncPoint365.Core.Entities;
 
 namespace SyncPoint365.Repository.Common.Interfaces
 {
@@ -9,5 +8,6 @@ namespace SyncPoint365.Repository.Common.Interfaces
 
         Task<IEnumerable<User>> GetUsersListAsync(CancellationToken cancellationToken = default);
 
+        Task UpdateUserStatusAsync(User user, CancellationToken cancellationToken = default);
     }
 }
