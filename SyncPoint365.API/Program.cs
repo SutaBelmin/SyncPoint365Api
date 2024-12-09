@@ -32,6 +32,9 @@ namespace SyncPoint365.API
                                      .AllowAnyHeader());
             });
 
+            builder.Services.AddAuthentication(builder.Configuration);
+            builder.Services.AddAuthorization();
+
             var app = builder.Build();
             app.UseCors("AllowAllOrigins");
 
@@ -42,6 +45,8 @@ namespace SyncPoint365.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

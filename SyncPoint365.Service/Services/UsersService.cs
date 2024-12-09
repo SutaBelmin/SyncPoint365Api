@@ -47,7 +47,22 @@ namespace SyncPoint365.Service.Services
             await _repository.UpdateUserStatusAsync(user, cancellationToken);
 
             return user.isActive;
+        }
 
+        private void CreatePasswordHashAndSalt(string password, out string passwordHash, out string passwordSalt)
+        {
+            byte[] saltBytes = new byte[16];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(saltBytes);
+            }
+            passwordSalt = Convert.ToBase64String(saltBytes);
+
+            using (var hmac = new HMACSHA512(saltBytes))
+            {
+                var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                passwordHash = Convert.ToBase64String(hashBytes);
+            }
         }
     }
 }

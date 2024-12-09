@@ -15,7 +15,6 @@ namespace SyncPoint365.API.Controllers
             this._usersService = usersService;
         }
 
-
         [HttpGet]
         [Route("Get-Users", Name = "SyncPoint365-GetUsers")]
         public async Task<IActionResult> GetUsersListAsync(CancellationToken cancellationToken = default)
