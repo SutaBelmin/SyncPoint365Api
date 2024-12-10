@@ -6,7 +6,7 @@ using SyncPoint365.Service.Common.Interfaces;
 
 namespace SyncPoint365.API.Controllers
 {
-    [Route("[controller]")]
+    [Route("absence-requests")]
     [ApiController]
     public class AbsenceRequestsController : BaseController<AbsenceRequestDTO, AbsenceRequestAddDTO, AbsenceRequestUpdateDTO>
     {
