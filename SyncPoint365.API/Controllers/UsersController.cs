@@ -48,5 +48,17 @@ namespace SyncPoint365.API.Controllers
             return await _usersService.EmailExists(email);
         }
 
+        [HttpGet]
+        [Route("Filter", Name = "SyncPoint365-GetUsersPagedListAsync")]
+        public async Task<IActionResult> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        {
+            var data = await _usersService.GetUsersPagedListAsync(isActive, query, roleId, page, pageSize, cancellationToken);
+
+            if (data == null)
+                return NotFound();
+
+            return Ok(GetPagedResult(data));
+        }
+
     }
 }
