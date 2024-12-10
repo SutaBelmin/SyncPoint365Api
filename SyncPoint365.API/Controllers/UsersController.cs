@@ -42,10 +42,12 @@ namespace SyncPoint365.API.Controllers
                 return BadRequest();
             }
         }
+
         [HttpGet]
         [Route("Email-Exists", Name = "SyncPoint365-EmailExists")]
         public async Task<bool> EmailExists(string email)
         {
+
             return await _usersService.EmailExists(email);
         }
 
