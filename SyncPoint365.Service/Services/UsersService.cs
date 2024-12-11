@@ -69,5 +69,21 @@ namespace SyncPoint365.Service.Services
             var dtos = Mapper.Map<List<UserDTO>>(users);
             return new PagedList<UserDTO>(usersList, dtos);
         }
+        
+        public virtual async Task UpdateAsync(UserUpdateDTO dto, CancellationToken cancellationToken = default)
+        {
+            await UpdateValidator.ValidateAndThrowAsync(dto, cancellationToken);
+
+            var entity = await Repository.GetByIdAsync(dto.Id, cancellationToken);
+            if (entity == null)
+            {
+                throw new KeyNotFoundException();
+            }
+
+            Mapper.Map(dto, entity);
+
+            Repository.Update(entity);
+            await Repository.SaveChangesAsync(cancellationToken);
+        }
     }
 }
