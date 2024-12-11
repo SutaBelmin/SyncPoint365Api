@@ -45,5 +45,19 @@ namespace SyncPoint365.API.Controllers
             return Ok(genders);
         }
 
+        [HttpGet]
+        [Route("absence-requests-status", Name = "SyncPoint365-GetAbsenceRequestsStatus")]
+        public ActionResult<IEnumerable<SelectItemDTO>> GetAbsenceRequestsStatus()
+        {
+            var absenceRequestStatus = _enumsService.GetEnumValues<AbsenceRequestStatus>();
+
+            if (absenceRequestStatus == null)
+            {
+                return NotFound("Absence request status not found.");
+            }
+
+            return Ok(absenceRequestStatus);
+        }
+
     }
 }
