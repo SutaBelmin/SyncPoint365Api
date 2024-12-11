@@ -50,30 +50,13 @@ namespace SyncPoint365.Repository.Repositories
             return await DbSet.AnyAsync(x => x.Email.ToLower() == email.ToLower());
         }
 
-        public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            IQueryable<User> queryable = DbSet;
-
-            if (!string.IsNullOrEmpty(query))
-            {
-                queryable = queryable.Where(x => x.FirstName.ToLower().Contains(query.ToLower()) || x.LastName.ToLower().Contains(query.ToLower()));
-            }
-
-            if (isActive.HasValue)
-            {
-                queryable = queryable.Where(x => x.isActive == isActive);
-            }
-
-            if (roleId.HasValue)
-            {
-                var parsedRole = (Role)roleId.Value;
-                queryable = queryable.Where(x => x.Role == parsedRole);
-            }
-
-            if (page == -1)
-                return queryable.ToPagedListAsync(1, int.MaxValue);
-            else
-                return queryable.ToPagedListAsync(page, pageSize);
+            return DbSet.Include(x => x.City).Where(user =>
+             (string.IsNullOrEmpty(query) || (user.FirstName + " " + user.LastName).ToLower().Contains(query.ToLower())) &&
+             (!isActive.HasValue || user.isActive == isActive) &&
+             (!roleId.HasValue || user.Role == (Role)roleId.Value))
+             .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
     }
 }

@@ -2,6 +2,7 @@
 using FluentValidation;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Entities;
+using SyncPoint365.Core.Helpers;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
 using SyncPoint365.Service.Helpers;
@@ -60,7 +61,7 @@ namespace SyncPoint365.Service.Services
             return _repository.EmailExists(email);
         }
 
-        public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             var usersList = await _repository.GetUsersPagedListAsync(isActive, query, roleId, page, pageSize, cancellationToken);
             var users = usersList.ToList();
