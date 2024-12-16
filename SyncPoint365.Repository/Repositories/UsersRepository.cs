@@ -3,6 +3,7 @@ using SyncPoint365.Core.Entities;
 using SyncPoint365.Core.Enums;
 using SyncPoint365.Core.Helpers;
 using SyncPoint365.Repository.Common.Interfaces;
+using System.Linq.Dynamic.Core;
 using X.PagedList;
 
 namespace SyncPoint365.Repository.Repositories
@@ -50,14 +51,26 @@ namespace SyncPoint365.Repository.Repositories
             return await DbSet.AnyAsync(x => x.Email.ToLower() == email.ToLower());
         }
 
-        public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, bool isAscending = true, CancellationToken cancellationToken = default)
+        public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
         {
             var queryable = DbSet.Include(x => x.City).Where(user =>
              (string.IsNullOrEmpty(query) || (user.FirstName + " " + user.LastName).ToLower().Contains(query.ToLower())) &&
              (!isActive.HasValue || user.isActive == isActive) &&
              (!roleId.HasValue || user.Role == (Role)roleId.Value));
 
-            queryable = isAscending ? queryable.OrderBy(x => x.LastName) : queryable.OrderByDescending(x => x.LastName);
+
+            if (!string.IsNullOrWhiteSpace(orderBy))
+            {
+                var orderByParts = orderBy.Split('|');
+                if (orderByParts.Length == 2)
+                {
+                    string columnName = orderByParts[0];
+                    string sortDirection = orderByParts[1].ToLower();
+
+                    if (sortDirection == "asc" || sortDirection == "desc")
+                        queryable = queryable.OrderBy($"{columnName} {sortDirection}");
+                }
+            }
 
             return queryable.ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }

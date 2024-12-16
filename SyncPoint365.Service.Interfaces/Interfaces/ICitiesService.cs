@@ -7,6 +7,6 @@ namespace SyncPoint365.Service.Common.Interfaces
     public interface ICitiesService : IBaseService<CityDTO, CityAddDTO, CityUpdateDTO>
     {
         Task<IEnumerable<CityDTO>> GetCitiesListAsync(CancellationToken cancellationToken = default);
-        Task<IPagedList<CityDTO>> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, bool isAscending = true, CancellationToken cancellationToken = default);
+        Task<IPagedList<CityDTO>> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default);
     }
 }

@@ -21,7 +21,7 @@ namespace SyncPoint365.Repository.Repositories
                 .ToListAsync();
         }
 
-        public Task<IPagedList<City>> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, bool isAscending = true, CancellationToken cancellationToken = default)
+        public Task<IPagedList<City>> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
         {
             IQueryable<City> queryable = DbSet.Include(x => x.Country);
 
@@ -37,7 +37,7 @@ namespace SyncPoint365.Repository.Repositories
                 queryable = queryable.Where(city => city.CountryId == countryId.Value);
             }
 
-            queryable = isAscending ? DbSet.OrderBy(x => x.Name) : DbSet.OrderByDescending(x => x.Name);
+            //queryable = isAscending ? DbSet.OrderBy(x => x.Name) : DbSet.OrderByDescending(x => x.Name);
 
 
             if (page == -1)
