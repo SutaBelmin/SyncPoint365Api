@@ -50,13 +50,16 @@ namespace SyncPoint365.Repository.Repositories
             return await DbSet.AnyAsync(x => x.Email.ToLower() == email.ToLower());
         }
 
-        public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, bool isAscending = true, CancellationToken cancellationToken = default)
         {
-            return DbSet.Include(x => x.City).Where(user =>
+            var queryable = DbSet.Include(x => x.City).Where(user =>
              (string.IsNullOrEmpty(query) || (user.FirstName + " " + user.LastName).ToLower().Contains(query.ToLower())) &&
              (!isActive.HasValue || user.isActive == isActive) &&
-             (!roleId.HasValue || user.Role == (Role)roleId.Value))
-             .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
+             (!roleId.HasValue || user.Role == (Role)roleId.Value));
+
+            queryable = isAscending ? queryable.OrderBy(x => x.LastName) : queryable.OrderByDescending(x => x.LastName);
+
+            return queryable.ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace SyncPoint365.Service.Common.Interfaces
         Task<bool> UpdateUserStatusAsync(int id, CancellationToken cancellationToken = default);
         Task<bool> EmailExists(string email);
 
-        Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default);
+        Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, bool isAscending = true, CancellationToken cancellationToken = default);
 
     }
 }

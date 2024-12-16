@@ -61,9 +61,9 @@ namespace SyncPoint365.Service.Services
             return _repository.EmailExists(email);
         }
 
-        public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, bool isAscending = true, CancellationToken cancellationToken = default)
         {
-            var usersList = await _repository.GetUsersPagedListAsync(isActive, query, roleId, page, pageSize, cancellationToken);
+            var usersList = await _repository.GetUsersPagedListAsync(isActive, query, roleId, page, pageSize, isAscending, cancellationToken);
             var users = usersList.ToList();
 
             var dtos = Mapper.Map<List<UserDTO>>(users);
