@@ -1,4 +1,6 @@
 ﻿using SyncPoint365.Core.Entities;
+using SyncPoint365.Core.Helpers;
+using X.PagedList;
 
 namespace SyncPoint365.Repository.Common.Interfaces
 {
@@ -11,8 +13,10 @@ namespace SyncPoint365.Repository.Common.Interfaces
         Task UpdateUserStatusAsync(User user, CancellationToken cancellationToken = default);
 
         Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default);
-        
+
         Task<bool> EmailExists(string email);
+
+        Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default);
 
     }
 }
