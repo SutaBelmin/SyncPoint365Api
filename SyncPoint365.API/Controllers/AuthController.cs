@@ -38,6 +38,11 @@ namespace SyncPoint365.API.Controllers
                     return Unauthorized();
                 }
 
+                if (!user.IsActive)
+                {
+                    return Forbid();
+                }
+
                 return Ok(new { User = user, Token = GenerateToken(user) });
             }
             catch (UnauthorizedAccessException)

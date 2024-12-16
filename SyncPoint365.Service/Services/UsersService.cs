@@ -50,10 +50,10 @@ namespace SyncPoint365.Service.Services
                 throw new Exception("User not found!");
             }
 
-            user.isActive = !user.isActive;
+            user.IsActive = !user.IsActive;
             await _repository.UpdateUserStatusAsync(user, cancellationToken);
 
-            return user.isActive;
+            return user.IsActive;
         }
 
         public Task<bool> EmailExists(string email)
@@ -69,8 +69,8 @@ namespace SyncPoint365.Service.Services
             var dtos = Mapper.Map<List<UserDTO>>(users);
             return new PagedList<UserDTO>(usersList, dtos);
         }
-        
-        public virtual async Task UpdateAsync(UserUpdateDTO dto, CancellationToken cancellationToken = default)
+
+        public override async Task UpdateAsync(UserUpdateDTO dto, CancellationToken cancellationToken = default)
         {
             await UpdateValidator.ValidateAndThrowAsync(dto, cancellationToken);
 
