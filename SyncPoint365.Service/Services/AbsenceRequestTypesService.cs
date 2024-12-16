@@ -22,9 +22,9 @@ namespace SyncPoint365.Service.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<AbsenceRequestTypeDTO>> GetAbsenceRequestTypesListAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<AbsenceRequestTypeDTO>> GetAbsenceRequestTypesListAsync(bool? isActive, CancellationToken cancellationToken = default)
         {
-            var absenceRequestTypes = await _repository.GetAbsenceRequestTypesListAsync();
+            var absenceRequestTypes = await _repository.GetAbsenceRequestTypesListAsync(isActive);
 
             return _mapper.Map<IEnumerable<AbsenceRequestTypeDTO>>(absenceRequestTypes);
         }

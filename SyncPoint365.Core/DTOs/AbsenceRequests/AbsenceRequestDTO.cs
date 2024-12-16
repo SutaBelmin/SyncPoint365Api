@@ -1,4 +1,5 @@
-﻿using SyncPoint365.Core.Entities;
+﻿using SyncPoint365.Core.DTOs.Users;
+using SyncPoint365.Core.Entities;
 using SyncPoint365.Core.Enums;
 
 namespace SyncPoint365.Core.DTOs.AbsenceRequests
@@ -14,7 +15,7 @@ namespace SyncPoint365.Core.DTOs.AbsenceRequests
         public int AbsenceRequestTypeId { get; set; }
 
         public int UserId { get; set; }
-        public User User { get; set; } = default!;
+        public UserDTO User { get; set; } = default!;
 
     }
 }

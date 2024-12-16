@@ -11,9 +11,9 @@ namespace SyncPoint365.Repository.Repositories
         {
         }
 
-        public async Task<IEnumerable<AbsenceRequestType>> GetAbsenceRequestTypesListAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<AbsenceRequestType>> GetAbsenceRequestTypesListAsync(bool? isActive, CancellationToken cancellationToken = default)
         {
-            return await DbSet.ToListAsync();
+            return await DbSet.Where(a => (!isActive.HasValue || a.IsActive == isActive.Value)).ToListAsync(cancellationToken);
         }
 
         public Task<IPagedList<AbsenceRequestType>> GetAbsenceRequestTypesPagedListAsync(bool? isActive, string? query, int page, int pageSize, CancellationToken cancellationToken)
