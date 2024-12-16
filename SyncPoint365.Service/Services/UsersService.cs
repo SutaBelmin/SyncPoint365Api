@@ -86,5 +86,37 @@ namespace SyncPoint365.Service.Services
             return user.IsActive;
         }
 
+        public Task<bool> EmailExists(string email)
+        {
+            return _repository.EmailExists(email);
+        }
+
+        public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        {
+            var usersList = await _repository.GetUsersPagedListAsync(isActive, query, roleId, page, pageSize, cancellationToken);
+            var users = usersList.ToList();
+
+            var dtos = Mapper.Map<List<UserDTO>>(users);
+            return new PagedList<UserDTO>(usersList, dtos);
+        }
+        public async Task<bool> PasswordChangeAsync(int id, string password, CancellationToken cancellationToken = default)
+        {
+            var user = await _repository.GetByUserIdAsync(id, cancellationToken);
+            if (user == null)
+            {
+                throw new Exception("User not found!");
+            }
+
+            var newSalt = Cryptography.GenerateSalt();
+            var newHash = Cryptography.GenerateHash(password, newSalt);
+
+            user.PasswordSalt = newSalt;
+            user.PasswordHash = newHash;
+
+            await _repository.UpdateUserPasswordAsync(user, cancellationToken);
+
+            return true;
+        }
+
     }
 }

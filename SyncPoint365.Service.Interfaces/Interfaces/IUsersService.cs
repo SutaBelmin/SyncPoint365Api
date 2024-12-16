@@ -12,5 +12,6 @@ namespace SyncPoint365.Service.Common.Interfaces
         Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default);
 
         Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default);
+        Task<bool> PasswordChangeAsync(int id, string password, CancellationToken cancellationToken);
     }
 }

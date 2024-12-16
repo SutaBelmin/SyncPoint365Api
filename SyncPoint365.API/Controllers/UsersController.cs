@@ -63,5 +63,19 @@ namespace SyncPoint365.API.Controllers
             return Ok(GetPagedResult(data));
         }
 
+        [HttpPost]
+        [Route("password-change", Name = "SyncPoint365-PasswordChange")]
+        public async Task<IActionResult> PasswordChangeAsync(int id, string password, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var result = await _usersService.PasswordChangeAsync(id, password, cancellationToken);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 }
