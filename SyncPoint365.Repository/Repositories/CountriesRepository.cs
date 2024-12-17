@@ -35,6 +35,12 @@ namespace SyncPoint365.Repository.Repositories
             {
                 queryable = queryable.Where(c => c.Name.Contains(query) || c.DisplayName.Contains(query));
             }
+
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                queryable = queryable.Sort(orderBy);
+            }
+
             int totalSetCount = await queryable.CountAsync(cancellationToken);
             return await queryable.ToPagedListAsync(page, pageSize, totalSetCount, cancellationToken);
         }
