@@ -28,9 +28,10 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("paged", Name = "SyncPoint365-GetAbsenceRequestTypesPagedListAsync")]
-        public async Task<IActionResult> GetAbsenceRequestTypesPagedListAsync(bool? isActive = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetAbsenceRequestTypesPagedListAsync(bool? isActive = null, string? query = null,
+            int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? sortOrder = null, CancellationToken cancellationToken = default)
         {
-            var items = await _absenceRequestTypeService.GetAbsenceRequestTypesPagedListAsync(isActive, query, page, pageSize, cancellationToken: cancellationToken);
+            var items = await _absenceRequestTypeService.GetAbsenceRequestTypesPagedListAsync(isActive, query, page, pageSize, sortOrder, cancellationToken: cancellationToken);
 
             if (items == null)
                 return NotFound();
