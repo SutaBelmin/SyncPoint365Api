@@ -27,5 +27,16 @@ namespace SyncPoint365.Repository.Repositories
             int totalSetCount = await queryable.CountAsync(cancellationToken);
             return await queryable.ToPagedListAsync(page, pageSize, totalSetCount, cancellationToken);
         }
+        public async Task<IPagedList<Country>> GetPagedCountriesAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
+        {
+            IQueryable<Country> queryable = DbSet;
+
+            if (!string.IsNullOrEmpty(query))
+            {
+                queryable = queryable.Where(c => c.Name.Contains(query) || c.DisplayName.Contains(query));
+            }
+            int totalSetCount = await queryable.CountAsync(cancellationToken);
+            return await queryable.ToPagedListAsync(page, pageSize, totalSetCount, cancellationToken);
+        }
     }
 }
