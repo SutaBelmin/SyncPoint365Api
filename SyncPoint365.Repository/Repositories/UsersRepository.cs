@@ -53,26 +53,16 @@ namespace SyncPoint365.Repository.Repositories
 
         public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
         {
-            var queryable = DbSet.Include(x => x.City).Where(user =>
-             (string.IsNullOrEmpty(query) || (user.FirstName + " " + user.LastName).ToLower().Contains(query.ToLower())) &&
-             (!isActive.HasValue || user.isActive == isActive) &&
-             (!roleId.HasValue || user.Role == (Role)roleId.Value));
-
+            var usersQuery = DbSet.Include(x => x.City).Where(user =>
+                                                             (string.IsNullOrEmpty(query) || (user.FirstName + " " + user.LastName).ToLower().Contains(query.ToLower()))
+                                                             &&
+                                                             (!isActive.HasValue || user.isActive == isActive) &&
+                                                             (!roleId.HasValue || user.Role == (Role)roleId.Value));
 
             if (!string.IsNullOrWhiteSpace(orderBy))
-            {
-                var orderByParts = orderBy.Split('|');
-                if (orderByParts.Length == 2)
-                {
-                    string columnName = orderByParts[0];
-                    string sortDirection = orderByParts[1].ToLower();
+                usersQuery = usersQuery.Sort(orderBy);
 
-                    if (sortDirection == "asc" || sortDirection == "desc")
-                        queryable = queryable.OrderBy($"{columnName} {sortDirection}");
-                }
-            }
-
-            return queryable.ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
+            return usersQuery.ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
     }
 }
