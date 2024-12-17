@@ -53,16 +53,13 @@ namespace SyncPoint365.Repository.Repositories
 
         public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
         {
-            var usersQuery = DbSet.Include(x => x.City).Where(user =>
+            return DbSet.Include(x => x.City).Where(user =>
                                                              (string.IsNullOrEmpty(query) || (user.FirstName + " " + user.LastName).ToLower().Contains(query.ToLower()))
                                                              &&
                                                              (!isActive.HasValue || user.isActive == isActive) &&
-                                                             (!roleId.HasValue || user.Role == (Role)roleId.Value));
-
-            if (!string.IsNullOrWhiteSpace(orderBy))
-                usersQuery = usersQuery.Sort(orderBy);
-
-            return usersQuery.ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
+                                                             (!roleId.HasValue || user.Role == (Role)roleId.Value))
+                                                             .Sort(string.IsNullOrWhiteSpace(orderBy) ? "lastName|asc" : orderBy)
+                                                             .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
     }
 }

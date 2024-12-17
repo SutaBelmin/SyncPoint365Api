@@ -23,18 +23,13 @@ namespace SyncPoint365.Repository.Repositories
 
         public Task<IPagedList<City>> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
         {
-
-            var citiesQuery = DbSet.Include(x => x.Country).Where(x =>
+            return DbSet.Include(x => x.Country).Where(x =>
                                                            (string.IsNullOrWhiteSpace(query) || (x.Name.ToLower().Contains(query.ToLower()))
                                                            || (x.DisplayName.ToLower().Contains(query.ToLower())))
                                                            &&
-                                                           (!countryId.HasValue || (x.CountryId == countryId.Value)));
-
-            if (!string.IsNullOrWhiteSpace(orderBy))
-                citiesQuery = citiesQuery.Sort(orderBy);
-
-
-            return citiesQuery.ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
+                                                           (!countryId.HasValue || (x.CountryId == countryId.Value)))
+                                                           .Sort(string.IsNullOrWhiteSpace(orderBy) ? "name|asc" : orderBy)
+                                                           .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
     }
 }
