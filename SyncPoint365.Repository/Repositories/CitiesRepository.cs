@@ -2,6 +2,7 @@
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Core.Helpers;
 using SyncPoint365.Repository.Common.Interfaces;
+using System.Linq.Dynamic.Core;
 using X.PagedList;
 
 namespace SyncPoint365.Repository.Repositories
@@ -23,27 +24,13 @@ namespace SyncPoint365.Repository.Repositories
 
         public Task<IPagedList<City>> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
         {
-            IQueryable<City> queryable = DbSet.Include(x => x.Country);
 
-            if (!string.IsNullOrWhiteSpace(query))
-            {
-                queryable = queryable.Where(city =>
-                                 city.Name.ToLower().Contains(query.ToLower()) ||
-                                 city.DisplayName.ToLower().Contains(query.ToLower()));
-            }
-
-            if (countryId.HasValue)
-            {
-                queryable = queryable.Where(city => city.CountryId == countryId.Value);
-            }
-
-            //queryable = isAscending ? DbSet.OrderBy(x => x.Name) : DbSet.OrderByDescending(x => x.Name);
-
-
-            if (page == -1)
-                return queryable.ToPagedListAsync(1, int.MaxValue);
-            else
-                return queryable.ToPagedListAsync(page, pageSize);
+            return DbSet.Include(x => x.Country).Where(x =>
+                                                           (string.IsNullOrWhiteSpace(query) || (x.Name.ToLower().Contains(query.ToLower()))
+                                                           || (x.DisplayName.ToLower().Contains(query.ToLower())))
+                                                           &&
+                                                           (!countryId.HasValue || (x.CountryId == countryId.Value)))
+                                                           .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
     }
 }
