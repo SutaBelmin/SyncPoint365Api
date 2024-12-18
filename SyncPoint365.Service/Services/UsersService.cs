@@ -99,7 +99,7 @@ namespace SyncPoint365.Service.Services
             var dtos = Mapper.Map<List<UserDTO>>(users);
             return new PagedList<UserDTO>(usersList, dtos);
         }
-        public async Task<bool> PasswordChangeAsync(int id, string password, CancellationToken cancellationToken = default)
+        public async Task<bool> ChangePasswordAsync(int id, string password, CancellationToken cancellationToken = default)
         {
             var user = await _repository.GetByUserIdAsync(id, cancellationToken);
             if (user == null)
@@ -107,13 +107,12 @@ namespace SyncPoint365.Service.Services
                 throw new Exception("User not found!");
             }
 
-            var newSalt = Cryptography.GenerateSalt();
-            var newHash = Cryptography.GenerateHash(password, newSalt);
+            user.PasswordSalt = Cryptography.GenerateSalt();
+            user.PasswordHash = Cryptography.GenerateHash(password, user.PasswordSalt);
 
-            user.PasswordSalt = newSalt;
-            user.PasswordHash = newHash;
+            _repository.Update(user, cancellationToken);
 
-            await _repository.UpdateUserPasswordAsync(user, cancellationToken);
+            await _repository.SaveChangesAsync(cancellationToken);
 
             return true;
         }

@@ -56,12 +56,6 @@ namespace SyncPoint365.Repository.Repositories
                                                              .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
 
-        public async Task UpdateUserPasswordAsync(User user, CancellationToken cancellationToken = default)
-        {
-            DbSet.Update(user);
-            await SaveChangesAsync(cancellationToken);
-        }
-
     }
 }
 
