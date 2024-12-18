@@ -42,20 +42,6 @@ namespace SyncPoint365.Service.Services
             return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
-        public async Task<bool> UpdateUserStatusAsync(int id, CancellationToken cancellationToken = default)
-        {
-            var user = await _repository.GetByUserIdAsync(id, cancellationToken);
-            if (user == null)
-            {
-                throw new Exception("User not found!");
-            }
-
-            user.IsActive = !user.IsActive;
-            await _repository.UpdateUserStatusAsync(user, cancellationToken);
-
-            return user.IsActive;
-        }
-
         public Task<bool> EmailExists(string email)
         {
             return _repository.EmailExists(email);
@@ -74,7 +60,7 @@ namespace SyncPoint365.Service.Services
         {
             await UpdateValidator.ValidateAndThrowAsync(dto, cancellationToken);
 
-            var entity = await Repository.GetByIdAsync(dto.Id, cancellationToken);
+            var entity = await _repository.GetByIdAsync(dto.Id, cancellationToken);
             if (entity == null)
             {
                 throw new KeyNotFoundException();
@@ -85,5 +71,20 @@ namespace SyncPoint365.Service.Services
             Repository.Update(entity);
             await Repository.SaveChangesAsync(cancellationToken);
         }
+        public async Task<bool> ToggleUserStatusAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var user = await _repository.GetByUserIdAsync(id, cancellationToken);
+            if (user == null)
+            {
+                throw new Exception("User not found!");
+            }
+
+            user.IsActive = !user.IsActive;
+            _repository.Update(user);
+            await Repository.SaveChangesAsync(cancellationToken);
+
+            return user.IsActive;
+        }
+
     }
 }

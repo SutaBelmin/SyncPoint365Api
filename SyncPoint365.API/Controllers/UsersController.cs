@@ -34,7 +34,7 @@ namespace SyncPoint365.API.Controllers
         {
             try
             {
-                var status = await _usersService.UpdateUserStatusAsync(id, cancellationToken);
+                var status = await _usersService.ToggleUserStatusAsync(id, cancellationToken);
                 return Ok(new { IsActive = status });
             }
             catch
