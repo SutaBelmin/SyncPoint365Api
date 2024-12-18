@@ -71,7 +71,7 @@ namespace SyncPoint365.Service.Services
             Repository.Update(entity);
             await Repository.SaveChangesAsync(cancellationToken);
         }
-        public async Task<bool> ToggleUserStatusAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
         {
             var user = await _repository.GetByUserIdAsync(id, cancellationToken);
             if (user == null)
@@ -81,7 +81,7 @@ namespace SyncPoint365.Service.Services
 
             user.IsActive = !user.IsActive;
             _repository.Update(user);
-            await Repository.SaveChangesAsync(cancellationToken);
+            await _repository.SaveChangesAsync(cancellationToken);
 
             return user.IsActive;
         }

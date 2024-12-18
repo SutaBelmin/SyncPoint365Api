@@ -30,11 +30,11 @@ namespace SyncPoint365.API.Controllers
 
         [HttpPost]
         [Route("Change-Status", Name = "SyncPoint365-ChangeStatus")]
-        public async Task<IActionResult> UpdateUserStatusAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
         {
             try
             {
-                var status = await _usersService.ToggleUserStatusAsync(id, cancellationToken);
+                var status = await _usersService.ChangeUserStatusAsync(id, cancellationToken);
                 return Ok(new { IsActive = status });
             }
             catch
