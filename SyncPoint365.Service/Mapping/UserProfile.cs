@@ -12,7 +12,11 @@ namespace SyncPoint365.Service.Mapping
                .ForMember(d => d.FullName, o => o.MapFrom(e => e.FirstName + " " + e.LastName));
 
             CreateMap<UserAddDTO, User>();
-            CreateMap<UserUpdateDTO, User>();
+
+            CreateMap<UserUpdateDTO, User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
+                .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore());
+
         }
     }
 }
