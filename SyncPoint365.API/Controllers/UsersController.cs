@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SyncPoint365.API.RESTModels;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Helpers;
 using SyncPoint365.Service.Common.Interfaces;
@@ -65,11 +66,16 @@ namespace SyncPoint365.API.Controllers
 
         [HttpPut]
         [Route("Change-Password", Name = "SyncPoint365-ChangePassword")]
-        public async Task<IActionResult> ChangePasswordAsync(int id, string password, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ChangePasswordAsync([FromBody] UserChangePasswordModel model, CancellationToken cancellationToken = default)
         {
+            if (model == null || string.IsNullOrWhiteSpace(model.Password))
+            {
+                return BadRequest(new { error = "Invalid input data." });
+            }
+
             try
             {
-                var result = await _usersService.ChangePasswordAsync(id, password, cancellationToken);
+                var result = await _usersService.ChangePasswordAsync(model.Id, model.Password, cancellationToken);
                 return Ok(result);
             }
             catch (Exception ex)
