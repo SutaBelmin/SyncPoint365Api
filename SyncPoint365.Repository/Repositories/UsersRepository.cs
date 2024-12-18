@@ -50,7 +50,7 @@ namespace SyncPoint365.Repository.Repositories
             return DbSet.Include(x => x.City).Where(user =>
                                                              (string.IsNullOrEmpty(query) || (user.FirstName + " " + user.LastName).ToLower().Contains(query.ToLower()))
                                                              &&
-                                                             (!isActive.HasValue || user.isActive == isActive) &&
+                                                             (!isActive.HasValue || user.IsActive == isActive) &&
                                                              (!roleId.HasValue || user.Role == (Role)roleId.Value))
                                                              .Sort(string.IsNullOrWhiteSpace(orderBy) ? "lastName|asc" : orderBy)
                                                              .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
