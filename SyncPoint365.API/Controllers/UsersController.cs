@@ -68,7 +68,7 @@ namespace SyncPoint365.API.Controllers
         [Route("Change-Password", Name = "SyncPoint365-ChangePassword")]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] UserChangePasswordModel model, CancellationToken cancellationToken = default)
         {
-            if (model == null || string.IsNullOrWhiteSpace(model.Password))
+            if (!ModelState.IsValid)
             {
                 return BadRequest(new { error = "Invalid input data." });
             }
