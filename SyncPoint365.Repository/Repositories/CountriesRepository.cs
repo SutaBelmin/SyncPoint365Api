@@ -38,7 +38,7 @@ namespace SyncPoint365.Repository.Repositories
 
             if (!string.IsNullOrEmpty(orderBy))
             {
-                queryable = queryable.Sort(orderBy);
+                queryable = queryable.Sort(string.IsNullOrWhiteSpace(orderBy) ? "name|asc" : orderBy);
             }
 
             int totalSetCount = await queryable.CountAsync(cancellationToken);
