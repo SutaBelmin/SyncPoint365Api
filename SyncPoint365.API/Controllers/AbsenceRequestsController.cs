@@ -22,6 +22,11 @@ namespace SyncPoint365.API.Controllers
         public async Task<IActionResult> GetAbsenceRequestTypesPagedListAsync(int? absenceRequestTypeId = null, int? userId = null, int? absenceRequestStatusId = null, DateTime? dateFrom = null, DateTime? dateTo = null,
             int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? sortOrder = null, CancellationToken cancellationToken = default)
         {
+            if (string.IsNullOrWhiteSpace(sortOrder))
+            {
+                sortOrder = "user.lastName|a, user|firstName|a, dateFrom|a, dateTo|a";
+            }
+
             var items = await _absenceRequestsService.GetAbsenceRequestsPagedListAsync(absenceRequestTypeId, userId, absenceRequestStatusId, dateFrom, dateTo, page, pageSize, sortOrder, cancellationToken: cancellationToken);
 
             if (items == null)

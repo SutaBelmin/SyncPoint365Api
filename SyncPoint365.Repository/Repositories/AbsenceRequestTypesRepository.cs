@@ -25,7 +25,6 @@ namespace SyncPoint365.Repository.Repositories
             if (!string.IsNullOrWhiteSpace(sortOrder))
                 absenceRequestTypesQuery = absenceRequestTypesQuery.Sort(sortOrder);
 
-
             return absenceRequestTypesQuery.ToPagedListAsync(page, pageSize);
         }
     }

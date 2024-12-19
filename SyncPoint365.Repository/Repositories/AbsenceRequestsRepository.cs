@@ -28,9 +28,6 @@ namespace SyncPoint365.Repository.Repositories
             if (!string.IsNullOrWhiteSpace(sortOrder))
                 absenceRequestsQuery = absenceRequestsQuery.Sort(sortOrder);
 
-            //absenceRequestsQuery = absenceRequestsQuery
-            //        .OrderBy("User.LastName ascending, User.FirstName ascending");
-
             return absenceRequestsQuery.ToPagedListAsync(page, pageSize);
         }
     }
