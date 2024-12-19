@@ -55,6 +55,7 @@ namespace SyncPoint365.Repository.Repositories
                                                              .Sort(string.IsNullOrWhiteSpace(orderBy) ? "lastName|asc" : orderBy)
                                                              .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
+
     }
 }
 
