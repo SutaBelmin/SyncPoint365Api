@@ -1,5 +1,4 @@
 ﻿using System.Linq.Dynamic.Core;
-using System.Reflection;
 using System.Text;
 
 namespace SyncPoint365.Core.Helpers
@@ -8,9 +7,10 @@ namespace SyncPoint365.Core.Helpers
     {
         public static IQueryable<T> Sort<T>(this IQueryable<T> src, string orderByString)
         {
-            var orderParams = orderByString.Trim().Split(',');
+            if (string.IsNullOrWhiteSpace(orderByString))
+                return src;
 
-            var propertyInfos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var orderParams = orderByString.Trim().Split(',');
 
             var orderQueryBuilder = new StringBuilder();
 
@@ -18,21 +18,15 @@ namespace SyncPoint365.Core.Helpers
             {
                 var trimmedParam = param.Trim();
 
-                var propertyFromQueryName = trimmedParam.Split("|")[0];
+                var propertyFromQueryName = trimmedParam.Split('|')[0];
+                var direction = trimmedParam.EndsWith("desc", StringComparison.InvariantCultureIgnoreCase) ? "descending" : "ascending";
 
-                var objectProperty = propertyInfos.FirstOrDefault(pi => pi.Name.Equals(propertyFromQueryName, StringComparison.InvariantCultureIgnoreCase));
-
-                if (objectProperty == null)
-                    continue;
-
-                var direction = param.EndsWith("desc") ? "descending" : "ascending";
-
-                orderQueryBuilder.Append($"{objectProperty.Name} {direction},");
+                orderQueryBuilder.Append($"{propertyFromQueryName} {direction},");
             }
 
-            var orderQuery = orderQueryBuilder.ToString().Trim(',', ' ');
+            var orderQuery = orderQueryBuilder.ToString().TrimEnd(',');
 
-            return src.OrderBy(orderQuery);
+            return !string.IsNullOrEmpty(orderQuery) ? src.OrderBy(orderQuery) : src;
         }
     }
 }
