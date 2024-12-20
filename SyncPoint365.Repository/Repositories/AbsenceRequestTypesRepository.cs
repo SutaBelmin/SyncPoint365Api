@@ -17,15 +17,11 @@ namespace SyncPoint365.Repository.Repositories
             return await DbSet.Where(a => (!isActive.HasValue || a.IsActive == isActive.Value)).ToListAsync(cancellationToken);
         }
 
-        public Task<IPagedList<AbsenceRequestType>> GetAbsenceRequestTypesPagedListAsync(bool? isActive, string? query, int page, int pageSize, string? sortOrder, CancellationToken cancellationToken = default)
+        public Task<IPagedList<AbsenceRequestType>> GetAbsenceRequestTypesPagedListAsync(bool? isActive, string? query, string? orderBy, int page, int pageSize, CancellationToken cancellationToken = default)
         {
-            var absenceRequestTypesQuery = DbSet.Where(a => (isActive == null || a.IsActive == isActive)
-                && (string.IsNullOrWhiteSpace(query) || a.Name.ToLower().Contains(query.ToLower())));
-
-            if (!string.IsNullOrWhiteSpace(sortOrder))
-                absenceRequestTypesQuery = absenceRequestTypesQuery.Sort(sortOrder);
-
-            return absenceRequestTypesQuery.ToPagedListAsync(page, pageSize);
+            return DbSet.Where(a => (isActive == null || a.IsActive == isActive)
+                && (string.IsNullOrWhiteSpace(query) || a.Name.ToLower().Contains(query.ToLower())))
+                .Sort(string.IsNullOrWhiteSpace(orderBy) ? "Name|asc" : orderBy).ToPagedListAsync(page, pageSize);
         }
     }
 }

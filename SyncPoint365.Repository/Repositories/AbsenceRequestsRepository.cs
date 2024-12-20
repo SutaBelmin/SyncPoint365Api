@@ -15,20 +15,16 @@ namespace SyncPoint365.Repository.Repositories
         }
 
         public Task<IPagedList<AbsenceRequest>> GetAbsenceRequestsPagedListAsync(int? absenceRequestTypeId, int? userId, int? absenceRequestStatusId, DateTime? dateFrom, DateTime? dateTo,
-            int page, int pageSize, string? sortOrder, CancellationToken cancellationToken)
+            string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
         {
             var includes = DbSet.Include(x => x.AbsenceRequestType).Include(c => c.User);
 
-            var absenceRequestsQuery = includes.Where(a => ((userId == null || a.UserId == userId.Value)
-            && (absenceRequestTypeId == null || a.AbsenceRequestTypeId == absenceRequestTypeId.Value)
-            && (!absenceRequestStatusId.HasValue || a.AbsenceRequestStatus == (AbsenceRequestStatus)absenceRequestStatusId.Value)
-            && ((!dateFrom.HasValue || (a.DateFrom >= dateFrom && a.DateFrom <= dateTo))
-            || (!dateTo.HasValue || (a.DateTo <= dateTo && a.DateTo >= dateFrom)))));
-
-            if (!string.IsNullOrWhiteSpace(sortOrder))
-                absenceRequestsQuery = absenceRequestsQuery.Sort(sortOrder);
-
-            return absenceRequestsQuery.ToPagedListAsync(page, pageSize);
+            return includes.Where(a => ((userId == null || a.UserId == userId.Value)
+                && (absenceRequestTypeId == null || a.AbsenceRequestTypeId == absenceRequestTypeId.Value)
+                && (!absenceRequestStatusId.HasValue || a.AbsenceRequestStatus == (AbsenceRequestStatus)absenceRequestStatusId.Value)
+                && ((!dateFrom.HasValue || (a.DateFrom >= dateFrom && a.DateFrom <= dateTo))
+                || (!dateTo.HasValue || (a.DateTo <= dateTo && a.DateTo >= dateFrom)))))
+                .Sort(string.IsNullOrWhiteSpace(orderBy) ? "user.lastName|asc, user|firstName|asc, dateFrom|asc, dateTo|asc" : orderBy).ToPagedListAsync(page, pageSize);
         }
     }
 }
