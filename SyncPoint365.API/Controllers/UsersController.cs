@@ -54,9 +54,9 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("Paged", Name = "SyncPoint365-GetUsersPagedListAsync")]
-        public async Task<IActionResult> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var data = await _usersService.GetUsersPagedListAsync(isActive, query, roleId, page, pageSize, orderBy, cancellationToken);
+            var data = await _usersService.GetUsersPagedListAsync(isActive, query, roleId, orderBy, page, pageSize, cancellationToken);
 
             if (data == null)
                 return NotFound();

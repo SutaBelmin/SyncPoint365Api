@@ -45,7 +45,7 @@ namespace SyncPoint365.Repository.Repositories
             return await DbSet.AnyAsync(x => x.Email.ToLower() == email.ToLower());
         }
 
-        public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
+        public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             return DbSet.Include(x => x.City).Where(user =>
                                                              (string.IsNullOrEmpty(query) || (user.FirstName + " " + user.LastName).ToLower().Contains(query.ToLower()))

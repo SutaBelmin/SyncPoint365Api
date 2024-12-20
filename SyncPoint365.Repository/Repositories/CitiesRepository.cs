@@ -21,7 +21,7 @@ namespace SyncPoint365.Repository.Repositories
                 .ToListAsync();
         }
 
-        public Task<IPagedList<City>> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
+        public Task<IPagedList<City>> GetPagedCitiesAsync(int? countryId = null, string? query = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             return DbSet.Include(x => x.Country).Where(x =>
                                                            (string.IsNullOrWhiteSpace(query) || (x.Name.ToLower().Contains(query.ToLower()))

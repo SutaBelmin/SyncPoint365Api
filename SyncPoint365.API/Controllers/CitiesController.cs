@@ -31,9 +31,9 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("Paged", Name = "SyncPoint365-GetCitiesPaged")]
-        public async Task<IActionResult> GetPagedCitiesAsync(int? countryId = null, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetPagedCitiesAsync(int? countryId = null, string? query = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var data = await _citiesService.GetPagedCitiesAsync(countryId, query, page, pageSize, orderBy, cancellationToken);
+            var data = await _citiesService.GetPagedCitiesAsync(countryId, query, orderBy, page, pageSize, cancellationToken);
 
             if (data == null)
                 return NotFound();
