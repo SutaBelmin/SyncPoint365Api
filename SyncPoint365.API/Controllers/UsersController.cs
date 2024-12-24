@@ -89,5 +89,20 @@ namespace SyncPoint365.API.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("Upload-Profile-Picture", Name = "SyncPoint365-UploadProfilePicture")]
+        public async Task<IActionResult> UploadProfilePictureAsync([FromForm] FileUploadRequest request, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var result = await _usersService.UploadProfilePictureAsync(request, cancellationToken);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 }

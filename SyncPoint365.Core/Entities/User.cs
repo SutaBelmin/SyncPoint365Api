@@ -17,6 +17,6 @@ namespace SyncPoint365.Core.Entities
         public bool IsActive { get; set; } = default;
         public int CityId { get; set; }
         public virtual City City { get; set; } = default!;
-
+        public string? ImagePath { get; set; }
     }
 }

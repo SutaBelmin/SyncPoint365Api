@@ -102,6 +102,48 @@ namespace SyncPoint365.Service.Services
 
             return true;
         }
+        public async Task<string> UploadProfilePictureAsync(FileUploadRequest request, CancellationToken cancellationToken = default)
+        {
+            if (request.File == null || request.File.Length == 0)
+            {
+                throw new Exception("Invalid file!");
+            }
 
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+            var extension = Path.GetExtension(request.File.FileName);
+
+            if (!allowedExtensions.Contains(extension.ToLower()))
+            {
+                throw new Exception("Unsupported file format!");
+            }
+
+            if (!request.File.ContentType.StartsWith("image/"))
+            {
+                throw new Exception("Invalid file type!");
+            }
+
+            var user = await _repository.GetByUserIdAsync(request.UserId, cancellationToken);
+            if (user == null)
+            {
+                throw new Exception("User not found!");
+            }
+
+            var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(request.File.FileName)}";
+            var relativePath = Path.Combine("uploads", uniqueFileName);
+            var filePath = Path.Combine("wwwroot", relativePath);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await request.File.CopyToAsync(stream, cancellationToken);
+            }
+
+            user.ImagePath = relativePath;
+            _repository.Update(user);
+            await _repository.SaveChangesAsync(cancellationToken);
+
+            return relativePath;
+        }
     }
 }
