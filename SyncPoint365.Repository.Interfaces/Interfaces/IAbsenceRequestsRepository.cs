@@ -5,7 +5,8 @@ namespace SyncPoint365.Repository.Common.Interfaces
 {
     public interface IAbsenceRequestsRepository : IBaseRepository<AbsenceRequest>
     {
-        Task<IPagedList<AbsenceRequest>> GetAbsenceRequestsPagedListAsync(int? absenceRequestTypeId, int? userId, int? absenceRequestStatusId, DateTime? dateFrom, DateTime? dateTo, int page, int pageSize, CancellationToken cancellationToken);
+        Task<IPagedList<AbsenceRequest>> GetAbsenceRequestsPagedListAsync(int? absenceRequestTypeId, int? userId, int? absenceRequestStatusId, DateTime? dateFrom, DateTime? dateTo,
+            string? orderBy, int page, int pageSize, CancellationToken cancellationToken = default);
     }
 
 }
