@@ -27,22 +27,12 @@ namespace SyncPoint365.Repository.Repositories
             int totalSetCount = await queryable.CountAsync(cancellationToken);
             return await queryable.ToPagedListAsync(page, pageSize, totalSetCount, cancellationToken);
         }
-        public async Task<IPagedList<Country>> GetPagedCountriesAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, string? orderBy = null, CancellationToken cancellationToken = default)
+        public async Task<IPagedList<Country>> GetPagedCountriesAsync(string? query = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            IQueryable<Country> queryable = DbSet;
-
-            if (!string.IsNullOrEmpty(query))
-            {
-                queryable = queryable.Where(c => c.Name.Contains(query) || c.DisplayName.Contains(query));
-            }
-
-            if (!string.IsNullOrEmpty(orderBy))
-            {
-                queryable = queryable.Sort(string.IsNullOrWhiteSpace(orderBy) ? "name|asc" : orderBy);
-            }
-
-            int totalSetCount = await queryable.CountAsync(cancellationToken);
-            return await queryable.ToPagedListAsync(page, pageSize, totalSetCount, cancellationToken);
+            return await DbSet
+                .Where(x => string.IsNullOrEmpty(query) || x.Name.Contains(query) || x.DisplayName.Contains(query))
+                .Sort(string.IsNullOrWhiteSpace(orderBy) ? "name|asc" : orderBy)
+                .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
     }
 }
