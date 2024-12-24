@@ -27,5 +27,12 @@ namespace SyncPoint365.Repository.Repositories
             int totalSetCount = await queryable.CountAsync(cancellationToken);
             return await queryable.ToPagedListAsync(page, pageSize, totalSetCount, cancellationToken);
         }
+        public async Task<IPagedList<Country>> GetPagedCountriesAsync(string? query = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        {
+            return await DbSet
+                .Where(x => string.IsNullOrEmpty(query) || x.Name.Contains(query) || x.DisplayName.Contains(query))
+                .Sort(string.IsNullOrWhiteSpace(orderBy) ? "name|asc" : orderBy)
+                .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
+        }
     }
 }
