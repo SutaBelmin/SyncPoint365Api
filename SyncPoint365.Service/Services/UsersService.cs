@@ -31,8 +31,8 @@ namespace SyncPoint365.Service.Services
             entity.PasswordHash = Cryptography.GenerateHash(dto.Password, entity.PasswordSalt);
 
 
-            await Repository.AddAsync(entity, cancellationToken);
-            await Repository.SaveChangesAsync(cancellationToken);
+            await _repository.AddAsync(entity, cancellationToken);
+            await _repository.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<IEnumerable<UserDTO>> GetUsersListAsync(CancellationToken cancellationToken = default)
@@ -50,9 +50,9 @@ namespace SyncPoint365.Service.Services
         public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             var usersList = await _repository.GetUsersPagedListAsync(isActive, query, roleId, orderBy, page, pageSize, cancellationToken);
-            var users = usersList.ToList();
 
-            var dtos = Mapper.Map<List<UserDTO>>(users);
+            var dtos = Mapper.Map<List<UserDTO>>(usersList);
+
             return new PagedList<UserDTO>(usersList, dtos);
         }
 
@@ -68,8 +68,8 @@ namespace SyncPoint365.Service.Services
 
             Mapper.Map(dto, entity);
 
-            Repository.Update(entity);
-            await Repository.SaveChangesAsync(cancellationToken);
+            _repository.Update(entity);
+            await _repository.SaveChangesAsync(cancellationToken);
         }
         public async Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
         {

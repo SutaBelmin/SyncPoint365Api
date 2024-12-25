@@ -28,9 +28,8 @@ namespace SyncPoint365.Service.Services
         public async Task<IPagedList<CountryDTO>> GetPagedCountriesAsync(string? query = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             var pagedList = await _repository.GetPagedCountriesAsync(query, orderBy, page, pageSize, cancellationToken);
-            var entities = pagedList.ToList();
 
-            var dtos = Mapper.Map<List<CountryDTO>>(entities);
+            var dtos = Mapper.Map<List<CountryDTO>>(pagedList);
 
             return new PagedList<CountryDTO>(pagedList, dtos);
         }

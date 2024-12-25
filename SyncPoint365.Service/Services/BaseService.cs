@@ -31,8 +31,7 @@ namespace SyncPoint365.Service.Services
         public virtual async Task<IPagedList<TDTO>> GetAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             var pagedList = await Repository.GetAsync(query, page, pageSize, cancellationToken);
-            var entities = pagedList.ToList();
-            var dtos = Mapper.Map<List<TDTO>>(entities);
+            var dtos = Mapper.Map<List<TDTO>>(pagedList);
 
             return new PagedList<TDTO>(pagedList, dtos);
         }

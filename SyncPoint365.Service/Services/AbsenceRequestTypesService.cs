@@ -34,8 +34,7 @@ namespace SyncPoint365.Service.Services
         {
             var paged = await _repository.GetAbsenceRequestTypesPagedListAsync(isActive, query, orderBy, page, pageSize, cancellationToken: cancellationToken);
 
-            var entities = paged.ToList();
-            var dtos = Mapper.Map<List<AbsenceRequestTypeDTO>>(entities);
+            var dtos = Mapper.Map<List<AbsenceRequestTypeDTO>>(paged);
 
             return new PagedList<AbsenceRequestTypeDTO>(paged, dtos);
         }
