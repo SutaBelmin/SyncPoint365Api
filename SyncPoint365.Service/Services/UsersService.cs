@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Core.Helpers;
@@ -21,7 +22,7 @@ namespace SyncPoint365.Service.Services
             _mapper = mapper;
         }
 
-        public override async Task AddAsync(UserAddDTO dto, CancellationToken cancellationToken = default)
+        public override async Task AddAsync([FromForm] UserAddDTO dto, CancellationToken cancellationToken = default)
         {
             await AddValidator.ValidateAndThrowAsync(dto, cancellationToken);
 
@@ -29,6 +30,35 @@ namespace SyncPoint365.Service.Services
 
             entity.PasswordSalt = Cryptography.GenerateSalt(); ;
             entity.PasswordHash = Cryptography.GenerateHash(dto.Password, entity.PasswordSalt);
+
+            if (dto.File != null && dto.File.Length > 0)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var extension = Path.GetExtension(dto.File.FileName);
+
+                if (!allowedExtensions.Contains(extension.ToLower()))
+                {
+                    throw new Exception("Unsupported file format!");
+                }
+
+                if (!dto.File.ContentType.StartsWith("image/"))
+                {
+                    throw new Exception("Invalid file type!");
+                }
+
+                var uniqueFileName = $"{Guid.NewGuid()}{extension}";
+                var relativePath = Path.Combine("uploads", uniqueFileName);
+                var filePath = Path.Combine("wwwroot", relativePath);
+
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.File.CopyToAsync(stream, cancellationToken);
+                }
+
+                entity.ImagePath = relativePath;
+            }
 
 
             await _repository.AddAsync(entity, cancellationToken);
@@ -145,5 +175,6 @@ namespace SyncPoint365.Service.Services
 
             return relativePath;
         }
+
     }
 }
