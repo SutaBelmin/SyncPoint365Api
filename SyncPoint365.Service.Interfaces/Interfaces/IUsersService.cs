@@ -14,5 +14,6 @@ namespace SyncPoint365.Service.Common.Interfaces
         Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default);
         Task<bool> ChangePasswordAsync(int id, string password, CancellationToken cancellationToken);
         Task<string> UploadProfilePictureAsync(FileUploadRequest request, CancellationToken cancellationToken = default);
+
     }
 }

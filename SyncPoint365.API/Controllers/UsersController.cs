@@ -104,5 +104,40 @@ namespace SyncPoint365.API.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("Get-Profile-Picture", Name = "SyncPoint365-GetProfilePicture")]
+        public async Task<IActionResult> GetProfilePictureAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var user = await _usersService.GetByIdAsync(userId, cancellationToken);
+                if (user == null)
+                {
+                    return NotFound(new { error = "User not found." });
+                }
+
+                if (string.IsNullOrEmpty(user.ImagePath))
+                {
+                    return NotFound(new { error = "Profile picture not available." });
+                }
+
+                var filePath = Path.Combine("wwwroot", user.ImagePath);
+                if (!System.IO.File.Exists(filePath))
+                {
+                    return NotFound(new { error = "File not found on server." });
+                }
+
+                var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath, cancellationToken);
+                var contentType = "image/" + Path.GetExtension(user.ImagePath).TrimStart('.');
+
+                return File(fileBytes, contentType);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
     }
 }
