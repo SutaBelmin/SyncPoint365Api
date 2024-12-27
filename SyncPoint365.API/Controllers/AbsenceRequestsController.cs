@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SyncPoint365.API.RESTModels;
 using SyncPoint365.Core.DTOs.AbsenceRequests;
-using SyncPoint365.Core.Enums;
 using SyncPoint365.Core.Helpers;
 using SyncPoint365.Service.Common.Interfaces;
 
@@ -33,12 +33,16 @@ namespace SyncPoint365.API.Controllers
         }
 
         [HttpPut]
-        [Route("change-absence-request-status", Name = "SyncPoint365-ChangeAbsenceRequestStatus")]
-        public async Task<IActionResult> ChangeAbsenceRequestStatusAsync(int id, [FromBody] AbsenceRequestStatus newStatus, CancellationToken cancellationToken = default)
+        [Route("Change-Absence-Request-Status", Name = "SyncPoint365-ChangeAbsenceRequestStatus")]
+        public async Task<IActionResult> ChangeAbsenceRequestStatusAsync([FromBody] AbsenceRequestsChangeStatusModel model, CancellationToken cancellationToken = default)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { error = "Invalid input data." });
+            }
             try
             {
-                var updatedStatus = await _absenceRequestsService.ChangeAbsenceRequestStatusAsync(id, newStatus, cancellationToken);
+                var updatedStatus = await _absenceRequestsService.ChangeAbsenceRequestStatusAsync(model.Id, model.NewStatus, cancellationToken);
                 return Ok(new { AbsenceRequestStatus = updatedStatus });
             }
             catch
