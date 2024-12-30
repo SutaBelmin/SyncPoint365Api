@@ -2,11 +2,11 @@
 
 namespace SyncPoint365.API.RESTModels
 {
-    public class AbsenceRequestsChangeStatusModel
+    public class AbsenceRequestStatusChangeModel
     {
 
         public int Id { get; set; }
-        public AbsenceRequestStatus NewStatus { get; set; }
+        public AbsenceRequestStatus Status { get; set; }
 
     }
 }

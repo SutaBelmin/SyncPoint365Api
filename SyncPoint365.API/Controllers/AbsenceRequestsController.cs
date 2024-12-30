@@ -34,7 +34,7 @@ namespace SyncPoint365.API.Controllers
 
         [HttpPut]
         [Route("Change-Absence-Request-Status", Name = "SyncPoint365-ChangeAbsenceRequestStatus")]
-        public async Task<IActionResult> ChangeAbsenceRequestStatusAsync([FromBody] AbsenceRequestsChangeStatusModel model, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ChangeAbsenceRequestStatusAsync([FromBody] AbsenceRequestStatusChangeModel model, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {
@@ -42,7 +42,7 @@ namespace SyncPoint365.API.Controllers
             }
             try
             {
-                var updatedStatus = await _absenceRequestsService.ChangeAbsenceRequestStatusAsync(model.Id, model.NewStatus, cancellationToken);
+                var updatedStatus = await _absenceRequestsService.ChangeAbsenceRequestStatusAsync(model.Id, model.Status, cancellationToken);
                 return Ok(new { AbsenceRequestStatus = updatedStatus });
             }
             catch
