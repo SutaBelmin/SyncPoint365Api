@@ -1,4 +1,5 @@
 ﻿using SyncPoint365.Core.DTOs.AbsenceRequests;
+using SyncPoint365.Core.Enums;
 using X.PagedList;
 
 namespace SyncPoint365.Service.Common.Interfaces
@@ -7,5 +8,7 @@ namespace SyncPoint365.Service.Common.Interfaces
     {
         Task<IPagedList<AbsenceRequestDTO>> GetAbsenceRequestsPagedListAsync(int? absenceRequestTypeId, int? userId, int? absenceRequestStatusId, DateTime? dateFrom, DateTime? dateTo,
             string? orderBy, int page, int pageSize, CancellationToken cancellationToken = default);
+
+        Task<AbsenceRequestStatus> ChangeAbsenceRequestStatusAsync(int id, AbsenceRequestStatus newStatus, CancellationToken cancellationToken = default);
     }
 }
