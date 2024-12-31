@@ -15,6 +15,6 @@ namespace SyncPoint365.Core.DTOs.Users
         public string Address { get; set; } = default!;
         public Role Role { get; set; }
         public int CityId { get; set; }
-        public IFormFile? File { get; set; }
+        public IFormFile? PhotoFile { get; set; }
     }
 }

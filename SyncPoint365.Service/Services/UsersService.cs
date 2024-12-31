@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Core.Helpers;
@@ -15,11 +16,12 @@ namespace SyncPoint365.Service.Services
     {
         private readonly IUsersRepository _repository;
         protected readonly IMapper _mapper;
-
-        public UsersService(IUsersRepository repository, IMapper mapper, IValidator<UserAddDTO> addValidator, IValidator<UserUpdateDTO> updateValidator) : base(repository, mapper, addValidator, updateValidator)
+        private readonly FileSettings _fileSettings;
+        public UsersService(IUsersRepository repository, IMapper mapper, IValidator<UserAddDTO> addValidator, IValidator<UserUpdateDTO> updateValidator, IOptions<FileSettings> fileSettings) : base(repository, mapper, addValidator, updateValidator)
         {
             _repository = repository;
             _mapper = mapper;
+            _fileSettings = fileSettings.Value;
         }
 
         public override async Task AddAsync([FromForm] UserAddDTO dto, CancellationToken cancellationToken = default)
@@ -31,22 +33,21 @@ namespace SyncPoint365.Service.Services
             entity.PasswordSalt = Cryptography.GenerateSalt(); ;
             entity.PasswordHash = Cryptography.GenerateHash(dto.Password, entity.PasswordSalt);
 
-            if (dto.File != null && dto.File.Length > 0)
+            if (dto.PhotoFile != null && dto.PhotoFile.Length > 0)
             {
-                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-                var extension = Path.GetExtension(dto.File.FileName);
+                var exstension = Path.GetExtension(dto.PhotoFile.FileName).ToLower();
 
-                if (!allowedExtensions.Contains(extension.ToLower()))
+                if (!_fileSettings.AllowedExtensions.Contains(exstension))
                 {
                     throw new Exception("Unsupported file format!");
                 }
 
-                if (!dto.File.ContentType.StartsWith("image/"))
+                if (!dto.PhotoFile.ContentType.StartsWith("image/"))
                 {
                     throw new Exception("Invalid file type!");
                 }
 
-                var uniqueFileName = $"{Guid.NewGuid()}{extension}";
+                var uniqueFileName = $"{Guid.NewGuid()}{exstension}";
                 var relativePath = Path.Combine("uploads", uniqueFileName);
                 var filePath = Path.Combine("wwwroot", relativePath);
 
@@ -54,7 +55,7 @@ namespace SyncPoint365.Service.Services
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await dto.File.CopyToAsync(stream, cancellationToken);
+                    await dto.PhotoFile.CopyToAsync(stream, cancellationToken);
                 }
 
                 entity.ImagePath = relativePath;
@@ -134,20 +135,19 @@ namespace SyncPoint365.Service.Services
         }
         public async Task<string> UploadProfilePictureAsync(FileUploadRequest request, CancellationToken cancellationToken = default)
         {
-            if (request.File == null || request.File.Length == 0)
+            if (request.PhotoFile == null || request.PhotoFile.Length == 0)
             {
                 throw new Exception("Invalid file!");
             }
 
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-            var extension = Path.GetExtension(request.File.FileName);
+            var exstension = Path.GetExtension(request.PhotoFile.FileName).ToLower();
 
-            if (!allowedExtensions.Contains(extension.ToLower()))
+            if (!_fileSettings.AllowedExtensions.Contains(exstension))
             {
                 throw new Exception("Unsupported file format!");
             }
 
-            if (!request.File.ContentType.StartsWith("image/"))
+            if (!request.PhotoFile.ContentType.StartsWith("image/"))
             {
                 throw new Exception("Invalid file type!");
             }
@@ -158,7 +158,7 @@ namespace SyncPoint365.Service.Services
                 throw new Exception("User not found!");
             }
 
-            var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(request.File.FileName)}";
+            var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(request.PhotoFile.FileName)}";
             var relativePath = Path.Combine("uploads", uniqueFileName);
             var filePath = Path.Combine("wwwroot", relativePath);
 
@@ -166,7 +166,7 @@ namespace SyncPoint365.Service.Services
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                await request.File.CopyToAsync(stream, cancellationToken);
+                await request.PhotoFile.CopyToAsync(stream, cancellationToken);
             }
 
             user.ImagePath = relativePath;

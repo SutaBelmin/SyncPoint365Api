@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using SyncPoint365.Repository;
 using SyncPoint365.Service;
+using SyncPoint365.Service.Helpers;
 using System.Text.Json.Serialization;
 
 namespace SyncPoint365.API
@@ -16,6 +17,8 @@ namespace SyncPoint365.API
                 o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
+
+            builder.Services.Configure<FileSettings>(builder.Configuration.GetSection("FileSettings"));
 
             builder.Services.AddConfigs(builder.Configuration);
             builder.Services.AddDatabase(builder.Configuration);
