@@ -176,6 +176,16 @@ namespace SyncPoint365.Service.Services
             return relativePath;
         }
 
+        public async Task<bool> DeleteUserImageAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            var user = await _repository.GetByUserIdAsync(userId, cancellationToken);
+            if (user == null)
+            {
+                throw new Exception("User not found!");
+            }
+
+            return await _repository.DeleteUserImageAsync(userId, cancellationToken);
+        }
 
     }
 }

@@ -134,5 +134,26 @@ namespace SyncPoint365.API.Controllers
 
         }
 
+        [HttpDelete]
+        [Route("Delete-Image", Name = "SyncPoint365-DeleteUserImage")]
+        public async Task<IActionResult> DeleteUserImageAsync(int id, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var result = await _usersService.DeleteUserImageAsync(id, cancellationToken);
+                if (!result)
+                {
+                    return NotFound();
+                }
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+
     }
 }
