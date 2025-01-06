@@ -1,4 +1,5 @@
-﻿using SyncPoint365.Core.Enums;
+﻿using Microsoft.AspNetCore.Http;
+using SyncPoint365.Core.Enums;
 
 namespace SyncPoint365.Core.DTOs.Users
 {
@@ -13,5 +14,7 @@ namespace SyncPoint365.Core.DTOs.Users
         public string Address { get; set; } = default!;
         public Role Role { get; set; }
         public int CityId { get; set; }
+        public IFormFile? PhotoFile { get; set; }
+
     }
 }

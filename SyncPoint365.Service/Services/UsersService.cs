@@ -87,7 +87,7 @@ namespace SyncPoint365.Service.Services
             return new PagedList<UserDTO>(usersList, dtos);
         }
 
-        public override async Task UpdateAsync(UserUpdateDTO dto, CancellationToken cancellationToken = default)
+        public override async Task UpdateAsync([FromForm] UserUpdateDTO dto, CancellationToken cancellationToken = default)
         {
             await UpdateValidator.ValidateAndThrowAsync(dto, cancellationToken);
 
@@ -99,9 +99,47 @@ namespace SyncPoint365.Service.Services
 
             Mapper.Map(dto, entity);
 
+            if (dto.PhotoFile != null && dto.PhotoFile.Length > 0)
+            {
+                var extension = Path.GetExtension(dto.PhotoFile.FileName).ToLower();
+                if (!_fileSettings.AllowedExtensions.Contains(extension))
+                {
+                    throw new Exception();
+                }
+
+                if (!dto.PhotoFile.ContentType.StartsWith("image/"))
+                {
+                    throw new Exception();
+                }
+
+                var uniqueFileName = $"{Guid.NewGuid()}{extension}";
+                var relativePath = Path.Combine("uploads", uniqueFileName);
+                var filePath = Path.Combine("wwwroot", relativePath);
+
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.PhotoFile.CopyToAsync(stream, cancellationToken);
+                }
+
+                if (!string.IsNullOrEmpty(entity.ImagePath))
+                {
+                    var oldFilePath = Path.Combine("wwwroot", entity.ImagePath);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
+                }
+
+                entity.ImagePath = relativePath;
+            }
+
             _repository.Update(entity);
             await _repository.SaveChangesAsync(cancellationToken);
         }
+
+
         public async Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
         {
             var user = await _repository.GetByUserIdAsync(id, cancellationToken);
@@ -133,48 +171,8 @@ namespace SyncPoint365.Service.Services
 
             return true;
         }
-        public async Task<string> UploadProfilePictureAsync(FileUploadRequest request, CancellationToken cancellationToken = default)
-        {
-            if (request.PhotoFile == null || request.PhotoFile.Length == 0)
-            {
-                throw new Exception("Invalid file!");
-            }
 
-            var exstension = Path.GetExtension(request.PhotoFile.FileName).ToLower();
 
-            if (!_fileSettings.AllowedExtensions.Contains(exstension))
-            {
-                throw new Exception("Unsupported file format!");
-            }
-
-            if (!request.PhotoFile.ContentType.StartsWith("image/"))
-            {
-                throw new Exception("Invalid file type!");
-            }
-
-            var user = await _repository.GetByUserIdAsync(request.UserId, cancellationToken);
-            if (user == null)
-            {
-                throw new Exception("User not found!");
-            }
-
-            var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(request.PhotoFile.FileName)}";
-            var relativePath = Path.Combine("uploads", uniqueFileName);
-            var filePath = Path.Combine("wwwroot", relativePath);
-
-            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await request.PhotoFile.CopyToAsync(stream, cancellationToken);
-            }
-
-            user.ImagePath = relativePath;
-            _repository.Update(user);
-            await _repository.SaveChangesAsync(cancellationToken);
-
-            return relativePath;
-        }
 
         public async Task<bool> DeleteUserImageAsync(int userId, CancellationToken cancellationToken = default)
         {
