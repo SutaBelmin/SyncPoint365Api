@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using SyncPoint365.Core.Enums;
+﻿using SyncPoint365.Core.Enums;
 
 namespace SyncPoint365.Core.DTOs.Users
 {
@@ -17,6 +16,6 @@ namespace SyncPoint365.Core.DTOs.Users
         public bool isActive { get; set; }
         public int CityId { get; set; }
         public string CityName { get; set; } = default!;
-        public IFormFile? ImageFile { get; set; }
+        public string? ImagePath { get; set; }
     }
 }

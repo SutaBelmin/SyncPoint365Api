@@ -33,16 +33,16 @@ namespace SyncPoint365.Service.Services
             entity.PasswordSalt = Cryptography.GenerateSalt(); ;
             entity.PasswordHash = Cryptography.GenerateHash(dto.Password, entity.PasswordSalt);
 
-            if (dto.PhotoFile != null && dto.PhotoFile.Length > 0)
+            if (dto.ImagePath != null && dto.ImagePath.Length > 0)
             {
-                var exstension = Path.GetExtension(dto.PhotoFile.FileName).ToLower();
+                var exstension = Path.GetExtension(dto.ImagePath.FileName).ToLower();
 
                 if (!_fileSettings.AllowedExtensions.Contains(exstension))
                 {
                     throw new Exception("Unsupported file format!");
                 }
 
-                if (!dto.PhotoFile.ContentType.StartsWith("image/"))
+                if (!dto.ImagePath.ContentType.StartsWith("image/"))
                 {
                     throw new Exception("Invalid file type!");
                 }
@@ -55,7 +55,7 @@ namespace SyncPoint365.Service.Services
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await dto.PhotoFile.CopyToAsync(stream, cancellationToken);
+                    await dto.ImagePath.CopyToAsync(stream, cancellationToken);
                 }
 
                 entity.ImagePath = relativePath;
@@ -99,15 +99,15 @@ namespace SyncPoint365.Service.Services
 
             Mapper.Map(dto, entity);
 
-            if (dto.PhotoFile != null && dto.PhotoFile.Length > 0)
+            if (dto.ImagePath != null && dto.ImagePath.Length > 0)
             {
-                var extension = Path.GetExtension(dto.PhotoFile.FileName).ToLower();
+                var extension = Path.GetExtension(dto.ImagePath.FileName).ToLower();
                 if (!_fileSettings.AllowedExtensions.Contains(extension))
                 {
                     throw new Exception();
                 }
 
-                if (!dto.PhotoFile.ContentType.StartsWith("image/"))
+                if (!dto.ImagePath.ContentType.StartsWith("image/"))
                 {
                     throw new Exception();
                 }
@@ -120,7 +120,7 @@ namespace SyncPoint365.Service.Services
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await dto.PhotoFile.CopyToAsync(stream, cancellationToken);
+                    await dto.ImagePath.CopyToAsync(stream, cancellationToken);
                 }
 
                 if (!string.IsNullOrEmpty(entity.ImagePath))
@@ -172,6 +172,29 @@ namespace SyncPoint365.Service.Services
             return true;
         }
 
+        public override async Task<UserDTO?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var user = await _repository.GetByIdAsync(id);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            var userDTO = _mapper.Map<UserDTO>(user);
+
+            if (!string.IsNullOrEmpty(user.ImagePath))
+            {
+                var filePath = Path.Combine("wwwroot", user.ImagePath);
+                if (File.Exists(filePath))
+                {
+                    var fileBytes = File.ReadAllBytesAsync(filePath, cancellationToken);
+                    userDTO.ImagePath = Convert.ToBase64String(await fileBytes);
+                }
+            }
+
+            return userDTO;
+        }
 
 
         public async Task<bool> DeleteUserImageAsync(int userId, CancellationToken cancellationToken = default)
