@@ -15,8 +15,14 @@ namespace SyncPoint365.Repository.Repositories
         }
 
         public Task<IPagedList<AbsenceRequest>> GetAbsenceRequestsPagedListAsync(int? absenceRequestTypeId, int? userId, int? absenceRequestStatusId, DateTime? dateFrom, DateTime? dateTo,
-            string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
+            int? year, string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
         {
+            if (year.HasValue)
+            {
+                dateFrom = new DateTime(year.Value, 1, 1, 0, 0, 0);
+                dateTo = new DateTime(year.Value, 12, 31, 23, 59, 59);
+            }
+
             var includes = DbSet.Include(x => x.AbsenceRequestType).Include(c => c.User);
 
             return includes.Where(a => ((userId == null || a.UserId == userId.Value)
