@@ -4,6 +4,7 @@ using SyncPoint365.Service.Common.Interfaces;
 using Constants = SyncPoint365.Core.Helpers.Constants;
 namespace SyncPoint365.API.Controllers
 {
+    //[Authorize(Policy = "AdminPolicy")]
     [Route("absence-request-types")]
     [ApiController]
     public class AbsenceRequestTypesController : BaseController<AbsenceRequestTypeDTO, AbsenceRequestTypeAddDTO, AbsenceRequestTypeUpdateDTO>
