@@ -12,4 +12,9 @@
         public string Audience { get; set; } = default!;
         public string Key { get; set; } = default!;
     }
+    public class FileSettings
+    {
+        public List<string> AllowedExtensions { get; set; } = default!;
+        public string UserImagesPath { get; set; } = default!;
+    }
 }

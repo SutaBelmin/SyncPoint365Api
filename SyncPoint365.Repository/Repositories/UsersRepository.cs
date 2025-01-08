@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Core.Enums;
 using SyncPoint365.Core.Helpers;
@@ -10,8 +11,10 @@ namespace SyncPoint365.Repository.Repositories
 {
     public class UsersRepository : BaseRepository<User>, IUsersRepository
     {
-        public UsersRepository(DatabaseContext databaseContext) : base(databaseContext)
+        private readonly IConfiguration _configuration;
+        public UsersRepository(DatabaseContext databaseContext, IConfiguration configuration) : base(databaseContext)
         {
+            _configuration = configuration;
         }
 
         public async Task<User?> GetByUserIdAsync(int id, CancellationToken cancellationToken = default)
@@ -64,12 +67,12 @@ namespace SyncPoint365.Repository.Repositories
                 return false;
             }
 
-            var filePath = Path.Combine("wwwroot", user.ImagePath);
+            var userImagesPath = _configuration["FileSettings:UserImagesPath"]!;
+            var filePath = Path.Combine(userImagesPath, user.ImagePath);
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
             }
-
             user.ImagePath = null;
             DbSet.Update(user);
             await SaveChangesAsync();

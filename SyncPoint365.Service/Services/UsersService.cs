@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Core.Helpers;
@@ -16,12 +17,12 @@ namespace SyncPoint365.Service.Services
     {
         private readonly IUsersRepository _repository;
         protected readonly IMapper _mapper;
-        private readonly FileSettings _fileSettings;
-        public UsersService(IUsersRepository repository, IMapper mapper, IValidator<UserAddDTO> addValidator, IValidator<UserUpdateDTO> updateValidator, IOptions<FileSettings> fileSettings) : base(repository, mapper, addValidator, updateValidator)
+        private readonly IConfiguration _configuration;
+        public UsersService(IUsersRepository repository, IMapper mapper, IValidator<UserAddDTO> addValidator, IValidator<UserUpdateDTO> updateValidator, IConfiguration configuration) : base(repository, mapper, addValidator, updateValidator)
         {
             _repository = repository;
             _mapper = mapper;
-            _fileSettings = fileSettings.Value;
+            _configuration = configuration;
         }
 
         public override async Task AddAsync([FromForm] UserAddDTO dto, CancellationToken cancellationToken = default)
@@ -33,34 +34,10 @@ namespace SyncPoint365.Service.Services
             entity.PasswordSalt = Cryptography.GenerateSalt(); ;
             entity.PasswordHash = Cryptography.GenerateHash(dto.Password, entity.PasswordSalt);
 
-            if (dto.ImagePath != null && dto.ImagePath.Length > 0)
+            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
             {
-                var exstension = Path.GetExtension(dto.ImagePath.FileName).ToLower();
-
-                if (!_fileSettings.AllowedExtensions.Contains(exstension))
-                {
-                    throw new Exception("Unsupported file format!");
-                }
-
-                if (!dto.ImagePath.ContentType.StartsWith("image/"))
-                {
-                    throw new Exception("Invalid file type!");
-                }
-
-                var uniqueFileName = $"{Guid.NewGuid()}{exstension}";
-                var relativePath = Path.Combine("uploads", uniqueFileName);
-                var filePath = Path.Combine("wwwroot", relativePath);
-
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await dto.ImagePath.CopyToAsync(stream, cancellationToken);
-                }
-
-                entity.ImagePath = relativePath;
+                entity.ImagePath = await HandleImageUpload(dto.ImageFile, entity.Id, cancellationToken);
             }
-
 
             await _repository.AddAsync(entity, cancellationToken);
             await _repository.SaveChangesAsync(cancellationToken);
@@ -99,40 +76,17 @@ namespace SyncPoint365.Service.Services
 
             Mapper.Map(dto, entity);
 
-            if (dto.ImagePath != null && dto.ImagePath.Length > 0)
+            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
             {
-                var extension = Path.GetExtension(dto.ImagePath.FileName).ToLower();
-                if (!_fileSettings.AllowedExtensions.Contains(extension))
-                {
-                    throw new Exception();
-                }
-
-                if (!dto.ImagePath.ContentType.StartsWith("image/"))
-                {
-                    throw new Exception();
-                }
-
-                var uniqueFileName = $"{Guid.NewGuid()}{extension}";
-                var relativePath = Path.Combine("uploads", uniqueFileName);
-                var filePath = Path.Combine("wwwroot", relativePath);
-
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await dto.ImagePath.CopyToAsync(stream, cancellationToken);
-                }
-
                 if (!string.IsNullOrEmpty(entity.ImagePath))
                 {
-                    var oldFilePath = Path.Combine("wwwroot", entity.ImagePath);
+                    var oldFilePath = Path.Combine(_configuration["FileSettings:UserImagesPath"]!, entity.ImagePath);
                     if (File.Exists(oldFilePath))
                     {
                         File.Delete(oldFilePath);
                     }
                 }
-
-                entity.ImagePath = relativePath;
+                entity.ImagePath = await HandleImageUpload(dto.ImageFile, entity.Id, cancellationToken);
             }
 
             _repository.Update(entity);
@@ -189,13 +143,45 @@ namespace SyncPoint365.Service.Services
                 if (File.Exists(filePath))
                 {
                     var fileBytes = File.ReadAllBytesAsync(filePath, cancellationToken);
-                    userDTO.ImagePath = Convert.ToBase64String(await fileBytes);
+                    userDTO.ImageFile = Convert.ToBase64String(await fileBytes);
                 }
             }
 
             return userDTO;
         }
 
+        private async Task<string> HandleImageUpload(IFormFile? imageFile, int entityId, CancellationToken cancellationToken)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            var extension = Path.GetExtension(imageFile.FileName).ToLower();
+            var allowedExtension = _configuration.GetSection("FileSettings:AllowedExtensions").AsEnumerable().Select(c => c.Value).ToList();
+            if (!allowedExtension.Contains(extension))
+            {
+                throw new Exception("Unsupported file format!");
+            }
+
+            if (!imageFile.ContentType.StartsWith("image/"))
+            {
+                throw new Exception("Invalid file type!");
+            }
+
+            var uniqueFileName = $"{entityId}{extension}";
+            var relativePath = Path.Combine(_configuration["FileSettings:UserImagesPath"]!, uniqueFileName);
+            var filePath = Path.Combine(_configuration["FileSettings:UploadDirectory"]!, relativePath);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream, cancellationToken);
+            }
+
+            return relativePath;
+        }
 
         public async Task<bool> DeleteUserImageAsync(int userId, CancellationToken cancellationToken = default)
         {
