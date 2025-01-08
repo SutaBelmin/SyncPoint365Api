@@ -33,7 +33,7 @@ namespace SyncPoint365.Service.Services
             return new PagedList<AbsenceRequestDTO>(paged, dtos);
         }
 
-        public async Task<AbsenceRequestStatus> ChangeAbsenceRequestStatusAsync(int id, AbsenceRequestStatus status, CancellationToken cancellationToken = default)
+        public async Task<AbsenceRequestStatus> ChangeAbsenceRequestStatusAsync(int id, AbsenceRequestStatus status, string? postComment, CancellationToken cancellationToken = default)
         {
             var absenceRequest = await _repository.GetByIdAsync(id);
             if (absenceRequest == null)
@@ -42,11 +42,12 @@ namespace SyncPoint365.Service.Services
             }
 
             absenceRequest.AbsenceRequestStatus = status;
+            absenceRequest.PostComment = postComment;
 
             _repository.Update(absenceRequest);
             await _repository.SaveChangesAsync(cancellationToken);
 
-            return absenceRequest.AbsenceRequestStatus;
+            return absenceRequest;
         }
     }
 }
