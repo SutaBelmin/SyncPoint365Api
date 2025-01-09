@@ -16,7 +16,5 @@ namespace SyncPoint365.Repository.Common.Interfaces
 
         Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default);
 
-        Task<bool> DeleteUserImageAsync(int userId, CancellationToken cancellationToken = default);
-
     }
 }

@@ -59,27 +59,6 @@ namespace SyncPoint365.Repository.Repositories
                                                              .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
 
-        public async Task<bool> DeleteUserImageAsync(int userId, CancellationToken cancellationToken = default)
-        {
-            var user = await DbSet.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
-            if (user == null || string.IsNullOrEmpty(user.ImagePath))
-            {
-                return false;
-            }
-
-            var userImagesPath = _configuration["FileSettings:UserImagesPath"]!;
-            var filePath = Path.Combine(userImagesPath, user.ImagePath);
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-            user.ImagePath = null;
-            DbSet.Update(user);
-            await SaveChangesAsync();
-
-            return true;
-        }
-
     }
 }
 

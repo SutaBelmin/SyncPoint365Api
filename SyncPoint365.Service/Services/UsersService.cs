@@ -31,6 +31,8 @@ namespace SyncPoint365.Service.Services
 
             var entity = Mapper.Map<User>(dto);
 
+            entity.IsActive = true;
+
             entity.PasswordSalt = Cryptography.GenerateSalt(); ;
             entity.PasswordHash = Cryptography.GenerateHash(dto.Password, entity.PasswordSalt);
 
@@ -80,13 +82,26 @@ namespace SyncPoint365.Service.Services
             {
                 if (!string.IsNullOrEmpty(entity.ImagePath))
                 {
-                    var oldFilePath = Path.Combine(_configuration["FileSettings:UserImagesPath"]!, entity.ImagePath);
+                    var oldFilePath = Path.Combine(_configuration["FileSettings:UploadsDirectory"]!, entity.ImagePath);
                     if (File.Exists(oldFilePath))
                     {
                         File.Delete(oldFilePath);
                     }
                 }
                 entity.ImagePath = await HandleImageUpload(dto.ImageFile, entity.Id, cancellationToken);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(entity.ImagePath))
+                {
+                    var oldPathFile = Path.Combine(_configuration["FileSettings:UploadsDirectory"]!, entity.ImagePath);
+                    if (File.Exists(oldPathFile))
+                    {
+                        File.Delete(oldPathFile);
+                    }
+
+                    entity.ImagePath = null;
+                }
             }
 
             _repository.Update(entity);
@@ -170,8 +185,8 @@ namespace SyncPoint365.Service.Services
             }
 
             var uniqueFileName = $"{entityId}{extension}";
-            var relativePath = Path.Combine(_configuration["FileSettings:UserImagesPath"]!, uniqueFileName);
-            var filePath = Path.Combine(_configuration["FileSettings:UploadDirectory"]!, relativePath);
+            var relativePath = Path.Combine(_configuration["FileSettings:UploadsDirectory"]!, uniqueFileName);
+            var filePath = Path.Combine(_configuration["FileSettings:RootDirectory"]!, relativePath);
 
             Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
 
@@ -182,17 +197,5 @@ namespace SyncPoint365.Service.Services
 
             return relativePath;
         }
-
-        public async Task<bool> DeleteUserImageAsync(int userId, CancellationToken cancellationToken = default)
-        {
-            var user = await _repository.GetByUserIdAsync(userId, cancellationToken);
-            if (user == null)
-            {
-                throw new Exception("User not found!");
-            }
-
-            return await _repository.DeleteUserImageAsync(userId, cancellationToken);
-        }
-
     }
 }
