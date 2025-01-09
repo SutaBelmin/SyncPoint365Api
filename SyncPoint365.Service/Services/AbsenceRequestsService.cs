@@ -47,7 +47,7 @@ namespace SyncPoint365.Service.Services
             _repository.Update(absenceRequest);
             await _repository.SaveChangesAsync(cancellationToken);
 
-            return absenceRequest;
+            return absenceRequest.AbsenceRequestStatus;
         }
     }
 }
