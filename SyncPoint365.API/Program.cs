@@ -1,10 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SyncPoint365.Repository;
 using SyncPoint365.Repository.Seed;
 using SyncPoint365.Service;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace SyncPoint365.API
@@ -64,33 +61,7 @@ namespace SyncPoint365.API
                                      .AllowAnyHeader());
             });
 
-            builder.Services.AddAuthentication(opt =>
-            {
-                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidAudience = builder.Configuration["JwtSettings:Audience"],
-                        ValidateAudience = false,
-                        RequireExpirationTime = false,
-                        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-                        ValidateIssuer = false,
-                        ValidateLifetime = false,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
-                    };
-                });
-
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("SuperAdminPolicy", policy => policy.RequireRole("SuperAdministrator"));
-                options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Administrator"));
-                options.AddPolicy("EmployeePolicy", policy => policy.RequireRole("Employee"));
-            });
+            builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
 
             var app = builder.Build();
             app.UseCors("AllowAllOrigins");
@@ -103,10 +74,6 @@ namespace SyncPoint365.API
                 CitiesSeed.Seed(context);
                 UsersSeed.Seed(context);
             }
-
-            app.UseSwagger();
-            app.UseSwaggerUI();
-
 
             if (app.Environment.IsDevelopment())
             {

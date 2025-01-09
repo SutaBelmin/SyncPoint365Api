@@ -26,28 +26,36 @@ namespace SyncPoint365.API
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connectionStrings!.Main));
         }
 
-        public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static void AddAuthenticationAndAuthorization(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettingsSection = configuration.GetSection("JwtSettings");
             var jwtSettings = jwtSettingsSection.Get<JWTSettings>();
 
-            services.AddAuthentication(options =>
+            services.AddAuthentication(opt =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(o =>
+                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
             {
-                o.TokenValidationParameters = new TokenValidationParameters
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
+                    ValidateAudience = true,
+                    RequireExpirationTime = false,
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidateIssuer = true,
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
                 };
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("SuperAdminPolicy", policy => policy.RequireRole("SuperAdministrator"));
+                options.AddPolicy("SuperAdminOrAdminPolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator"));
+                options.AddPolicy("SuperAdminAdminOrEmployeePolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator", "Employee"));
             });
         }
     }
