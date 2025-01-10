@@ -78,7 +78,19 @@ namespace SyncPoint365.Service.Services
 
             Mapper.Map(dto, entity);
 
-            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+            if (dto.IsImageDeleted)
+            {
+                if (!string.IsNullOrEmpty(entity.ImagePath))
+                {
+                    var oldFilePath = Path.Combine(_configuration["FileSettings:UploadsDirectory"]!, entity.ImagePath);
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
+                    entity.ImagePath = null;
+                }
+            }
+            else if (dto.ImageFile != null && dto.ImageFile.Length > 0)
             {
                 if (!string.IsNullOrEmpty(entity.ImagePath))
                 {
@@ -90,23 +102,11 @@ namespace SyncPoint365.Service.Services
                 }
                 entity.ImagePath = await HandleImageUpload(dto.ImageFile, entity.Id, cancellationToken);
             }
-            else
-            {
-                if (!string.IsNullOrEmpty(entity.ImagePath))
-                {
-                    var oldPathFile = Path.Combine(_configuration["FileSettings:UploadsDirectory"]!, entity.ImagePath);
-                    if (File.Exists(oldPathFile))
-                    {
-                        File.Delete(oldPathFile);
-                    }
-
-                    entity.ImagePath = null;
-                }
-            }
 
             _repository.Update(entity);
             await _repository.SaveChangesAsync(cancellationToken);
         }
+
 
 
         public async Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)

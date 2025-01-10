@@ -15,6 +15,6 @@ namespace SyncPoint365.Core.DTOs.Users
         public Role Role { get; set; }
         public int CityId { get; set; }
         public IFormFile? ImageFile { get; set; }
-
+        public bool IsImageDeleted { get; set; }
     }
 }
