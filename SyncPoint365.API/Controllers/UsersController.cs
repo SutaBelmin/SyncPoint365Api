@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SyncPoint365.API.RESTModels;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Helpers;
@@ -6,7 +7,7 @@ using SyncPoint365.Service.Common.Interfaces;
 
 namespace SyncPoint365.API.Controllers
 {
-    //[Authorize(Policy = "SuperAdminPolicy")]
+    [Authorize(Policy = "SuperAdminOrAdminPolicy")]
     [Route("[controller]")]
     [ApiController]
     public class UsersController : BaseController<UserDTO, UserAddDTO, UserUpdateDTO>

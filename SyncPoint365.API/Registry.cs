@@ -55,7 +55,7 @@ namespace SyncPoint365.API
             {
                 options.AddPolicy("SuperAdminPolicy", policy => policy.RequireRole("SuperAdministrator"));
                 options.AddPolicy("SuperAdminOrAdminPolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator"));
-                options.AddPolicy("SuperAdminAdminOrEmployeePolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator", "Employee"));
+                options.AddPolicy("SuperAdminOrAdminOrEmployeePolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator", "Employee"));
             });
         }
     }
