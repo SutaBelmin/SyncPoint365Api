@@ -7,7 +7,7 @@ using SyncPoint365.Service.Common.Interfaces;
 
 namespace SyncPoint365.API.Controllers
 {
-    [Authorize(Policy = "SuperAdminOrAdminPolicy")]
+    [Authorize(Policy = "SuperAdminPolicyAdminPolicy")]
     [Route("[controller]")]
     [ApiController]
     public class UsersController : BaseController<UserDTO, UserAddDTO, UserUpdateDTO>

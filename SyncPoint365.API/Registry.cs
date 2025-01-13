@@ -26,7 +26,7 @@ namespace SyncPoint365.API
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connectionStrings!.Main));
         }
 
-        public static void AddAuthenticationAndAuthorization(this IServiceCollection services, IConfiguration configuration)
+        public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettingsSection = configuration.GetSection("JwtSettings");
             var jwtSettings = jwtSettingsSection.Get<JWTSettings>();
@@ -50,13 +50,17 @@ namespace SyncPoint365.API
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
                 };
             });
+        }
 
+        public static void AddAuthorization(this IServiceCollection services)
+        {
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("SuperAdminPolicy", policy => policy.RequireRole("SuperAdministrator"));
-                options.AddPolicy("SuperAdminOrAdminPolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator"));
-                options.AddPolicy("SuperAdminOrAdminOrEmployeePolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator", "Employee"));
+                options.AddPolicy("SuperAdminPolicyAdminPolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator"));
+                options.AddPolicy("SuperAdminPolicyAdminPolicyEmployeePolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator", "Employee"));
             });
         }
+
     }
 }

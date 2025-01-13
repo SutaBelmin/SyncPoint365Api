@@ -8,7 +8,7 @@ using SyncPoint365.Service.Common.Interfaces;
 
 namespace SyncPoint365.API.Controllers
 {
-    [Authorize(Policy = "SuperAdminOrAdminOrEmployeePolicy")]
+    [Authorize(Policy = "SuperAdminPolicyAdminPolicyEmployeePolicy")]
     [Route("absence-requests")]
     [ApiController]
     public class AbsenceRequestsController : BaseController<AbsenceRequestDTO, AbsenceRequestAddDTO, AbsenceRequestUpdateDTO>

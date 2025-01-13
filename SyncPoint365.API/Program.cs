@@ -1,6 +1,5 @@
 using Microsoft.OpenApi.Models;
 using SyncPoint365.Repository;
-using SyncPoint365.Repository.Seed;
 using SyncPoint365.Service;
 using System.Text.Json.Serialization;
 
@@ -61,19 +60,12 @@ namespace SyncPoint365.API
                                      .AllowAnyHeader());
             });
 
-            builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
+            builder.Services.AddAuthentication(builder.Configuration);
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
             app.UseCors("AllowAllOrigins");
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetService<DatabaseContext>();
-                context.Database.EnsureCreated();
-                CountriesSeed.Seed(context);
-                CitiesSeed.Seed(context);
-                UsersSeed.Seed(context);
-            }
 
             if (app.Environment.IsDevelopment())
             {
