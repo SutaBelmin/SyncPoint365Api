@@ -13,6 +13,7 @@ namespace SyncPoint365.Repository
             services.AddScoped<ICountriesRepository, CountriesRepository>();
             services.AddScoped<IAbsenceRequestTypesRepository, AbsenceRequestTypesRepository>();
             services.AddScoped<ICitiesRepository, CitiesRepository>();
+            services.AddScoped<ICompanyDocumentsRepository, CompanyDocumentsRepository>();
         }
     }
 }
