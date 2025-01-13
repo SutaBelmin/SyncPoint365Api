@@ -31,7 +31,7 @@ namespace SyncPoint365.API.Controllers
             return Ok(data);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("Change-Status", Name = "SyncPoint365-ChangeStatus")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
