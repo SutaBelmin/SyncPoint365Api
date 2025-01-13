@@ -16,6 +16,9 @@ namespace SyncPoint365.API
 
             var jwtSettingsSection = configuration.GetSection("JwtSettings");
             services.Configure<JWTSettings>(jwtSettingsSection);
+
+            var fileSettings = configuration.GetSection("FileSettings");
+            services.Configure<FileSettings>(fileSettings);
         }
 
         public static void AddDatabase(this IServiceCollection services, IConfiguration configuration)

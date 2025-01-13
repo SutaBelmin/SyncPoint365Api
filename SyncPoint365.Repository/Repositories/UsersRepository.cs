@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Core.Enums;
 using SyncPoint365.Core.Helpers;
@@ -11,10 +10,10 @@ namespace SyncPoint365.Repository.Repositories
 {
     public class UsersRepository : BaseRepository<User>, IUsersRepository
     {
-        private readonly IConfiguration _configuration;
-        public UsersRepository(DatabaseContext databaseContext, IConfiguration configuration) : base(databaseContext)
+
+        public UsersRepository(DatabaseContext databaseContext) : base(databaseContext)
         {
-            _configuration = configuration;
+
         }
 
         public async Task<User?> GetByUserIdAsync(int id, CancellationToken cancellationToken = default)
