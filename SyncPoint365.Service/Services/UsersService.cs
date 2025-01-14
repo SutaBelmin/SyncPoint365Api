@@ -80,13 +80,15 @@ namespace SyncPoint365.Service.Services
 
             string? newImagePath = null;
 
+            var uploadsDirectory = Path.Combine(_configuration["FileSettings:RootDirectory"]!, _configuration["FileSettings:UploadsDirectory"]!);
+
             try
             {
                 if (dto.IsImageDeleted)
                 {
                     if (!string.IsNullOrEmpty(entity.ImagePath))
                     {
-                        var oldFilePath = Path.Combine(_configuration["FileSettings:UploadsDirectory"]!, entity.ImagePath);
+                        var oldFilePath = Path.Combine(uploadsDirectory, entity.ImagePath);
                         if (File.Exists(oldFilePath))
                         {
                             File.Delete(oldFilePath);
@@ -98,7 +100,7 @@ namespace SyncPoint365.Service.Services
                 {
                     if (!string.IsNullOrEmpty(entity.ImagePath))
                     {
-                        var oldFilePath = Path.Combine(_configuration["FileSettings:UploadsDirectory"]!, entity.ImagePath);
+                        var oldFilePath = Path.Combine(uploadsDirectory, entity.ImagePath);
                         if (File.Exists(oldFilePath))
                         {
                             File.Delete(oldFilePath);
@@ -116,7 +118,7 @@ namespace SyncPoint365.Service.Services
             {
                 if (!string.IsNullOrEmpty(newImagePath))
                 {
-                    var newFilePath = Path.Combine(_configuration["FileSettings:UploadsDirectory"]!, newImagePath);
+                    var newFilePath = Path.Combine(uploadsDirectory, newImagePath);
                     if (File.Exists(newFilePath))
                     {
                         File.Delete(newFilePath);
@@ -125,10 +127,7 @@ namespace SyncPoint365.Service.Services
 
                 throw;
             }
-
         }
-
-
 
         public async Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
         {
@@ -144,6 +143,7 @@ namespace SyncPoint365.Service.Services
 
             return user.IsActive;
         }
+
         public async Task<bool> ChangePasswordAsync(int id, string password, CancellationToken cancellationToken = default)
         {
             var user = await _repository.GetByUserIdAsync(id, cancellationToken);
