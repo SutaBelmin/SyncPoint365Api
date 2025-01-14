@@ -1,8 +1,11 @@
-﻿using SyncPoint365.Core.DTOs.CompanyDocuments;
+﻿using Microsoft.AspNetCore.Mvc;
+using SyncPoint365.Core.DTOs.CompanyDocuments;
 using SyncPoint365.Service.Common.Interfaces;
 
 namespace SyncPoint365.API.Controllers
 {
+    [Route("[controller]")]
+    [ApiController]
     public class CompanyDocumentsController : BaseController<CompanyDocumentDTO, CompanyDocumentAddDTO, CompanyDocumentUpdateDTO>
     {
         private readonly ICompanyDocumentsService _companyDocumentsService;
@@ -10,5 +13,6 @@ namespace SyncPoint365.API.Controllers
         {
             _companyDocumentsService = companyDocumentsService;
         }
+
     }
 }
