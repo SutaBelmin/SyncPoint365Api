@@ -57,9 +57,18 @@ namespace SyncPoint365.API
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("SuperAdminPolicy", policy => policy.RequireRole("SuperAdministrator"));
-                options.AddPolicy("SuperAdminPolicyAdminPolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator"));
-                options.AddPolicy("SuperAdminPolicyAdminPolicyEmployeePolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator", "Employee"));
+                options.AddPolicy("AdminPolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator"));
+                options.AddPolicy("AdminEmployeePolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator", "Employee"));
             });
+        }
+        public static void InitializeDatabase(this IServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<DatabaseContext>();
+                context.Database.EnsureCreated();
+                DatabaseSeed.Seed(context);
+            }
         }
 
     }

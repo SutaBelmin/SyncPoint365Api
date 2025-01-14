@@ -7,7 +7,6 @@ using SyncPoint365.Service.Common.Interfaces;
 
 namespace SyncPoint365.API.Controllers
 {
-    [Authorize(Policy = "SuperAdminPolicyAdminPolicy")]
     [Route("[controller]")]
     [ApiController]
     public class UsersController : BaseController<UserDTO, UserAddDTO, UserUpdateDTO>
@@ -21,6 +20,7 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("Get-Users", Name = "SyncPoint365-GetUsers")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> GetUsersListAsync(CancellationToken cancellationToken = default)
         {
             var data = await _usersService.GetUsersListAsync();
@@ -33,6 +33,7 @@ namespace SyncPoint365.API.Controllers
 
         [HttpPost]
         [Route("Change-Status", Name = "SyncPoint365-ChangeStatus")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
         {
             try
@@ -48,6 +49,7 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("Email-Exists", Name = "SyncPoint365-EmailExists")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<bool> EmailExists(string email)
         {
 
@@ -56,6 +58,7 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("Paged", Name = "SyncPoint365-GetUsersPagedListAsync")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             var data = await _usersService.GetUsersPagedListAsync(isActive, query, roleId, orderBy, page, pageSize, cancellationToken);
@@ -68,6 +71,7 @@ namespace SyncPoint365.API.Controllers
 
         [HttpPut]
         [Route("Change-Password", Name = "SyncPoint365-ChangePassword")]
+        [Authorize(Policy = "AdminEmployeePolicy")]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] UserChangePasswordModel model, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)

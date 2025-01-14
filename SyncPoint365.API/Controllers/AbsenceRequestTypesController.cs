@@ -17,7 +17,7 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("list", Name = "SyncPoint365-GetAbsenceRequestTypesList")]
-        [Authorize(Policy = "SuperAdminPolicyAdminPolicyEmployeePolicy")]
+        [Authorize(Policy = "AdminEmployeePolicy")]
         public async Task<IActionResult> GetAbsenceRequestTypesListAsync(bool? isActive = null, CancellationToken cancellationToken = default)
         {
             var items = await _absenceRequestTypeService.GetAbsenceRequestTypesListAsync(isActive);
@@ -30,7 +30,7 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("paged", Name = "SyncPoint365-GetAbsenceRequestTypesPagedListAsync")]
-        [Authorize(Policy = "SuperAdminPolicyAdminPolicy")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> GetAbsenceRequestTypesPagedListAsync(bool? isActive = null, string? query = null, string? orderBy = null,
             int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {

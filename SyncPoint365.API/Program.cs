@@ -66,6 +66,7 @@ namespace SyncPoint365.API
             var app = builder.Build();
             app.UseCors("AllowAllOrigins");
 
+            app.Services.InitializeDatabase();
 
             if (app.Environment.IsDevelopment())
             {
