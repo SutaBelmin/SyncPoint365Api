@@ -31,24 +31,45 @@ namespace SyncPoint365.API
             var jwtSettingsSection = configuration.GetSection("JwtSettings");
             var jwtSettings = jwtSettingsSection.Get<JWTSettings>();
 
-            services.AddAuthentication(options =>
+            services.AddAuthentication(opt =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(o =>
+                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
             {
-                o.TokenValidationParameters = new TokenValidationParameters
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
+                    ValidateAudience = true,
+                    RequireExpirationTime = false,
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidateIssuer = true,
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
                 };
             });
         }
+
+        public static void AddAuthorization(this IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("SuperAdminPolicy", policy => policy.RequireRole("SuperAdministrator"));
+                options.AddPolicy("AdminPolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator"));
+                options.AddPolicy("AdminEmployeePolicy", policy => policy.RequireRole("SuperAdministrator", "Administrator", "Employee"));
+            });
+        }
+        public static void InitializeDatabase(this IServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<DatabaseContext>();
+                context.Database.EnsureCreated();
+                DatabaseSeed.Seed(context);
+            }
+        }
+
     }
 }

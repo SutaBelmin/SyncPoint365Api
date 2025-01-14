@@ -1,3 +1,4 @@
+using Microsoft.OpenApi.Models;
 using SyncPoint365.Repository;
 using SyncPoint365.Service;
 using System.Text.Json.Serialization;
@@ -23,7 +24,34 @@ namespace SyncPoint365.API
             builder.Services.AddApplication();
             builder.Services.AddValidators();
 
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(opt =>
+            {
+                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
+                opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                });
+                opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
+            });
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigins",
@@ -37,6 +65,8 @@ namespace SyncPoint365.API
 
             var app = builder.Build();
             app.UseCors("AllowAllOrigins");
+
+            app.Services.InitializeDatabase();
 
             if (app.Environment.IsDevelopment())
             {

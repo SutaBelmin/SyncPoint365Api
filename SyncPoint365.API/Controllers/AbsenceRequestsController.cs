@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SyncPoint365.API.RESTModels;
 using SyncPoint365.Core.DTOs.AbsenceRequests;
 using SyncPoint365.Core.Helpers;
@@ -7,6 +8,7 @@ using SyncPoint365.Service.Common.Interfaces;
 
 namespace SyncPoint365.API.Controllers
 {
+    [Authorize(Policy = "AdminEmployeePolicy")]
     [Route("absence-requests")]
     [ApiController]
     public class AbsenceRequestsController : BaseController<AbsenceRequestDTO, AbsenceRequestAddDTO, AbsenceRequestUpdateDTO>

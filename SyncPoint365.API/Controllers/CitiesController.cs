@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SyncPoint365.Core.DTOs.Cities;
 using SyncPoint365.Core.Helpers;
 using SyncPoint365.Service.Common.Interfaces;
 
 namespace SyncPoint365.API.Controllers
 {
+    [Authorize(Policy = "SuperAdminPolicy")]
     [Route("[controller]")]
     [ApiController]
     public class CitiesController : BaseController<CityDTO, CityAddDTO, CityUpdateDTO>
