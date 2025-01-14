@@ -362,8 +362,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-/wwwroot/uploads/
-*.png
-*.jpg
-*.jpeg
-*.gif
+SyncPoint365.API/wwwroot/uploads/
+
+
+
+
