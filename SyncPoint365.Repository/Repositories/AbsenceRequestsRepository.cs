@@ -25,7 +25,8 @@ namespace SyncPoint365.Repository.Repositories
                 && ((!dateFrom.HasValue || (a.DateFrom >= dateFrom && a.DateFrom <= dateTo))
                 || (!dateTo.HasValue || (a.DateTo <= dateTo && a.DateTo >= dateFrom)))
                 && (!year.HasValue || (a.DateTo.Year == year || a.DateFrom.Year == year))))
-                .Sort(string.IsNullOrWhiteSpace(orderBy) ? "user.lastName|asc, user|firstName|asc, dateFrom|asc, dateTo|asc" : orderBy).ToPagedListAsync(page, pageSize);
+                .Sort(string.IsNullOrWhiteSpace(orderBy) ? "AbsenceRequestStatus|asc, DateCreated|asc, user.lastName|asc, user|firstName|asc" : orderBy)
+                .ToPagedListAsync(page, pageSize);
         }
     }
 }
