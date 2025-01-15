@@ -20,21 +20,28 @@ namespace SyncPoint365.Service.Services
 
         public override async Task AddAsync(CompanyDocumentAddDTO dto, CancellationToken cancellationToken = default)
         {
-
             var companyDocument = _mapper.Map<CompanyDocument>(dto);
 
-            using (var memoryStream = new MemoryStream())
-            {
-                await dto.File.CopyToAsync(memoryStream);
-                companyDocument.File = memoryStream.ToArray();
-            }
-
-            companyDocument.ContentType = dto.ContentType;
-            companyDocument.IsVisible = dto.IsVisible;
-            companyDocument.UserId = dto.UserId;
+            companyDocument.ContentType = dto.File.ContentType;
 
             await _repository.AddAsync(companyDocument, cancellationToken);
+            await _repository.SaveChangesAsync(cancellationToken);
+        }
 
+        public override async Task UpdateAsync(CompanyDocumentUpdateDTO dto, CancellationToken cancellationToken = default)
+        {
+            var companyDocument = await _repository.GetByIdAsync(dto.Id);
+            if (companyDocument == null)
+            {
+                throw new KeyNotFoundException($"CompanyDocument with Id {dto.Id} not found.");
+            }
+
+            _mapper.Map(dto, companyDocument);
+
+            companyDocument.ContentType = dto.File.ContentType;
+
+            _repository.Update(companyDocument);
+            await _repository.SaveChangesAsync(cancellationToken);
         }
 
     }

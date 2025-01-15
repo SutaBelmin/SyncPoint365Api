@@ -1,10 +1,11 @@
-﻿namespace SyncPoint365.Core.DTOs.CompanyDocuments
+﻿using Microsoft.AspNetCore.Http;
+
+namespace SyncPoint365.Core.DTOs.CompanyDocuments
 {
     public class CompanyDocumentUpdateDTO : BaseUpdateDTO
     {
         public string Name { get; set; } = default!;
-        public byte[] File { get; set; } = default!;
-        public string ContentType { get; set; } = default!;
+        public IFormFile File { get; set; } = default!;
         public bool IsVisible { get; set; }
         public int UserId { get; set; }
     }
