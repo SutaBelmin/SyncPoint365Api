@@ -77,40 +77,23 @@ namespace SyncPoint365.Service.Services
             }
 
             Mapper.Map(dto, entity);
-
             string? newImagePath = null;
-
             var uploadsDirectory = Path.Combine(_configuration["FileSettings:RootDirectory"]!, _configuration["FileSettings:UploadsDirectory"]!);
 
             try
             {
                 if (dto.IsImageDeleted)
                 {
-                    if (!string.IsNullOrEmpty(entity.ImagePath))
-                    {
-                        var oldFilePath = Path.Combine(uploadsDirectory, entity.ImagePath);
-                        if (File.Exists(oldFilePath))
-                        {
-                            File.Delete(oldFilePath);
-                        }
-                        entity.ImagePath = null;
-                    }
+                    DeleteImage(uploadsDirectory, entity.ImagePath);
+                    entity.ImagePath = null;
                 }
                 else if (dto.ImageFile != null && dto.ImageFile.Length > 0)
                 {
-                    if (!string.IsNullOrEmpty(entity.ImagePath))
-                    {
-                        var oldFilePath = Path.Combine(uploadsDirectory, entity.ImagePath);
-                        if (File.Exists(oldFilePath))
-                        {
-                            File.Delete(oldFilePath);
-                        }
-                    }
+                    DeleteImage(uploadsDirectory, entity.ImagePath);
 
                     newImagePath = await HandleImageUpload(dto.ImageFile, entity.Id);
                     entity.ImagePath = newImagePath;
                 }
-
                 _repository.Update(entity);
                 await _repository.SaveChangesAsync(cancellationToken);
             }
@@ -118,14 +101,22 @@ namespace SyncPoint365.Service.Services
             {
                 if (!string.IsNullOrEmpty(newImagePath))
                 {
-                    var newFilePath = Path.Combine(uploadsDirectory, newImagePath);
-                    if (File.Exists(newFilePath))
-                    {
-                        File.Delete(newFilePath);
-                    }
+                    DeleteImage(uploadsDirectory, newImagePath);
                 }
 
                 throw;
+            }
+        }
+
+        private void DeleteImage(string uploadsDirectory, string? imagePath)
+        {
+            if (!string.IsNullOrEmpty(imagePath))
+            {
+                var oldFilePath = Path.Combine(uploadsDirectory, imagePath);
+                if (File.Exists(oldFilePath))
+                {
+                    File.Delete(oldFilePath);
+                }
             }
         }
 
@@ -179,7 +170,7 @@ namespace SyncPoint365.Service.Services
                 if (File.Exists(filePath))
                 {
                     var fileBytes = File.ReadAllBytesAsync(filePath, cancellationToken);
-                    userDTO.ImagePath = Convert.ToBase64String(await fileBytes);
+                    userDTO.ImageContent = Convert.ToBase64String(await fileBytes);
                 }
             }
 
