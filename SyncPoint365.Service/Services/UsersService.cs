@@ -78,18 +78,17 @@ namespace SyncPoint365.Service.Services
 
             Mapper.Map(dto, entity);
             string? newImagePath = null;
-            var uploadsDirectory = Path.Combine(_configuration["FileSettings:RootDirectory"]!, _configuration["FileSettings:UploadsDirectory"]!);
 
             try
             {
                 if (dto.IsImageDeleted)
                 {
-                    DeleteImage(uploadsDirectory, entity.ImagePath);
+                    DeleteImage(entity.ImagePath);
                     entity.ImagePath = null;
                 }
                 else if (dto.ImageFile != null && dto.ImageFile.Length > 0)
                 {
-                    DeleteImage(uploadsDirectory, entity.ImagePath);
+                    DeleteImage(entity.ImagePath);
 
                     newImagePath = await HandleImageUpload(dto.ImageFile, entity.Id);
                     entity.ImagePath = newImagePath;
@@ -101,15 +100,17 @@ namespace SyncPoint365.Service.Services
             {
                 if (!string.IsNullOrEmpty(newImagePath))
                 {
-                    DeleteImage(uploadsDirectory, newImagePath);
+                    DeleteImage(newImagePath);
                 }
 
                 throw;
             }
         }
 
-        private void DeleteImage(string uploadsDirectory, string? imagePath)
+        private void DeleteImage(string? imagePath)
         {
+            var uploadsDirectory = Path.Combine(_configuration["FileSettings:RootDirectory"]!, _configuration["FileSettings:UploadsDirectory"]!);
+
             if (!string.IsNullOrEmpty(imagePath))
             {
                 var oldFilePath = Path.Combine(uploadsDirectory, imagePath);
