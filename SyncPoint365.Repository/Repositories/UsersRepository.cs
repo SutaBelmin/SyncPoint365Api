@@ -10,8 +10,10 @@ namespace SyncPoint365.Repository.Repositories
 {
     public class UsersRepository : BaseRepository<User>, IUsersRepository
     {
+
         public UsersRepository(DatabaseContext databaseContext) : base(databaseContext)
         {
+
         }
 
         public async Task<User?> GetByUserIdAsync(int id, CancellationToken cancellationToken = default)

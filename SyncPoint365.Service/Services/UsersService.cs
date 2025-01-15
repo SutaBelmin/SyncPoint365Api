@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Core.Helpers;
@@ -14,22 +17,29 @@ namespace SyncPoint365.Service.Services
     {
         private readonly IUsersRepository _repository;
         protected readonly IMapper _mapper;
-
-        public UsersService(IUsersRepository repository, IMapper mapper, IValidator<UserAddDTO> addValidator, IValidator<UserUpdateDTO> updateValidator) : base(repository, mapper, addValidator, updateValidator)
+        private readonly IConfiguration _configuration;
+        public UsersService(IUsersRepository repository, IMapper mapper, IValidator<UserAddDTO> addValidator, IValidator<UserUpdateDTO> updateValidator, IConfiguration configuration) : base(repository, mapper, addValidator, updateValidator)
         {
             _repository = repository;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
-        public override async Task AddAsync(UserAddDTO dto, CancellationToken cancellationToken = default)
+        public override async Task AddAsync([FromForm] UserAddDTO dto, CancellationToken cancellationToken = default)
         {
             await AddValidator.ValidateAndThrowAsync(dto, cancellationToken);
 
             var entity = Mapper.Map<User>(dto);
 
+            entity.IsActive = true;
+
             entity.PasswordSalt = Cryptography.GenerateSalt(); ;
             entity.PasswordHash = Cryptography.GenerateHash(dto.Password, entity.PasswordSalt);
 
+            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+            {
+                entity.ImagePath = await HandleImageUpload(dto.ImageFile, entity.Id);
+            }
 
             await _repository.AddAsync(entity, cancellationToken);
             await _repository.SaveChangesAsync(cancellationToken);
@@ -56,7 +66,7 @@ namespace SyncPoint365.Service.Services
             return new PagedList<UserDTO>(usersList, dtos);
         }
 
-        public override async Task UpdateAsync(UserUpdateDTO dto, CancellationToken cancellationToken = default)
+        public override async Task UpdateAsync([FromForm] UserUpdateDTO dto, CancellationToken cancellationToken = default)
         {
             await UpdateValidator.ValidateAndThrowAsync(dto, cancellationToken);
 
@@ -67,10 +77,50 @@ namespace SyncPoint365.Service.Services
             }
 
             Mapper.Map(dto, entity);
+            string? newImagePath = null;
 
-            _repository.Update(entity);
-            await _repository.SaveChangesAsync(cancellationToken);
+            try
+            {
+                if (dto.IsImageDeleted)
+                {
+                    DeleteImage(entity.ImagePath);
+                    entity.ImagePath = null;
+                }
+                else if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+                {
+                    DeleteImage(entity.ImagePath);
+
+                    newImagePath = await HandleImageUpload(dto.ImageFile, entity.Id);
+                    entity.ImagePath = newImagePath;
+                }
+                _repository.Update(entity);
+                await _repository.SaveChangesAsync(cancellationToken);
+            }
+            catch
+            {
+                if (!string.IsNullOrEmpty(newImagePath))
+                {
+                    DeleteImage(newImagePath);
+                }
+
+                throw;
+            }
         }
+
+        private void DeleteImage(string? imagePath)
+        {
+            var uploadsDirectory = Path.Combine(_configuration["FileSettings:RootDirectory"]!, _configuration["FileSettings:UploadsDirectory"]!);
+
+            if (!string.IsNullOrEmpty(imagePath))
+            {
+                var oldFilePath = Path.Combine(uploadsDirectory, imagePath);
+                if (File.Exists(oldFilePath))
+                {
+                    File.Delete(oldFilePath);
+                }
+            }
+        }
+
         public async Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
         {
             var user = await _repository.GetByUserIdAsync(id, cancellationToken);
@@ -85,6 +135,7 @@ namespace SyncPoint365.Service.Services
 
             return user.IsActive;
         }
+
         public async Task<bool> ChangePasswordAsync(int id, string password, CancellationToken cancellationToken = default)
         {
             var user = await _repository.GetByUserIdAsync(id, cancellationToken);
@@ -103,5 +154,60 @@ namespace SyncPoint365.Service.Services
             return true;
         }
 
+        public override async Task<UserDTO?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var user = await _repository.GetByIdAsync(id);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            var userDTO = _mapper.Map<UserDTO>(user);
+
+            if (!string.IsNullOrEmpty(user.ImagePath))
+            {
+                var filePath = Path.Combine(_configuration["FileSettings:RootDirectory"]!, user.ImagePath);
+                if (File.Exists(filePath))
+                {
+                    var fileBytes = File.ReadAllBytesAsync(filePath, cancellationToken);
+                    userDTO.ImageContent = Convert.ToBase64String(await fileBytes);
+                }
+            }
+
+            return userDTO;
+        }
+
+        private async Task<string> HandleImageUpload(IFormFile? imageFile, int userId)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            var extension = Path.GetExtension(imageFile.FileName).ToLower();
+            var allowedExtension = _configuration.GetSection("FileSettings:AllowedExtensions").Get<List<string>>();
+
+            if (allowedExtension == null || !allowedExtension.Contains(extension))
+            {
+                throw new Exception("Unsupported file format!");
+            }
+
+            if (!imageFile.ContentType.StartsWith("image/"))
+            {
+                throw new Exception("Invalid file type!");
+            }
+
+            var filePath = Path.Combine(_configuration["FileSettings:RootDirectory"]!, _configuration["FileSettings:UploadsDirectory"]!, $"{userId}{extension}");
+
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream);
+            }
+
+            return Path.Combine(_configuration["FileSettings:UploadsDirectory"]!, $"{userId}{extension}");
+        }
     }
 }

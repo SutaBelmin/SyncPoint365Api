@@ -89,5 +89,6 @@ namespace SyncPoint365.API.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
     }
 }

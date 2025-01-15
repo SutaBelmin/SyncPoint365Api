@@ -74,6 +74,7 @@ namespace SyncPoint365.API
                 app.UseSwaggerUI();
             }
 
+
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
