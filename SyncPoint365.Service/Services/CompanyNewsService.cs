@@ -4,6 +4,7 @@ using SyncPoint365.Core.DTOs.CompanyNews;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
+using X.PagedList;
 
 namespace SyncPoint365.Service.Services
 {
@@ -19,6 +20,15 @@ namespace SyncPoint365.Service.Services
         {
             _repository = repository;
             _mapper = mapper;
+        }
+
+        public async Task<IPagedList<CompanyNewsDTO>> GetCompanyNewsPagedListAsync(DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
+        {
+            var paged = await _repository.GetCompanyNewsPagedListAsync(dateFrom, dateTo, orderBy, page, pageSize, cancellationToken: cancellationToken);
+
+            var dtos = Mapper.Map<List<CompanyNewsDTO>>(paged);
+
+            return new PagedList<CompanyNewsDTO>(paged, dtos);
         }
     }
 }
