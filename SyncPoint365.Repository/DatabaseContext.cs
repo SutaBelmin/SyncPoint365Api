@@ -16,5 +16,7 @@ namespace SyncPoint365.Repository
         public DbSet<City> Cities { get; set; }
         public DbSet<CompanyDocument> CompanyDocuments { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<CompanyNews> CompanyNews { get; set; }
+
     }
 }
