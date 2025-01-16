@@ -15,6 +15,6 @@ namespace SyncPoint365.Repository
         public DbSet<AbsenceRequestType> AbsenceRequestTypes { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<CompanyDocument> CompanyDocuments { get; set; }
-
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
