@@ -16,9 +16,9 @@ namespace SyncPoint365.Repository.Repositories
 
         }
 
-        public async Task<User?> GetByUserIdAsync(int id, CancellationToken cancellationToken = default)
+        public async override Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await DbSet.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+            return await DbSet.Include(u => u.City).FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
         public async Task<IEnumerable<User>> GetUsersListAsync(CancellationToken cancellationToken = default)

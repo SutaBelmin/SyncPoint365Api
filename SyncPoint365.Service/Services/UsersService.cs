@@ -123,7 +123,7 @@ namespace SyncPoint365.Service.Services
 
         public async Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
         {
-            var user = await _repository.GetByUserIdAsync(id, cancellationToken);
+            var user = await _repository.GetByIdAsync(id, cancellationToken);
             if (user == null)
             {
                 throw new Exception("User not found!");
@@ -138,7 +138,7 @@ namespace SyncPoint365.Service.Services
 
         public async Task<bool> ChangePasswordAsync(int id, string password, CancellationToken cancellationToken = default)
         {
-            var user = await _repository.GetByUserIdAsync(id, cancellationToken);
+            var user = await _repository.GetByIdAsync(id, cancellationToken);
             if (user == null)
             {
                 throw new Exception("User not found!");
