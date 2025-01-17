@@ -1,5 +1,8 @@
-﻿using SyncPoint365.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using SyncPoint365.Core.Entities;
+using SyncPoint365.Core.Helpers;
 using SyncPoint365.Repository.Common.Interfaces;
+using X.PagedList;
 
 namespace SyncPoint365.Repository.Repositories
 {
@@ -10,5 +13,22 @@ namespace SyncPoint365.Repository.Repositories
 
         }
 
+        public override Task<IPagedList<CompanyDocument>> GetAsync(string? query = null, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        {
+            var companyDocuments = DbSet.Include(x => x.User);
+
+            if (page == -1)
+                return companyDocuments.ToPagedListAsync(1, int.MaxValue);
+            else
+                return companyDocuments.ToPagedListAsync(page, pageSize);
+        }
+
+        public Task<IPagedList<CompanyDocument>> GetPagedDocumentsAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        {
+            return DbSet.Include(x => x.User).Where(x =>
+                                                       string.IsNullOrWhiteSpace(query) ||
+                                                       (x.Name.ToLower().Contains(query.ToLower())))
+                                                       .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
+        }
     }
 }

@@ -2,8 +2,10 @@
 using FluentValidation;
 using SyncPoint365.Core.DTOs.CompanyDocuments;
 using SyncPoint365.Core.Entities;
+using SyncPoint365.Core.Helpers;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
+using X.PagedList;
 
 namespace SyncPoint365.Service.Services
 {
@@ -44,5 +46,14 @@ namespace SyncPoint365.Service.Services
             await _repository.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task<IPagedList<CompanyDocumentDTO>> GetPagedDocumentsAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        {
+            var pagedList = await _repository.GetPagedDocumentsAsync(query, page, pageSize, cancellationToken);
+
+            var dtos = Mapper.Map<List<CompanyDocumentDTO>>(pagedList);
+
+            return new PagedList<CompanyDocumentDTO>(pagedList, dtos);
+
+        }
     }
 }
