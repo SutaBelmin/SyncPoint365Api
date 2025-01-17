@@ -1,4 +1,10 @@
-﻿using System.Security.Claims;
+﻿using Microsoft.IdentityModel.Tokens;
+using SyncPoint365.API.Config;
+using SyncPoint365.Core.Entities;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SyncPoint365.API.Helpers
 {
@@ -18,6 +24,42 @@ namespace SyncPoint365.API.Helpers
                 throw new UnauthorizedAccessException("Logged user not found or does not have a role!");
 
             return user.Claims.First(c => c.Type == ClaimTypes.Role).Value;
+        public static (string JwtToken, RefreshToken RefreshToken) GenerateTokens(User user, JWTSettings jwtSettings)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.FirstName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim(ClaimTypes.Email, user.Email)
+            };
+
+            var key = Encoding.ASCII.GetBytes(jwtSettings.Key);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddMinutes(jwtSettings.Duration),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+            };
+
+            var jwtToken = tokenHandler.CreateToken(tokenDescriptor);
+
+            var refreshToken = new RefreshToken
+            {
+                Token = GenerateSecureToken(),
+                ExpirationDate = DateTime.UtcNow.AddDays(7)
+            };
+
+            return (tokenHandler.WriteToken(jwtToken), refreshToken);
+        }
+
+        private static string GenerateSecureToken()
+        {
+            using var rng = RandomNumberGenerator.Create();
+            var randomBytes = new byte[64];
+            rng.GetBytes(randomBytes);
+            return Convert.ToBase64String(randomBytes);
         }
 
     }

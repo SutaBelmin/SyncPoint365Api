@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using SyncPoint365.API.Config;
+using SyncPoint365.API.Helpers;
 using SyncPoint365.API.RESTModels;
-using SyncPoint365.Core.Entities;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Helpers;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace SyncPoint365.API.Controllers
 {
@@ -17,12 +13,14 @@ namespace SyncPoint365.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUsersRepository _usersRepository;
+        private readonly IRefreshTokensRepository _refreshTokensService;
         private readonly IOptions<JWTSettings> _jwtSettings;
 
-        public AuthController(IUsersRepository usersRepository, IConfiguration configuration, IOptions<JWTSettings> jwtSettings)
+        public AuthController(IUsersRepository usersRepository, IConfiguration configuration, IOptions<JWTSettings> jwtSettings, IRefreshTokensRepository refreshTokensService)
         {
             _usersRepository = usersRepository;
             _jwtSettings = jwtSettings;
+            _refreshTokensService = refreshTokensService;
         }
 
         [HttpPost]
@@ -43,7 +41,11 @@ namespace SyncPoint365.API.Controllers
                     return Forbid();
                 }
 
-                return Ok(new { User = user, Token = GenerateToken(user) });
+                return Ok(new
+                {
+                    User = user,
+                    Token = Auth.GenerateTokens(user, _jwtSettings.Value)
+                });
             }
             catch (UnauthorizedAccessException)
             {
@@ -51,34 +53,24 @@ namespace SyncPoint365.API.Controllers
             }
         }
 
-        private string GenerateToken(User user)
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] string refreshToken)
         {
-            var claimsIdentity = new ClaimsIdentity(new[]
+            var tokenDetails = await _refreshTokensService.GetByTokenAsync(refreshToken);
+
+            if (tokenDetails == null || tokenDetails.ExpirationDate < DateTime.UtcNow)
             {
-               new Claim("Id",user.Id.ToString()),
-               new Claim(ClaimTypes.Name, user.FirstName),
-               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-               new Claim(ClaimTypes.Role, user.Role.ToString()),
-               new Claim(ClaimTypes.Email, user.Email)
-           });
+                return Unauthorized("Invalid or expired refresh token");
+            }
 
-            var key = Encoding.ASCII.GetBytes(_jwtSettings.Value.Key);
-            var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature);
+            var user = await _usersRepository.GetByIdAsync(tokenDetails.UserId);
+            var (newJwt, newRefreshToken) = Auth.GenerateTokens(user, _jwtSettings.Value);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = claimsIdentity,
-                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.Value.Duration),
-                Issuer = _jwtSettings.Value.Issuer,
-                Audience = _jwtSettings.Value.Audience,
-                SigningCredentials = signingCredentials
-            };
+            await _refreshTokensService.GenerateAndSaveRefreshTokenAsync(user.Id);
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
+            return Ok(new { JwtToken = newJwt, RefreshToken = newRefreshToken.Token });
         }
+
 
     }
 }
