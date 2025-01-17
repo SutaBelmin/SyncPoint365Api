@@ -5,6 +5,6 @@ namespace SyncPoint365.Service.Common.Interfaces
 {
     public interface ICompanyNewsService : IBaseService<CompanyNewsDTO, CompanyNewsAddDTO, CompanyNewsUpdateDTO>
     {
-        Task<IPagedList<CompanyNewsDTO>> GetCompanyNewsPagedListAsync(DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken);
+        Task<IPagedList<CompanyNewsDTO>> GetCompanyNewsPagedListAsync(string? query, DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken);
     }
 }

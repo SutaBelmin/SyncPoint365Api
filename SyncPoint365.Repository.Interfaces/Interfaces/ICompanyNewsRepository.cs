@@ -5,6 +5,6 @@ namespace SyncPoint365.Repository.Common.Interfaces
 {
     public interface ICompanyNewsRepository : IBaseRepository<CompanyNews>
     {
-        Task<IPagedList<CompanyNews>> GetCompanyNewsPagedListAsync(DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken);
+        Task<IPagedList<CompanyNews>> GetCompanyNewsPagedListAsync(string? query, DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken);
     }
 }

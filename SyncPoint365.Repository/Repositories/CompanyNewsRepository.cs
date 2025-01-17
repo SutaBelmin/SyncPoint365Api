@@ -12,14 +12,15 @@ namespace SyncPoint365.Repository.Repositories
         {
         }
 
-        public async Task<IPagedList<CompanyNews>> GetCompanyNewsPagedListAsync(DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
+        public async Task<IPagedList<CompanyNews>> GetCompanyNewsPagedListAsync(string? query, DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
         {
 
-            var query = DbSet.Include(c => c.User).Sort(string.IsNullOrWhiteSpace(orderBy) ? "DateCreated|desc" : orderBy);
+            var includes = DbSet.Include(c => c.User);
 
-            var totalSetCount = await query.CountAsync(cancellationToken);
-
-            return await query.ToPagedListAsync(page, pageSize, totalSetCount, cancellationToken);
+            return await includes.Where(c => (string.IsNullOrWhiteSpace(query) || c.Title.ToLower().Contains(query.ToLower()))
+                && (!dateFrom.HasValue || (c.DateCreated >= dateFrom && c.DateCreated <= dateTo)))
+                .Sort(string.IsNullOrWhiteSpace(orderBy) ? "DateCreated|desc" : orderBy)
+                .ToPagedListAsync(page, pageSize);
         }
 
     }

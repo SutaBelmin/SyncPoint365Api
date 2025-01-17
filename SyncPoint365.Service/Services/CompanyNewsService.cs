@@ -22,9 +22,9 @@ namespace SyncPoint365.Service.Services
             _mapper = mapper;
         }
 
-        public async Task<IPagedList<CompanyNewsDTO>> GetCompanyNewsPagedListAsync(DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
+        public async Task<IPagedList<CompanyNewsDTO>> GetCompanyNewsPagedListAsync(string? query, DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
         {
-            var paged = await _repository.GetCompanyNewsPagedListAsync(dateFrom, dateTo, orderBy, page, pageSize, cancellationToken: cancellationToken);
+            var paged = await _repository.GetCompanyNewsPagedListAsync(query, dateFrom, dateTo, orderBy, page, pageSize, cancellationToken: cancellationToken);
 
             var dtos = Mapper.Map<List<CompanyNewsDTO>>(paged);
 
