@@ -7,6 +7,6 @@ namespace SyncPoint365.API.RESTModels
 
         public int Id { get; set; }
         public AbsenceRequestStatus Status { get; set; }
-
+        public string? PostComment { get; set; }
     }
 }

@@ -44,7 +44,7 @@ namespace SyncPoint365.API.Controllers
             }
             try
             {
-                var updatedStatus = await _absenceRequestsService.ChangeAbsenceRequestStatusAsync(model.Id, model.Status, cancellationToken);
+                var updatedStatus = await _absenceRequestsService.ChangeAbsenceRequestStatusAsync(model.Id, model.Status, model.PostComment, cancellationToken);
                 return Ok(new { AbsenceRequestStatus = updatedStatus });
             }
             catch
