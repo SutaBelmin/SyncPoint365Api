@@ -16,9 +16,6 @@ namespace SyncPoint365.API
 
             var jwtSettingsSection = configuration.GetSection("JwtSettings");
             services.Configure<JWTSettings>(jwtSettingsSection);
-
-            var fileSettings = configuration.GetSection("FileSettings");
-            services.Configure<FileSettings>(fileSettings);
         }
 
         public static void AddDatabase(this IServiceCollection services, IConfiguration configuration)
@@ -69,8 +66,13 @@ namespace SyncPoint365.API
             using (var scope = serviceProvider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetService<DatabaseContext>();
-                context.Database.EnsureCreated();
-                DatabaseSeed.Seed(context);
+
+                context.Database.Migrate();
+
+                if (!context.Users.Any())
+                {
+                    DatabaseSeed.Seed(context);
+                }
             }
         }
 
