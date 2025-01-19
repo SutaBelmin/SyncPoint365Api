@@ -18,14 +18,26 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("Paged", Name = "SyncPoint365-GetDocumentsPaged")]
-        public async Task<IActionResult> GetPagedDocumentsAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetPagedDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var data = await _companyDocumentsService.GetPagedDocumentsAsync(query, page, pageSize, cancellationToken);
+            var data = await _companyDocumentsService.GetPagedDocumentsAsync(dateFrom, dateTo, query, page, pageSize, cancellationToken);
 
             if (data == null)
                 return NotFound();
 
             return Ok(GetPagedResult(data));
+        }
+
+        [HttpPatch]
+        [Route("Update-Document-Visibility", Name = "SyncPoint365-UpdateDocumentVisibility")]
+        public async Task<IActionResult> UpdateDocumentVisibiltyAsync(int documentId, bool isVisibile, CancellationToken cancellationToken = default)
+        {
+            var result = await _companyDocumentsService.UpdateDocumentVisibiltyAsync(documentId, isVisibile, cancellationToken);
+
+            if (result)
+                return Ok(new { message = "Document visibility updated successfully." });
+
+            return NotFound();
         }
 
     }
