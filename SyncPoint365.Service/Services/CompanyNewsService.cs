@@ -30,5 +30,18 @@ namespace SyncPoint365.Service.Services
 
             return new PagedList<CompanyNewsDTO>(paged, dtos);
         }
+
+        public async Task<bool> UpdateVisibilityAsync(int id, bool isVisible, CancellationToken cancellationToken)
+        {
+            var companyNews = await _repository.GetByIdAsync(id);
+            if (companyNews == null)
+            {
+                return false;
+            }
+
+            companyNews.IsVisible = isVisible;
+            await _repository.SaveChangesAsync(cancellationToken);
+            return true;
+        }
     }
 }

@@ -28,5 +28,18 @@ namespace SyncPoint365.API.Controllers
 
             return Ok(GetPagedResult(items));
         }
+
+        [HttpPut]
+        [Route("Change-visibility", Name = "SyncPoint365-ChangeVisibility")]
+        public async Task<IActionResult> UpdateVisibility([FromQuery] int id, [FromBody] bool isVisible, CancellationToken cancellationToken)
+        {
+            var result = await _companyNewsService.UpdateVisibilityAsync(id, isVisible, cancellationToken);
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
     }
 }
