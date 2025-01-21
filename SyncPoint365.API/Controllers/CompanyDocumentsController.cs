@@ -17,10 +17,10 @@ namespace SyncPoint365.API.Controllers
 
 
         [HttpGet]
-        [Route("Paged", Name = "SyncPoint365-GetDocumentsPaged")]
-        public async Task<IActionResult> GetPagedDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        [Route("Paged", Name = "SyncPoint365-GetCompanyDocumentsPaged")]
+        public async Task<IActionResult> GetPagedCompanyDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var data = await _companyDocumentsService.GetPagedDocumentsAsync(dateFrom, dateTo, query, page, pageSize, cancellationToken);
+            var data = await _companyDocumentsService.GetPagedCompanyDocumentsAsync(dateFrom, dateTo, query, page, pageSize, cancellationToken);
 
             if (data == null)
                 return NotFound();

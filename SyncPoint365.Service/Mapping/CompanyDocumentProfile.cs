@@ -14,10 +14,18 @@ namespace SyncPoint365.Service.Mapping
                 src.File != null ? GetFileBytes(src.File) : null));
 
             CreateMap<CompanyDocumentUpdateDTO, CompanyDocument>()
-                .ForMember(dest => dest.File, opt => opt.MapFrom(src =>
-                 src.File != null ? GetFileBytes(src.File) : null));
+                .ForMember(dest => dest.File, opt =>
+                {
+                    opt.PreCondition(src => src.File != null);
+                    opt.MapFrom(src => GetFileBytes(src.File));
+                })
+                .ForAllMembers(opts =>
+                {
+                    opts.Condition((src, dest, srcMember) => srcMember != null);
+                });
 
-            CreateMap<CompanyDocumentDTO, CompanyDocument>().ReverseMap();
+            CreateMap<CompanyDocument, CompanyDocumentDTO>();
+
         }
 
         private static byte[] GetFileBytes(IFormFile file)
