@@ -25,6 +25,7 @@ namespace SyncPoint365.API.Helpers
 
             return user.Claims.First(c => c.Type == ClaimTypes.Role).Value;
         public static (string JwtToken, RefreshToken RefreshToken) GenerateTokens(User user, JWTSettings jwtSettings)
+        public static string GenerateAccessToken(User user, JWTSettings jwtSettings)
         {
             var claims = new List<Claim>
             {
@@ -44,14 +45,17 @@ namespace SyncPoint365.API.Helpers
             };
 
             var jwtToken = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(jwtToken);
+        }
 
-            var refreshToken = new RefreshToken
+        public static RefreshToken GenerateRefreshToken(User user)
+        {
+            return new RefreshToken
             {
+                UserId = user.Id,
                 Token = GenerateSecureToken(),
-                ExpirationDate = DateTime.UtcNow.AddDays(7)
+                ExpirationDate = DateTime.UtcNow.AddMinutes(30)
             };
-
-            return (tokenHandler.WriteToken(jwtToken), refreshToken);
         }
 
         private static string GenerateSecureToken()
@@ -61,6 +65,5 @@ namespace SyncPoint365.API.Helpers
             rng.GetBytes(randomBytes);
             return Convert.ToBase64String(randomBytes);
         }
-
     }
 }
