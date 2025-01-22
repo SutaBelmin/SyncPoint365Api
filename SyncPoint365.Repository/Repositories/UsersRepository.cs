@@ -47,13 +47,14 @@ namespace SyncPoint365.Repository.Repositories
             return await DbSet.AnyAsync(x => x.Email.ToLower() == email.ToLower());
         }
 
-        public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public Task<IPagedList<User>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? loggedUserRole = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             return DbSet.Include(x => x.City).Where(user =>
                                                              (string.IsNullOrEmpty(query) || (user.FirstName + " " + user.LastName).ToLower().Contains(query.ToLower()))
                                                              &&
                                                              (!isActive.HasValue || user.IsActive == isActive) &&
-                                                             (!roleId.HasValue || user.Role == (Role)roleId.Value))
+                                                             (!roleId.HasValue || user.Role == (Role)roleId.Value) &&
+                                                             (loggedUserRole != "Administrator" || user.Role == Role.Employee))
                                                              .Sort(string.IsNullOrWhiteSpace(orderBy) ? "lastName|asc" : orderBy)
                                                              .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }

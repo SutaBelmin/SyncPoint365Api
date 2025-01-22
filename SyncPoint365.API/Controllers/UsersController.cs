@@ -34,11 +34,11 @@ namespace SyncPoint365.API.Controllers
         [HttpPut]
         [Route("Change-Status", Name = "SyncPoint365-ChangeStatus")]
         [Authorize(Policy = "AdminPolicy")]
-        public async Task<IActionResult> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ChangeUserStatusAsync(int id, int loggedUser, CancellationToken cancellationToken = default)
         {
             try
             {
-                var status = await _usersService.ChangeUserStatusAsync(id, cancellationToken);
+                var status = await _usersService.ChangeUserStatusAsync(id, loggedUser, cancellationToken);
                 return Ok(new { IsActive = status });
             }
             catch
@@ -59,9 +59,9 @@ namespace SyncPoint365.API.Controllers
         [HttpGet]
         [Route("Paged", Name = "SyncPoint365-GetUsersPagedListAsync")]
         [Authorize(Policy = "AdminPolicy")]
-        public async Task<IActionResult> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? loggedUserRole = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var data = await _usersService.GetUsersPagedListAsync(isActive, query, roleId, orderBy, page, pageSize, cancellationToken);
+            var data = await _usersService.GetUsersPagedListAsync(isActive, query, roleId, loggedUserRole, orderBy, page, pageSize, cancellationToken);
 
             if (data == null)
                 return NotFound();

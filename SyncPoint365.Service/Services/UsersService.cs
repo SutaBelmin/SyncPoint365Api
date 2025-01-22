@@ -57,9 +57,9 @@ namespace SyncPoint365.Service.Services
             return _repository.EmailExists(email);
         }
 
-        public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? loggedUserRole = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var usersList = await _repository.GetUsersPagedListAsync(isActive, query, roleId, orderBy, page, pageSize, cancellationToken);
+            var usersList = await _repository.GetUsersPagedListAsync(isActive, query, roleId, loggedUserRole, orderBy, page, pageSize, cancellationToken);
 
             var dtos = Mapper.Map<List<UserDTO>>(usersList);
 
@@ -121,12 +121,17 @@ namespace SyncPoint365.Service.Services
             }
         }
 
-        public async Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<bool> ChangeUserStatusAsync(int id, int loggedUser, CancellationToken cancellationToken = default)
         {
+
             var user = await _repository.GetByIdAsync(id, cancellationToken);
             if (user == null)
             {
                 throw new Exception("User not found!");
+            }
+            if (loggedUser == id)
+            {
+                throw new Exception("The currently logged in user cannot deactivate himself!");
             }
 
             user.IsActive = !user.IsActive;
