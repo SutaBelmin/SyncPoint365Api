@@ -62,18 +62,18 @@ namespace SyncPoint365.Service.Services
             await _repository.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<IPagedList<CompanyDocumentDTO>> GetPagedCompanyDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public async Task<IPagedList<CompanyDocumentDTO>> GetPagedCompanyDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, bool? isVisible = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var pagedList = await _repository.GetPagedCompanyDocumentsAsync(dateFrom, dateTo, query, page, pageSize, cancellationToken);
+            var pagedList = await _repository.GetPagedCompanyDocumentsAsync(dateFrom, dateTo, query, isVisible, page, pageSize, cancellationToken);
 
             var dtos = Mapper.Map<List<CompanyDocumentDTO>>(pagedList);
 
             return new PagedList<CompanyDocumentDTO>(pagedList, dtos);
         }
 
-        public async Task<bool> UpdateDocumentVisibiltyAsync(int documentId, bool isVisibile, CancellationToken cancellationToken = default)
+        public async Task<bool> UpdateCompanyDocumentVisibiltyAsync(int documentId, bool isVisibile, CancellationToken cancellationToken = default)
         {
-            var result = await _repository.UpdateDocumentVisibiltyAsync(documentId, isVisibile, cancellationToken);
+            var result = await _repository.UpdateCompanyDocumentVisibiltyAsync(documentId, isVisibile, cancellationToken);
 
             if (!result)
                 return false;

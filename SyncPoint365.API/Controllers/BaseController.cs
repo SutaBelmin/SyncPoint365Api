@@ -81,7 +81,7 @@ namespace SyncPoint365.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int? id, CancellationToken cancellationToken = default)
+        public virtual async Task<IActionResult> DeleteAsync(int? id, CancellationToken cancellationToken = default)
         {
             try
             {

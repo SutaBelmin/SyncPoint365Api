@@ -6,8 +6,8 @@ namespace SyncPoint365.Repository.Common.Interfaces
 {
     public interface ICompanyDocumentsRepository : IBaseRepository<CompanyDocument>
     {
-        Task<IPagedList<CompanyDocument>> GetPagedCompanyDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default);
+        Task<IPagedList<CompanyDocument>> GetPagedCompanyDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, bool? isVisible = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default);
 
-        Task<bool> UpdateDocumentVisibiltyAsync(int documentId, bool isVisibile, CancellationToken cancellationToken = default);
+        Task<bool> UpdateCompanyDocumentVisibiltyAsync(int documentId, bool isVisibile, CancellationToken cancellationToken = default);
     }
 }

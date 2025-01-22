@@ -23,17 +23,18 @@ namespace SyncPoint365.Repository.Repositories
                 return companyDocuments.ToPagedListAsync(page, pageSize);
         }
 
-        public Task<IPagedList<CompanyDocument>> GetPagedCompanyDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public Task<IPagedList<CompanyDocument>> GetPagedCompanyDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, bool? isVisible = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             return DbSet.Include(x => x.User).Where(x =>
                                                        (string.IsNullOrWhiteSpace(query) ||
                                                        x.Name.ToLower().Contains(query.ToLower())) &&
                                                        (!dateFrom.HasValue || (x.DateCreated >= dateFrom && x.DateCreated <= dateTo)) &&
-                                                       (!dateTo.HasValue || (x.DateCreated <= dateTo && x.DateCreated >= dateFrom)))
+                                                       (!dateTo.HasValue || (x.DateCreated <= dateTo && x.DateCreated >= dateFrom)) &&
+                                                       (!isVisible.HasValue || x.IsVisible == isVisible.Value))
                                                        .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
 
-        public async Task<bool> UpdateDocumentVisibiltyAsync(int documentId, bool isVisibile, CancellationToken cancellationToken = default)
+        public async Task<bool> UpdateCompanyDocumentVisibiltyAsync(int documentId, bool isVisibile, CancellationToken cancellationToken = default)
         {
             var document = await DbSet.FirstOrDefaultAsync(x => x.Id == documentId);
 

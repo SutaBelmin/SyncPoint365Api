@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SyncPoint365.Core.DTOs.CompanyDocuments;
 using SyncPoint365.Core.Helpers;
 using SyncPoint365.Service.Common.Interfaces;
@@ -18,9 +19,10 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("Paged", Name = "SyncPoint365-GetCompanyDocumentsPaged")]
-        public async Task<IActionResult> GetPagedCompanyDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        [Authorize(Policy = "AdminEmployeePolicy")]
+        public async Task<IActionResult> GetPagedCompanyDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, bool? isVisible = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var data = await _companyDocumentsService.GetPagedCompanyDocumentsAsync(dateFrom, dateTo, query, page, pageSize, cancellationToken);
+            var data = await _companyDocumentsService.GetPagedCompanyDocumentsAsync(dateFrom, dateTo, query, isVisible, page, pageSize, cancellationToken);
 
             if (data == null)
                 return NotFound();
@@ -29,15 +31,37 @@ namespace SyncPoint365.API.Controllers
         }
 
         [HttpPatch]
-        [Route("Update-Document-Visibility", Name = "SyncPoint365-UpdateDocumentVisibility")]
-        public async Task<IActionResult> UpdateDocumentVisibiltyAsync(int documentId, bool isVisibile, CancellationToken cancellationToken = default)
+        [Route("Update-Company-Document-Visibility", Name = "SyncPoint365-UpdateCompanyDocumentVisibility")]
+        [Authorize(Policy = "AdminPolicy")]
+        public async Task<IActionResult> UpdateCompanyDocumentVisibiltyAsync(int documentId, bool isVisibile, CancellationToken cancellationToken = default)
         {
-            var result = await _companyDocumentsService.UpdateDocumentVisibiltyAsync(documentId, isVisibile, cancellationToken);
+            var result = await _companyDocumentsService.UpdateCompanyDocumentVisibiltyAsync(documentId, isVisibile, cancellationToken);
 
             if (result)
                 return Ok(new { message = "Document visibility updated successfully." });
 
             return NotFound();
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "AdminPolicy")]
+        public override Task<IActionResult> AddAsync(CompanyDocumentAddDTO dto, CancellationToken cancellationToken = default)
+        {
+            return base.AddAsync(dto, cancellationToken);
+        }
+
+        [HttpPut]
+        [Authorize(Policy = "AdminPolicy")]
+        public override Task<IActionResult> UpdateAsync(CompanyDocumentUpdateDTO dto, CancellationToken cancellationToken = default)
+        {
+            return base.UpdateAsync(dto, cancellationToken);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Policy = "AdminPolicy")]
+        public override Task<IActionResult> DeleteAsync(int? id, CancellationToken cancellationToken = default)
+        {
+            return base.DeleteAsync(id, cancellationToken);
         }
 
     }
