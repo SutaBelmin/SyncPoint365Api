@@ -23,5 +23,16 @@ namespace SyncPoint365.Repository.Repositories
                 .ToPagedListAsync(page, pageSize);
         }
 
+        public async Task<IPagedList<CompanyNews>> GetCompanyNewsVisibleListAsync(int page, int pageSize, CancellationToken cancellationToken)
+        {
+            var includes = DbSet.Include(c => c.User);
+
+            return await includes
+                .Where(c => c.IsVisible)
+                .OrderByDescending(c => c.DateCreated)
+                .ToPagedListAsync(page, pageSize);
+        }
+
+
     }
 }

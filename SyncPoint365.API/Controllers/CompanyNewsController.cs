@@ -41,5 +41,21 @@ namespace SyncPoint365.API.Controllers
 
             return Ok();
         }
+
+        [HttpGet]
+        [Route("visible", Name = "SyncPoint365-GetCompanyNewsVisibleListAsync")]
+        public async Task<IActionResult> GetCompanyNewsVisibleListAsync(
+        int page = Constants.Pagination.PageNumber,
+        int pageSize = Constants.Pagination.PageSize,
+        CancellationToken cancellationToken = default)
+        {
+            var items = await _companyNewsService.GetCompanyNewsVisibleListAsync(page, pageSize, cancellationToken);
+
+            if (items == null)
+                return NotFound();
+
+            return Ok(GetPagedResult(items));
+        }
+
     }
 }

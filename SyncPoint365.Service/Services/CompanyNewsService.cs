@@ -43,5 +43,13 @@ namespace SyncPoint365.Service.Services
             await _repository.SaveChangesAsync(cancellationToken);
             return true;
         }
+
+        public async Task<IPagedList<CompanyNewsDTO>> GetCompanyNewsVisibleListAsync(int page, int pageSize, CancellationToken cancellationToken)
+        {
+            var paged = await _repository.GetCompanyNewsVisibleListAsync(page, pageSize, cancellationToken);
+            var dtos = Mapper.Map<List<CompanyNewsDTO>>(paged);
+            return new PagedList<CompanyNewsDTO>(paged, dtos);
+        }
+
     }
 }
