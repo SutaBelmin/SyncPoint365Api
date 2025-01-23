@@ -56,7 +56,7 @@ namespace SyncPoint365.API.Helpers
             {
                 UserId = user.Id,
                 Token = GenerateSecureToken(),
-                ExpirationDate = DateTime.Now.AddMinutes(7)
+                ExpirationDate = DateTime.Now.AddMinutes(8)
             };
         }
 
