@@ -12,27 +12,15 @@ namespace SyncPoint365.Repository.Repositories
         {
         }
 
-        public async Task<IPagedList<CompanyNews>> GetCompanyNewsPagedListAsync(string? query, DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
+        public async Task<IPagedList<CompanyNews>> GetCompanyNewsPagedListAsync(string? query, bool? visible, DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
         {
 
             var includes = DbSet.Include(c => c.User);
 
             return await includes.Where(c => (string.IsNullOrWhiteSpace(query) || c.Title.ToLower().Contains(query.ToLower()))
-                && (!dateFrom.HasValue || (c.DateCreated >= dateFrom && c.DateCreated <= dateTo)))
+                && (!dateFrom.HasValue || (c.DateCreated >= dateFrom && c.DateCreated <= dateTo)) && (c.IsVisible == visible || !visible.HasValue))
                 .Sort(string.IsNullOrWhiteSpace(orderBy) ? "DateCreated|desc" : orderBy)
                 .ToPagedListAsync(page, pageSize);
         }
-
-        public async Task<IPagedList<CompanyNews>> GetCompanyNewsVisibleListAsync(int page, int pageSize, CancellationToken cancellationToken)
-        {
-            var includes = DbSet.Include(c => c.User);
-
-            return await includes
-                .Where(c => c.IsVisible)
-                .OrderByDescending(c => c.DateCreated)
-                .ToPagedListAsync(page, pageSize);
-        }
-
-
     }
 }

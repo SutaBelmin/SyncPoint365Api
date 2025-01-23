@@ -22,9 +22,9 @@ namespace SyncPoint365.Service.Services
             _mapper = mapper;
         }
 
-        public async Task<IPagedList<CompanyNewsDTO>> GetCompanyNewsPagedListAsync(string? query, DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
+        public async Task<IPagedList<CompanyNewsDTO>> GetCompanyNewsPagedListAsync(string? query, bool? visible, DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
         {
-            var paged = await _repository.GetCompanyNewsPagedListAsync(query, dateFrom, dateTo, orderBy, page, pageSize, cancellationToken: cancellationToken);
+            var paged = await _repository.GetCompanyNewsPagedListAsync(query, visible, dateFrom, dateTo, orderBy, page, pageSize, cancellationToken: cancellationToken);
 
             var dtos = Mapper.Map<List<CompanyNewsDTO>>(paged);
 
@@ -42,13 +42,6 @@ namespace SyncPoint365.Service.Services
             companyNews.IsVisible = isVisible;
             await _repository.SaveChangesAsync(cancellationToken);
             return true;
-        }
-
-        public async Task<IPagedList<CompanyNewsDTO>> GetCompanyNewsVisibleListAsync(int page, int pageSize, CancellationToken cancellationToken)
-        {
-            var paged = await _repository.GetCompanyNewsVisibleListAsync(page, pageSize, cancellationToken);
-            var dtos = Mapper.Map<List<CompanyNewsDTO>>(paged);
-            return new PagedList<CompanyNewsDTO>(paged, dtos);
         }
 
     }
