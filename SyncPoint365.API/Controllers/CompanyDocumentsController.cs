@@ -33,9 +33,9 @@ namespace SyncPoint365.API.Controllers
         [HttpPatch]
         [Route("Update-Company-Document-Visibility", Name = "SyncPoint365-UpdateCompanyDocumentVisibility")]
         [Authorize(Policy = "AdminPolicy")]
-        public async Task<IActionResult> UpdateCompanyDocumentVisibiltyAsync(int id, bool isVisibile, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateCompanyDocumentVisibiltyAsync(int id, CancellationToken cancellationToken = default)
         {
-            var result = await _companyDocumentsService.UpdateCompanyDocumentVisibiltyAsync(id, isVisibile, cancellationToken);
+            var result = await _companyDocumentsService.UpdateCompanyDocumentVisibiltyAsync(id, cancellationToken);
 
             if (result)
                 return Ok(new { message = "Document visibility updated successfully." });
