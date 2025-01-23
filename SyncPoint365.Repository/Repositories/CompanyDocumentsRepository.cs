@@ -34,15 +34,5 @@ namespace SyncPoint365.Repository.Repositories
                                                        .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
 
-        public async Task<bool> UpdateCompanyDocumentVisibiltyAsync(int documentId, bool isVisibile, CancellationToken cancellationToken = default)
-        {
-            var document = await DbSet.FirstOrDefaultAsync(x => x.Id == documentId);
-
-            if (document == null)
-                return false;
-
-            document.IsVisible = isVisibile;
-            return true;
-        }
     }
 }

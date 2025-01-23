@@ -71,12 +71,13 @@ namespace SyncPoint365.Service.Services
             return new PagedList<CompanyDocumentDTO>(pagedList, dtos);
         }
 
-        public async Task<bool> UpdateCompanyDocumentVisibiltyAsync(int documentId, bool isVisibile, CancellationToken cancellationToken = default)
+        public async Task<bool> UpdateCompanyDocumentVisibiltyAsync(int id, bool isVisibile, CancellationToken cancellationToken = default)
         {
-            var result = await _repository.UpdateCompanyDocumentVisibiltyAsync(documentId, isVisibile, cancellationToken);
-
-            if (!result)
+            var document = await _repository.GetByIdAsync(id);
+            if (document == null)
                 return false;
+
+            document.IsVisible = isVisibile;
 
             await _repository.SaveChangesAsync(cancellationToken);
             return true;

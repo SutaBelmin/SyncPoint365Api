@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using SyncPoint365.Core.DTOs.CompanyDocuments;
 using SyncPoint365.Core.Entities;
+using SyncPoint365.Service.Helpers;
 
 namespace SyncPoint365.Service.Mapping
 {
@@ -11,13 +11,13 @@ namespace SyncPoint365.Service.Mapping
         {
             CreateMap<CompanyDocumentAddDTO, CompanyDocument>()
             .ForMember(dest => dest.File, opt => opt.MapFrom(src =>
-                src.File != null ? GetFileBytes(src.File) : null));
+                src.File != null ? FileHelper.GetFileBytes(src.File) : null));
 
             CreateMap<CompanyDocumentUpdateDTO, CompanyDocument>()
                 .ForMember(dest => dest.File, opt =>
                 {
                     opt.PreCondition(src => src.File != null);
-                    opt.MapFrom(src => GetFileBytes(src.File));
+                    opt.MapFrom(src => FileHelper.GetFileBytes(src.File));
                 })
                 .ForAllMembers(opts =>
                 {
@@ -26,17 +26,6 @@ namespace SyncPoint365.Service.Mapping
 
             CreateMap<CompanyDocument, CompanyDocumentDTO>();
 
-        }
-
-        private static byte[] GetFileBytes(IFormFile file)
-        {
-            if (file == null)
-                return Array.Empty<byte>();
-            using (var memoryStream = new MemoryStream())
-            {
-                file.CopyTo(memoryStream);
-                return memoryStream.ToArray();
-            }
         }
     }
 }

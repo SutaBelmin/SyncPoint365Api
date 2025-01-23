@@ -8,6 +8,9 @@ namespace SyncPoint365.Service.Validators
         public CompanyDocumentAddValidator()
         {
             RuleFor(c => c.Name).NotNull().NotEmpty().WithMessage("Name is not valid");
+            RuleFor(c => c.File).NotNull().NotEmpty().WithMessage("File is not valid");
+            RuleFor(c => c.IsVisible).NotNull().WithMessage("IsVisible is not valid");
+            RuleFor(c => c.UserId).NotNull().NotEmpty().WithMessage("UserId is not valid");
         }
     }
 
