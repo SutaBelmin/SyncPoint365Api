@@ -9,14 +9,14 @@ namespace SyncPoint365.Repository.Repositories
 
         public RefreshTokensRepository(DatabaseContext dbContext) : base(dbContext) { }
 
-        public async Task<RefreshToken?> GetByTokenAsync(string token)
+        public async Task<RefreshToken?> GetRefreshTokenByUserIdAsync(int userId)
         {
-            return await DbSet.FirstOrDefaultAsync(x => x.Token == token);
+            return await DbSet.FirstOrDefaultAsync(t => t.UserId == userId);
         }
 
         public async Task SaveRefreshTokenAsync(RefreshToken refreshToken)
         {
-            var existingToken = await DbSet.FirstOrDefaultAsync(rt => rt.UserId == refreshToken.UserId);
+            var existingToken = await DbSet.FirstOrDefaultAsync(t => t.UserId == refreshToken.UserId);
 
             if (existingToken != null)
             {
@@ -31,23 +31,5 @@ namespace SyncPoint365.Repository.Repositories
 
             await SaveChangesAsync();
         }
-
-        public async Task DeleteRefreshTokenAsync(string token)
-        {
-            var refreshToken = await DbSet.FirstOrDefaultAsync(rt => rt.Token == token);
-
-            if (refreshToken != null)
-            {
-                DbSet.Remove(refreshToken);
-                await SaveChangesAsync();
-            }
-        }
-
-        public async Task<RefreshToken?> GetRefreshTokenByUserIdAsync(int userId)
-        {
-            return await DbSet.FirstOrDefaultAsync(rt => rt.UserId == userId && rt.ExpirationDate > DateTime.UtcNow);
-        }
-
-
     }
 }

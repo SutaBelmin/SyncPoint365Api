@@ -2,7 +2,8 @@
 {
     public class RefreshTokenUpdateDTO : BaseUpdateDTO
     {
-        public string RefreshToken { get; set; } = default!;
+        public int UserId { get; set; }
+        public string Token { get; set; } = default!;
         public DateTime ExpirationDate { get; set; }
     }
 }

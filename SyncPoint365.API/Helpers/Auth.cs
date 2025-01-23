@@ -40,7 +40,9 @@ namespace SyncPoint365.API.Helpers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(jwtSettings.Duration),
+                Expires = DateTime.Now.AddMinutes(jwtSettings.Duration),
+                Audience = jwtSettings.Audience,
+                Issuer = jwtSettings.Issuer,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
             };
 
@@ -54,7 +56,7 @@ namespace SyncPoint365.API.Helpers
             {
                 UserId = user.Id,
                 Token = GenerateSecureToken(),
-                ExpirationDate = DateTime.UtcNow.AddMinutes(30)
+                ExpirationDate = DateTime.Now.AddMinutes(7)
             };
         }
 

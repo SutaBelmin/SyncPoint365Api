@@ -4,74 +4,37 @@ using SyncPoint365.Core.DTOs.RefreshTokens;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
-using System.Security.Cryptography;
 
 namespace SyncPoint365.Service.Services
 {
     public class RefreshTokensService : BaseService<RefreshToken, RefreshTokenDTO, RefreshTokenAddDTO, RefreshTokenUpdateDTO>, IRefreshTokensService
     {
-        private readonly IRefreshTokensRepository _refreshTokensRepository;
+        private readonly IRefreshTokensRepository _repository;
+        private readonly IUsersRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public RefreshTokensService(IRefreshTokensRepository refreshTokensRepository, IMapper mapper, IValidator<RefreshTokenAddDTO> addValidator, IValidator<RefreshTokenUpdateDTO> updateValidator)
-            : base(refreshTokensRepository, mapper, addValidator, updateValidator)
+        public RefreshTokensService(IRefreshTokensRepository repository, IUsersRepository usersRepository, IMapper mapper, IValidator<RefreshTokenAddDTO> addValidator, IValidator<RefreshTokenUpdateDTO> updateValidator)
+            : base(repository, mapper, addValidator, updateValidator)
         {
-            _refreshTokensRepository = refreshTokensRepository;
+            _repository = repository;
+            _userRepository = usersRepository;
+            _mapper = mapper;
         }
 
-        public async Task<RefreshTokenDTO?> GetByTokenAsync(string token)
+        public async Task<RefreshTokenDTO?> GetRefreshTokenByUserIdAsync(int userId)
         {
-            var refreshToken = await _refreshTokensRepository.GetByTokenAsync(token);
-            if (refreshToken == null || refreshToken.ExpirationDate < DateTime.UtcNow)
-            {
-                return null;
-            }
-            return Mapper.Map<RefreshTokenDTO>(refreshToken);
+            var refreshToken = await _repository.GetRefreshTokenByUserIdAsync(userId);
+            return _mapper.Map<RefreshTokenDTO>(refreshToken);
         }
 
-        public async Task<RefreshTokenDTO> GenerateAndSaveRefreshTokenAsync(int userId)
+        public async Task SaveRefreshTokenAsync(RefreshToken refreshToken)
         {
-            var token = GenerateRefreshToken();
-            var expirationDate = DateTime.UtcNow.AddDays(7);
-
-            var refreshToken = new RefreshToken
-            {
-                UserId = userId,
-                Token = token,
-                ExpirationDate = expirationDate,
-                DateUpdated = DateTime.UtcNow,
-            };
-
-            await _refreshTokensRepository.AddAsync(refreshToken);
-            await _refreshTokensRepository.SaveChangesAsync();
-
-            return Mapper.Map<RefreshTokenDTO>(refreshToken);
+            await _repository.SaveRefreshTokenAsync(refreshToken);
         }
 
-        private string GenerateRefreshToken()
+        public Task<(bool isValid, User user)> ValidateAccessTokenAsync(string accessToken)
         {
-            var randomNumber = new byte[64];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-            }
-            return Convert.ToBase64String(randomNumber);
-        }
-
-        public async Task RemoveExpiredTokensAsync()
-        {
-            var allTokens = await _refreshTokensRepository.GetAsync();
-
-            var expiredTokens = allTokens.Where(x => x.ExpirationDate < DateTime.UtcNow).ToList();
-
-            if (expiredTokens.Any())
-            {
-                foreach (var token in expiredTokens)
-                {
-                    await _refreshTokensRepository.DeleteAsync(token.Id);
-                }
-
-                await _refreshTokensRepository.SaveChangesAsync();
-            }
+            throw new NotImplementedException();
         }
     }
 }

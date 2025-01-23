@@ -4,6 +4,7 @@ using SyncPoint365.API.Config;
 using SyncPoint365.API.Helpers;
 using SyncPoint365.API.RESTModels;
 using SyncPoint365.Repository.Common.Interfaces;
+using SyncPoint365.Service.Common.Interfaces;
 using SyncPoint365.Service.Helpers;
 
 namespace SyncPoint365.API.Controllers
@@ -13,14 +14,14 @@ namespace SyncPoint365.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUsersRepository _usersRepository;
-        private readonly IRefreshTokensRepository _refreshTokensRepository;
+        private readonly IRefreshTokensService _refreshTokensService;
         private readonly IOptions<JWTSettings> _jwtSettings;
 
-        public AuthController(IUsersRepository usersRepository, IConfiguration configuration, IOptions<JWTSettings> jwtSettings, IRefreshTokensRepository refreshTokensRepository)
+        public AuthController(IUsersRepository usersRepository, IConfiguration configuration, IOptions<JWTSettings> jwtSettings, IRefreshTokensService refreshTokensService)
         {
             _usersRepository = usersRepository;
             _jwtSettings = jwtSettings;
-            _refreshTokensRepository = refreshTokensRepository;
+            _refreshTokensService = refreshTokensService;
         }
 
         [HttpPost]
@@ -44,9 +45,9 @@ namespace SyncPoint365.API.Controllers
                 var accessToken = Auth.GenerateAccessToken(user, _jwtSettings.Value);
                 var refreshToken = Auth.GenerateRefreshToken(user);
 
-                await _refreshTokensRepository.SaveRefreshTokenAsync(refreshToken);
+                await _refreshTokensService.SaveRefreshTokenAsync(refreshToken);
 
-                return Ok(new { User = user, JwtToken = accessToken, RefreshToken = refreshToken.Token });
+                return Ok(new { User = user, AccessToken = accessToken, RefreshToken = refreshToken.Token });
             }
             catch (UnauthorizedAccessException)
             {
@@ -55,29 +56,29 @@ namespace SyncPoint365.API.Controllers
         }
 
 
-        [HttpPost]
-        [Route("ValidateRefreshToken")]
-        public async Task<IActionResult> ValidateRefreshToken([FromBody] AuthTokenValidationModel model)
-        {
-            try
-            {
-                var refreshToken = await _refreshTokensRepository.GetRefreshTokenByUserIdAsync(model.UserId);
+        //[HttpPost]
+        //[Route("validate-refresh-token")]
+        //public async Task<IActionResult> ValidateRefreshToken([FromBody] AuthTokenValidationModel model)
+        //{
+        //    try
+        //    {
+        //        var refreshToken = await _refreshTokensRepository.GetRefreshTokenByUserIdAsync(model.UserId);
 
-                if (refreshToken == null || refreshToken.ExpirationDate < DateTime.UtcNow)
-                {
-                    return Unauthorized("Refresh token is inactive or expired.");
-                }
+        //        if (refreshToken == null || refreshToken.ExpirationDate < DateTime.UtcNow)
+        //        {
+        //            return Unauthorized("Refresh token is inactive or expired.");
+        //        }
 
-                var user = await _usersRepository.GetByIdAsync(model.UserId);
-                var accessToken = Auth.GenerateAccessToken(user, _jwtSettings.Value);
+        //        var user = await _usersRepository.GetByIdAsync(model.UserId);
+        //        var accessToken = Auth.GenerateAccessToken(user, _jwtSettings.Value);
 
-                return Ok(new { JwtToken = accessToken, RefreshToken = refreshToken.Token });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal Server Error: VALIDACIJA" + ex.Message);
-            }
-        }
+        //        return Ok(new { JwtToken = accessToken, RefreshToken = refreshToken.Token });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, "Internal Server Error: VALIDACIJA" + ex.Message);
+        //    }
+        //}
 
     }
 }
