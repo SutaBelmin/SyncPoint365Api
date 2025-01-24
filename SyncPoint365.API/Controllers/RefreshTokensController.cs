@@ -40,13 +40,13 @@ namespace SyncPoint365.API.Controllers
                 var storedRefreshToken = await _refreshTokensService.GetRefreshTokenByUserIdAsync(userId.Value);
                 if (storedRefreshToken == null)
                 {
-                    return Unauthorized("No refresh token found for this user.");
+                    return Unauthorized(new { code = "TOKEN_EMPTY", message = "Refresh token empty." });
                 }
 
                 if (storedRefreshToken.ExpirationDate < DateTime.Now)
                 {
                     await _refreshTokensService.DeleteAsync(storedRefreshToken.Id);
-                    return Unauthorized("Refresh token has expired.");
+                    return Unauthorized(new { code = "TOKEN_EXPIRED", message = "Refresh token has expired." });
                 }
 
                 if (storedRefreshToken.Token == refreshToken)
