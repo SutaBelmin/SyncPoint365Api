@@ -17,11 +17,11 @@ namespace SyncPoint365.API.Controllers
 
         [HttpGet]
         [Route("paged", Name = "SyncPoint365-GetCompanyNewsPagedListAsync")]
-        public async Task<IActionResult> GetCompanyNewsPagedListAsync(string? query = null, bool? visible = null, DateTime? dateFrom = null, DateTime? dateTo = null, string? orderBy = null,
+        public async Task<IActionResult> GetCompanyNewsPagedListAsync(string? query = null, bool? isVisible = null, DateTime? dateFrom = null, DateTime? dateTo = null, string? orderBy = null,
             int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
 
-            var items = await _companyNewsService.GetCompanyNewsPagedListAsync(query, visible, dateFrom, dateTo, orderBy, page, pageSize, cancellationToken: cancellationToken);
+            var items = await _companyNewsService.GetCompanyNewsPagedListAsync(query, isVisible, dateFrom, dateTo, orderBy, page, pageSize, cancellationToken: cancellationToken);
 
             if (items == null)
                 return NotFound();
@@ -30,10 +30,10 @@ namespace SyncPoint365.API.Controllers
         }
 
         [HttpPut]
-        [Route("Change-visibility", Name = "SyncPoint365-ChangeVisibility")]
-        public async Task<IActionResult> UpdateVisibility([FromQuery] int id, [FromBody] bool isVisible, CancellationToken cancellationToken)
+        [Route("Change-Visibility", Name = "SyncPoint365-ChangeVisibility")]
+        public async Task<IActionResult> UpdateVisibility([FromQuery] int id, CancellationToken cancellationToken)
         {
-            var result = await _companyNewsService.UpdateVisibilityAsync(id, isVisible, cancellationToken);
+            var result = await _companyNewsService.UpdateVisibilityAsync(id, cancellationToken);
             if (!result)
             {
                 return NotFound();
