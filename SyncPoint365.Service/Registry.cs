@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SyncPoint365.Core.DTOs.AbsenceRequests;
 using SyncPoint365.Core.DTOs.AbsenceRequestTypes;
 using SyncPoint365.Core.DTOs.Cities;
+using SyncPoint365.Core.DTOs.CompanyDocuments;
 using SyncPoint365.Core.DTOs.Countries;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Service.Common.Interfaces;
@@ -26,6 +27,8 @@ namespace SyncPoint365.Service
             services.AddScoped<IValidator<CountryUpdateDTO>, CountryUpdateValidator>();
             services.AddScoped<IValidator<CityAddDTO>, CityAddValidator>();
             services.AddScoped<IValidator<CityUpdateDTO>, CityUpdateValidator>();
+            services.AddScoped<IValidator<CompanyDocumentAddDTO>, CompanyDocumentAddValidator>();
+            services.AddScoped<IValidator<CompanyDocumentUpdateDTO>, CompanyDocumentUpdateValidator>();
         }
 
         public static void AddApplication(this IServiceCollection services)
@@ -36,6 +39,7 @@ namespace SyncPoint365.Service
             services.AddScoped<ICountriesService, CountriesService>();
             services.AddScoped<ICitiesService, CitiesService>();
             services.AddScoped<IEnumsService, EnumsService>();
+            services.AddScoped<ICompanyDocumentsService, CompanyDocumentsService>();
         }
 
         public static void AddMapping(this IServiceCollection services)
