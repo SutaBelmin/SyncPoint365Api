@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SyncPoint365.API.Helpers;
 using SyncPoint365.API.RESTModels;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Helpers;
@@ -38,7 +39,10 @@ namespace SyncPoint365.API.Controllers
         {
             try
             {
-                var status = await _usersService.ChangeUserStatusAsync(id, cancellationToken);
+                var loggedUser = HttpContext.User;
+                var loggedUserId = AuthHelper.GetLoggedUserId(loggedUser);
+
+                var status = await _usersService.ChangeUserStatusAsync(id, loggedUserId, cancellationToken);
                 return Ok(new { IsActive = status });
             }
             catch
@@ -61,7 +65,10 @@ namespace SyncPoint365.API.Controllers
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var data = await _usersService.GetUsersPagedListAsync(isActive, query, roleId, orderBy, page, pageSize, cancellationToken);
+            var loggedUser = HttpContext.User;
+            var loggedUserRole = AuthHelper.GetLoggedUserRole(loggedUser);
+
+            var data = await _usersService.GetUsersPagedListAsync(isActive, query, roleId, loggedUserRole, orderBy, page, pageSize, cancellationToken);
 
             if (data == null)
                 return NotFound();

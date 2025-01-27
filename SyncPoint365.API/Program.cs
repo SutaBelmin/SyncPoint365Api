@@ -63,8 +63,6 @@ namespace SyncPoint365.API
             builder.Services.AddAuthentication(builder.Configuration);
             builder.Services.AddAuthorization();
 
-            builder.Services.AddHttpContextAccessor();
-
             var app = builder.Build();
             app.UseCors("AllowAllOrigins");
 

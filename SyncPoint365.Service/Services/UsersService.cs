@@ -10,7 +10,6 @@ using SyncPoint365.Core.Helpers;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
 using SyncPoint365.Service.Helpers;
-using System.Security.Claims;
 using X.PagedList;
 
 namespace SyncPoint365.Service.Services
@@ -20,13 +19,11 @@ namespace SyncPoint365.Service.Services
         private readonly IUsersRepository _repository;
         protected readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public UsersService(IUsersRepository repository, IMapper mapper, IValidator<UserAddDTO> addValidator, IValidator<UserUpdateDTO> updateValidator, IConfiguration configuration, IHttpContextAccessor httpContextAccessor) : base(repository, mapper, addValidator, updateValidator)
+        public UsersService(IUsersRepository repository, IMapper mapper, IValidator<UserAddDTO> addValidator, IValidator<UserUpdateDTO> updateValidator, IConfiguration configuration) : base(repository, mapper, addValidator, updateValidator)
         {
             _repository = repository;
             _mapper = mapper;
             _configuration = configuration;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public override async Task AddAsync([FromForm] UserAddDTO dto, CancellationToken cancellationToken = default)
@@ -61,20 +58,12 @@ namespace SyncPoint365.Service.Services
             return _repository.EmailExists(email);
         }
 
-        public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? loggedUserRole = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
-            var loggedUser = _httpContextAccessor.HttpContext?.User;
-            string? loggedUserRole = null;
+            if (string.IsNullOrEmpty(loggedUserRole))
+                throw new Exception("Logged user role not provided!");
 
-            if (loggedUser != null && loggedUser.HasClaim(c => c.Type == ClaimTypes.Role))
-                loggedUserRole = loggedUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-            else
-                throw new Exception("Logged user not found!");
-
-
-            if (loggedUserRole == "SuperAdministrator")
-                roleId = null;
-            else if (loggedUserRole == "Administrator")
+            if (loggedUserRole == Role.Administrator.ToString())
                 roleId = (int)Role.Employee;
 
             var usersList = await _repository.GetUsersPagedListAsync(isActive, query, roleId, orderBy, page, pageSize, cancellationToken);
@@ -139,21 +128,14 @@ namespace SyncPoint365.Service.Services
             }
         }
 
-        public async Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<bool> ChangeUserStatusAsync(int id, int loggedUserId, CancellationToken cancellationToken = default)
         {
-            var loggedUser = _httpContextAccessor.HttpContext?.User;
-            var loggedUserId = loggedUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (loggedUserId == null)
-            {
-                throw new Exception("Logged user not found!");
-            }
-
             var user = await _repository.GetByIdAsync(id, cancellationToken);
             if (user == null)
             {
                 throw new Exception("User not found!");
             }
-            if (Convert.ToInt64(loggedUserId) == id)
+            if (loggedUserId == id)
             {
                 throw new Exception("The currently logged in user cannot deactivate himself!");
             }
