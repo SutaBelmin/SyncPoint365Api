@@ -46,7 +46,7 @@ namespace SyncPoint365.API.Controllers
                 var accessToken = Auth.GenerateAccessToken(user, _jwtSettings.Value);
                 var refreshToken = Auth.GenerateRefreshToken(user, _jwtSettings.Value);
 
-                await _refreshTokensService.AddRefreshTokenAsync(user.Id, refreshToken.RefreshToken, refreshToken.Expiration);
+                await _refreshTokensService.ManageRefreshToken(user.Id, refreshToken.RefreshToken, refreshToken.Expiration);
 
                 return Ok(new { User = user, AccessToken = accessToken, RefreshToken = refreshToken.RefreshToken });
             }
