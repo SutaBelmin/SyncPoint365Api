@@ -5,6 +5,5 @@ namespace SyncPoint365.Repository.Common.Interfaces
     public interface IRefreshTokensRepository : IBaseRepository<RefreshToken>
     {
         Task<RefreshToken?> GetRefreshTokenByUserIdAsync(int userId);
-        Task SaveRefreshTokenAsync(RefreshToken refreshToken);
     }
 }

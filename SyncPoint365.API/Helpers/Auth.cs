@@ -1,9 +1,9 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using SyncPoint365.API.Config;
+using SyncPoint365.API.RESTModels;
 using SyncPoint365.Core.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace SyncPoint365.API.Helpers
@@ -40,7 +40,7 @@ namespace SyncPoint365.API.Helpers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddSeconds(jwtSettings.Duration),
+                Expires = DateTime.Now.AddSeconds(jwtSettings.AccessTokenDuration),
                 Audience = jwtSettings.Audience,
                 Issuer = jwtSettings.Issuer,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
@@ -50,22 +50,49 @@ namespace SyncPoint365.API.Helpers
             return tokenHandler.WriteToken(jwtToken);
         }
 
-        public static RefreshToken GenerateRefreshToken(User user)
+        public static AuthRefreshTokenResponse GenerateRefreshToken(User user, JWTSettings jwtSettings)
         {
-            return new RefreshToken
+            var claims = new List<Claim>
             {
-                UserId = user.Id,
-                Token = GenerateSecureToken(),
-                ExpirationDate = DateTime.Now.AddSeconds(35)
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             };
+
+            var key = Encoding.ASCII.GetBytes(jwtSettings.Key);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddSeconds(jwtSettings.RefreshTokenDuration),
+                Audience = jwtSettings.Audience,
+                Issuer = jwtSettings.Issuer,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+            };
+
+            var jwtToken = tokenHandler.CreateToken(tokenDescriptor);
+
+            var response = new AuthRefreshTokenResponse
+            {
+                RefreshToken = tokenHandler.WriteToken(jwtToken),
+                Expiration = tokenDescriptor.Expires.Value
+            };
+            return response;
         }
 
-        private static string GenerateSecureToken()
+        public static int? GetUserIdFromRefreshToken(string refreshToken)
         {
-            using var rng = RandomNumberGenerator.Create();
-            var randomBytes = new byte[64];
-            rng.GetBytes(randomBytes);
-            return Convert.ToBase64String(randomBytes);
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(refreshToken) as JwtSecurityToken;
+                var userIdClaim = jsonToken?.Claims.FirstOrDefault(c => c.Type == "nameid");
+
+                return userIdClaim != null ? int.Parse(userIdClaim.Value) : (int?)null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("User ID not found. Error: " + ex.Message);
+                return null;
+            }
         }
     }
 }

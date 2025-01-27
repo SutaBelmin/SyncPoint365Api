@@ -8,9 +8,9 @@ namespace SyncPoint365.Service.Mapping
     {
         public RefreshTokenProfile()
         {
-            CreateMap<RefreshToken, RefreshTokenDTO>().ReverseMap();
-            CreateMap<RefreshTokenAddDTO, RefreshToken>().ReverseMap();
-            CreateMap<RefreshTokenUpdateDTO, RefreshToken>().ReverseMap();
+            CreateMap<RefreshToken, RefreshTokenDTO>();
+            CreateMap<RefreshTokenAddDTO, RefreshToken>();
+            CreateMap<RefreshTokenUpdateDTO, RefreshToken>();
         }
     }
 }

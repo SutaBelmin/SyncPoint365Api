@@ -27,14 +27,34 @@ namespace SyncPoint365.Service.Services
             return _mapper.Map<RefreshTokenDTO>(refreshToken);
         }
 
-        public async Task SaveRefreshTokenAsync(RefreshToken refreshToken)
+        public async Task AddRefreshTokenAsync(int userId, string refreshToken, DateTime? tokenExpiration)
         {
-            await _repository.SaveRefreshTokenAsync(refreshToken);
-        }
-
-        public Task<(bool isValid, User user)> ValidateAccessTokenAsync(string accessToken)
-        {
-            throw new NotImplementedException();
+            var existingToken = await _repository.GetRefreshTokenByUserIdAsync(userId);
+            if (existingToken == null)
+            {
+                var refreshTokenDto = new RefreshTokenAddDTO
+                {
+                    UserId = userId,
+                    Token = refreshToken,
+                    ExpirationDate = tokenExpiration ?? DateTime.UtcNow.AddDays(7)
+                };
+                var refreshTokenEntity = _mapper.Map<RefreshToken>(refreshTokenDto);
+                await _repository.AddAsync(refreshTokenEntity);
+                await _repository.SaveChangesAsync();
+            }
+            else
+            {
+                var refreshTokenUpdateDto = new RefreshTokenUpdateDTO
+                {
+                    Id = existingToken.Id,
+                    UserId = userId,
+                    Token = refreshToken,
+                    ExpirationDate = tokenExpiration ?? DateTime.UtcNow.AddDays(7)
+                };
+                var refreshTokenEntity = _mapper.Map<RefreshToken>(refreshTokenUpdateDto);
+                await _repository.AddAsync(refreshTokenEntity);
+                await _repository.SaveChangesAsync();
+            }
         }
     }
 }

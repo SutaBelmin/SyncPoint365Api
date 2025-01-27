@@ -17,11 +17,12 @@ namespace SyncPoint365.API.Controllers
         private readonly IRefreshTokensService _refreshTokensService;
         private readonly IOptions<JWTSettings> _jwtSettings;
 
-        public AuthController(IUsersRepository usersRepository, IConfiguration configuration, IOptions<JWTSettings> jwtSettings, IRefreshTokensService refreshTokensService)
+        public AuthController(IUsersRepository usersRepository, IRefreshTokensService refreshTokensService, IConfiguration configuration,
+            IOptions<JWTSettings> jwtSettings)
         {
             _usersRepository = usersRepository;
-            _jwtSettings = jwtSettings;
             _refreshTokensService = refreshTokensService;
+            _jwtSettings = jwtSettings;
         }
 
         [HttpPost]
@@ -43,11 +44,11 @@ namespace SyncPoint365.API.Controllers
                 }
 
                 var accessToken = Auth.GenerateAccessToken(user, _jwtSettings.Value);
-                var refreshToken = Auth.GenerateRefreshToken(user);
+                var refreshToken = Auth.GenerateRefreshToken(user, _jwtSettings.Value);
 
-                await _refreshTokensService.SaveRefreshTokenAsync(refreshToken);
+                await _refreshTokensService.AddRefreshTokenAsync(user.Id, refreshToken.RefreshToken, refreshToken.Expiration);
 
-                return Ok(new { User = user, AccessToken = accessToken, RefreshToken = refreshToken.Token });
+                return Ok(new { User = user, AccessToken = accessToken, RefreshToken = refreshToken.RefreshToken });
             }
             catch (UnauthorizedAccessException)
             {
@@ -55,30 +56,48 @@ namespace SyncPoint365.API.Controllers
             }
         }
 
+        [HttpGet("Validate-Token")]
+        public async Task<IActionResult> CompareTokensAsync(string refreshToken)
+        {
+            try
+            {
+                var userId = Auth.GetUserIdFromRefreshToken(refreshToken);
 
-        //[HttpPost]
-        //[Route("validate-refresh-token")]
-        //public async Task<IActionResult> ValidateRefreshToken([FromBody] AuthTokenValidationModel model)
-        //{
-        //    try
-        //    {
-        //        var refreshToken = await _refreshTokensRepository.GetRefreshTokenByUserIdAsync(model.UserId);
+                if (userId == null)
+                {
+                    return Unauthorized("Invalid access token.");
+                }
 
-        //        if (refreshToken == null || refreshToken.ExpirationDate < DateTime.UtcNow)
-        //        {
-        //            return Unauthorized("Refresh token is inactive or expired.");
-        //        }
+                var storedRefreshToken = await _refreshTokensService.GetRefreshTokenByUserIdAsync(userId.Value);
+                if (storedRefreshToken == null)
+                {
+                    return Unauthorized(new { code = "TOKEN_EMPTY", message = "Refresh token empty." });
+                }
 
-        //        var user = await _usersRepository.GetByIdAsync(model.UserId);
-        //        var accessToken = Auth.GenerateAccessToken(user, _jwtSettings.Value);
+                if (storedRefreshToken.ExpirationDate < DateTime.Now)
+                {
+                    await _refreshTokensService.DeleteAsync(storedRefreshToken.Id);
+                    return Unauthorized(new { code = "TOKEN_EXPIRED", message = "Refresh token has expired." });
+                }
 
-        //        return Ok(new { JwtToken = accessToken, RefreshToken = refreshToken.Token });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, "Internal Server Error: VALIDACIJA" + ex.Message);
-        //    }
-        //}
+                if (storedRefreshToken.Token == refreshToken)
+                {
+                    var user = await _usersRepository.GetByIdAsync(userId.Value);
+                    if (user == null)
+                    {
+                        return Unauthorized("User not found.");
+                    }
 
+                    var newAccessToken = Auth.GenerateAccessToken(user, _jwtSettings.Value);
+                    return Ok(newAccessToken);
+                }
+
+                return Unauthorized("Refresh token does not match.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
     }
 }

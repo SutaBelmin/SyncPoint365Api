@@ -13,23 +13,5 @@ namespace SyncPoint365.Repository.Repositories
         {
             return await DbSet.FirstOrDefaultAsync(t => t.UserId == userId);
         }
-
-        public async Task SaveRefreshTokenAsync(RefreshToken refreshToken)
-        {
-            var existingToken = await DbSet.FirstOrDefaultAsync(t => t.UserId == refreshToken.UserId);
-
-            if (existingToken != null)
-            {
-                existingToken.Token = refreshToken.Token;
-                existingToken.ExpirationDate = refreshToken.ExpirationDate;
-                DbSet.Update(existingToken);
-            }
-            else
-            {
-                await DbSet.AddAsync(refreshToken);
-            }
-
-            await SaveChangesAsync();
-        }
     }
 }
