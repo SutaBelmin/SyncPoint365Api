@@ -13,16 +13,6 @@ namespace SyncPoint365.Repository.Repositories
 
         }
 
-        public override Task<IPagedList<CompanyDocument>> GetAsync(string? query = null, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
-        {
-            var companyDocuments = DbSet.Include(x => x.User);
-
-            if (page == -1)
-                return companyDocuments.ToPagedListAsync(1, int.MaxValue);
-            else
-                return companyDocuments.ToPagedListAsync(page, pageSize);
-        }
-
         public Task<IPagedList<CompanyDocument>> GetPagedCompanyDocumentsAsync(DateTime? dateFrom, DateTime? dateTo, string? query = null, bool? isVisible = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             return DbSet.Include(x => x.User).Where(x =>
