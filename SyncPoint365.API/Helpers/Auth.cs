@@ -26,7 +26,7 @@ namespace SyncPoint365.API.Helpers
             return user.Claims.First(c => c.Type == ClaimTypes.Role).Value;
         }
 
-        public static string GenerateAccessToken(UserDTO user, JWTSettings jwtSettings)
+        public static string GenerateAccessToken(UserLoginDTO user, JWTSettings jwtSettings)
         {
             var claims = new List<Claim>
             {
@@ -51,7 +51,7 @@ namespace SyncPoint365.API.Helpers
             return tokenHandler.WriteToken(jwtToken);
         }
 
-        public static RefreshTokenModel GenerateRefreshToken(UserDTO user, JWTSettings jwtSettings)
+        public static RefreshTokenModel GenerateRefreshToken(UserLoginDTO user, JWTSettings jwtSettings)
         {
             var claims = new List<Claim>
             {

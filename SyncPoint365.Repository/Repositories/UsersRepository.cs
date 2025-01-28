@@ -28,7 +28,7 @@ namespace SyncPoint365.Repository.Repositories
 
         public async Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
-            return await DbSet.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+            return await DbSet.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
         }
 
         public override Task<IPagedList<User>> GetAsync(string? query = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)

@@ -57,10 +57,10 @@ namespace SyncPoint365.Service.Services
         {
             return _repository.EmailExists(email);
         }
-
-        public Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken)
+        public async Task<UserLoginDTO?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
-            return _repository.GetUserByEmailAsync(email);
+            var user = await _repository.GetUserByEmailAsync(email, cancellationToken);
+            return user != null ? _mapper.Map<UserLoginDTO>(user) : null;
         }
 
         public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? loggedUserRole = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
@@ -224,11 +224,6 @@ namespace SyncPoint365.Service.Services
             }
 
             return Path.Combine(_configuration["FileSettings:UploadsDirectory"]!, $"{userId}{extension}");
-        }
-
-        public UserAuthDTO MapToUserAuthDTO(UserDTO userDto)
-        {
-            return _mapper.Map<UserAuthDTO>(userDto);
         }
     }
 }
