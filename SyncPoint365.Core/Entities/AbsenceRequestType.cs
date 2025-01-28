@@ -4,5 +4,6 @@
     {
         public string Name { get; set; } = default!;
         public bool IsActive { get; set; }
+        public string? Color { get; set; }
     }
 }
