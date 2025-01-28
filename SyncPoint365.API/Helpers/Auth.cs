@@ -2,7 +2,7 @@
 
 namespace SyncPoint365.API.Helpers
 {
-    public static class AuthHelper
+    public static class Auth
     {
         public static int GetLoggedUserId(ClaimsPrincipal user)
         {

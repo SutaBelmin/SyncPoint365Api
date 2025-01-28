@@ -40,7 +40,7 @@ namespace SyncPoint365.API.Controllers
             try
             {
                 var loggedUser = HttpContext.User;
-                var loggedUserId = AuthHelper.GetLoggedUserId(loggedUser);
+                var loggedUserId = Auth.GetLoggedUserId(loggedUser);
 
                 var status = await _usersService.ChangeUserStatusAsync(id, loggedUserId, cancellationToken);
                 return Ok(new { IsActive = status });
@@ -66,7 +66,7 @@ namespace SyncPoint365.API.Controllers
         public async Task<IActionResult> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
             var loggedUser = HttpContext.User;
-            var loggedUserRole = AuthHelper.GetLoggedUserRole(loggedUser);
+            var loggedUserRole = Auth.GetLoggedUserRole(loggedUser);
 
             var data = await _usersService.GetUsersPagedListAsync(isActive, query, roleId, loggedUserRole, orderBy, page, pageSize, cancellationToken);
 
