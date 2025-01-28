@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Entities;
+using SyncPoint365.Core.Enums;
 using SyncPoint365.Core.Helpers;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
@@ -57,8 +58,14 @@ namespace SyncPoint365.Service.Services
             return _repository.EmailExists(email);
         }
 
-        public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
+        public async Task<IPagedList<UserDTO>> GetUsersPagedListAsync(bool? isActive, string? query = null, int? roleId = null, string? loggedUserRole = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
+            if (string.IsNullOrEmpty(loggedUserRole))
+                throw new Exception("Logged user role not provided!");
+
+            if (loggedUserRole == Role.Administrator.ToString())
+                roleId = (int)Role.Employee;
+
             var usersList = await _repository.GetUsersPagedListAsync(isActive, query, roleId, orderBy, page, pageSize, cancellationToken);
 
             var dtos = Mapper.Map<List<UserDTO>>(usersList);
@@ -121,12 +128,16 @@ namespace SyncPoint365.Service.Services
             }
         }
 
-        public async Task<bool> ChangeUserStatusAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<bool> ChangeUserStatusAsync(int id, int loggedUserId, CancellationToken cancellationToken = default)
         {
             var user = await _repository.GetByIdAsync(id, cancellationToken);
             if (user == null)
             {
                 throw new Exception("User not found!");
+            }
+            if (loggedUserId == id)
+            {
+                throw new Exception("The currently logged in user cannot deactivate himself!");
             }
 
             user.IsActive = !user.IsActive;
