@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 using SyncPoint365.API.Config;
 using SyncPoint365.API.Helpers;
 using SyncPoint365.API.RESTModels;
-using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
 using SyncPoint365.Service.Helpers;
 
@@ -13,14 +12,15 @@ namespace SyncPoint365.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUsersRepository _usersRepository;
+        private readonly IUsersService _usersService;
         private readonly IRefreshTokensService _refreshTokensService;
         private readonly IOptions<JWTSettings> _jwtSettings;
 
-        public AuthController(IUsersRepository usersRepository, IRefreshTokensService refreshTokensService, IConfiguration configuration,
+
+        public AuthController(IUsersService usersService, IRefreshTokensService refreshTokensService, IConfiguration configuration,
             IOptions<JWTSettings> jwtSettings)
         {
-            _usersRepository = usersRepository;
+            _usersService = usersService;
             _refreshTokensService = refreshTokensService;
             _jwtSettings = jwtSettings;
         }
@@ -31,9 +31,10 @@ namespace SyncPoint365.API.Controllers
         {
             try
             {
-                var user = await _usersRepository.GetUserByEmailAsync(model.Email, cancellationToken);
+                var user = await _usersService.GetUserByEmailAsync(model.Email, cancellationToken);
+                var userDto = await _usersService.GetByIdAsync(user.Id);
 
-                if (user == null || !Cryptography.VerifyPassword(model.Password, user.PasswordHash, user.PasswordSalt))
+                if (user == null || userDto == null || !Cryptography.VerifyPassword(model.Password, user.PasswordHash, user.PasswordSalt))
                 {
                     return Unauthorized();
                 }
@@ -43,12 +44,12 @@ namespace SyncPoint365.API.Controllers
                     return Forbid();
                 }
 
-                var accessToken = Auth.GenerateAccessToken(user, _jwtSettings.Value);
-                var refreshToken = Auth.GenerateRefreshToken(user, _jwtSettings.Value);
+                var accessToken = Auth.GenerateAccessToken(userDto, _jwtSettings.Value);
+                var refreshToken = Auth.GenerateRefreshToken(userDto, _jwtSettings.Value);
 
                 await _refreshTokensService.ManageRefreshToken(user.Id, refreshToken.RefreshToken, refreshToken.Expiration);
-
-                return Ok(new { User = user, AccessToken = accessToken, RefreshToken = refreshToken.RefreshToken });
+                var userAuthDto = _usersService.MapToUserAuthDTO(userDto);
+                return Ok(new { User = userAuthDto, AccessToken = accessToken, refreshToken.RefreshToken });
             }
             catch (UnauthorizedAccessException)
             {
@@ -82,7 +83,7 @@ namespace SyncPoint365.API.Controllers
 
                 if (storedRefreshToken.Token == refreshToken)
                 {
-                    var user = await _usersRepository.GetByIdAsync(userId.Value);
+                    var user = await _usersService.GetByIdAsync(userId.Value);
                     if (user == null)
                     {
                         return Unauthorized("User not found.");

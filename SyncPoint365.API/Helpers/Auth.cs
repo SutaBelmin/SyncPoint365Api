@@ -1,7 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using SyncPoint365.API.Config;
 using SyncPoint365.API.RESTModels;
-using SyncPoint365.Core.Entities;
+using SyncPoint365.Core.DTOs.Users;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -24,8 +24,7 @@ namespace SyncPoint365.API.Helpers
                 throw new UnauthorizedAccessException("Logged user not found or does not have a role!");
 
             return user.Claims.First(c => c.Type == ClaimTypes.Role).Value;
-        public static (string JwtToken, RefreshToken RefreshToken) GenerateTokens(User user, JWTSettings jwtSettings)
-        public static string GenerateAccessToken(User user, JWTSettings jwtSettings)
+        public static string GenerateAccessToken(UserDTO user, JWTSettings jwtSettings)
         {
             var claims = new List<Claim>
             {
@@ -50,7 +49,7 @@ namespace SyncPoint365.API.Helpers
             return tokenHandler.WriteToken(jwtToken);
         }
 
-        public static RefreshTokenModel GenerateRefreshToken(User user, JWTSettings jwtSettings)
+        public static RefreshTokenModel GenerateRefreshToken(UserDTO user, JWTSettings jwtSettings)
         {
             var claims = new List<Claim>
             {

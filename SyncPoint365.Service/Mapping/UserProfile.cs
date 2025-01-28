@@ -13,6 +13,8 @@ namespace SyncPoint365.Service.Mapping
 
             CreateMap<UserAddDTO, User>();
 
+            CreateMap<UserDTO, UserAuthDTO>();
+
             CreateMap<UserUpdateDTO, User>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
                 .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore());
