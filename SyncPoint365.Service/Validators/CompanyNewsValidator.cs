@@ -9,7 +9,6 @@ namespace SyncPoint365.Service.Validators
         {
             RuleFor(c => c.Title).NotNull().NotEmpty().WithMessage("Title is not valid");
             RuleFor(c => c.Text).NotNull().NotEmpty().WithMessage("Text is not valid");
-            RuleFor(c => c.IsVisible).NotNull().NotEmpty().WithMessage("Visibility is not valid");
         }
     }
     public class CompanyNewsUpdateValidator : AbstractValidator<CompanyNewsUpdateDTO>
@@ -18,7 +17,6 @@ namespace SyncPoint365.Service.Validators
         {
             RuleFor(c => c.Title).NotNull().NotEmpty().WithMessage("Title is not valid");
             RuleFor(c => c.Text).NotNull().NotEmpty().WithMessage("Text is not valid");
-            RuleFor(c => c.IsVisible).NotNull().NotEmpty().WithMessage("Visibility is not valid");
         }
     }
 }

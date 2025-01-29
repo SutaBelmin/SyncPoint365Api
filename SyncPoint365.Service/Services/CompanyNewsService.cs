@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
 using SyncPoint365.Core.DTOs.CompanyNews;
 using SyncPoint365.Core.Entities;
 using SyncPoint365.Repository.Common.Interfaces;
 using SyncPoint365.Service.Common.Interfaces;
-using System.Security.Claims;
 using X.PagedList;
 
 namespace SyncPoint365.Service.Services
@@ -14,17 +12,14 @@ namespace SyncPoint365.Service.Services
     {
         protected readonly ICompanyNewsRepository _repository;
         protected readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         public CompanyNewsService(ICompanyNewsRepository repository,
             IMapper mapper,
             IValidator<CompanyNewsAddDTO> addValidator,
-            IValidator<CompanyNewsUpdateDTO> updateValidator,
-            IHttpContextAccessor httpContextAccessor)
+            IValidator<CompanyNewsUpdateDTO> updateValidator)
             : base(repository, mapper, addValidator, updateValidator)
         {
             _repository = repository;
             _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IPagedList<CompanyNewsDTO>> GetCompanyNewsPagedListAsync(string? query, bool? isVisible, DateTime? dateFrom, DateTime? dateTo, string? orderBy, int page, int pageSize, CancellationToken cancellationToken)
@@ -51,13 +46,6 @@ namespace SyncPoint365.Service.Services
 
         public override async Task AddAsync(CompanyNewsAddDTO dto, CancellationToken cancellationToken = default)
         {
-            var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
-
-            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
-            {
-                dto.UserId = userId;
-            }
-
             await base.AddAsync(dto, cancellationToken);
         }
 

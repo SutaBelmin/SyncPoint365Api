@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SyncPoint365.API.Helpers;
 using SyncPoint365.Core.DTOs.CompanyNews;
 using SyncPoint365.Core.Helpers;
 using SyncPoint365.Service.Common.Interfaces;
@@ -42,5 +43,24 @@ namespace SyncPoint365.API.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("add", Name = "SyncPoint365-AddCompanyNews")]
+        public async Task<IActionResult> AddCompanyNewsAsync([FromBody] CompanyNewsAddDTO dto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var userId = Auth.GetLoggedUserId(HttpContext.User);
+
+                dto.UserId = userId;
+
+                await _companyNewsService.AddAsync(dto, cancellationToken);
+
+                return Ok();
+            }
+            catch
+            {
+                return Unauthorized();
+            }
+        }
     }
 }

@@ -23,7 +23,6 @@ namespace SyncPoint365.API
             builder.Services.AddInfrastructure();
             builder.Services.AddApplication();
             builder.Services.AddValidators();
-            builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddSwaggerGen(opt =>
             {
