@@ -16,7 +16,7 @@ namespace SyncPoint365.Service.Mapping
 
             CreateMap<UserAddDTO, User>();
 
-            CreateMap<UserLoginDTO, UserDTO>();
+            CreateMap<UserDTO, UserLoginDTO>();
 
             CreateMap<UserDTO, UserAuthDTO>();
 

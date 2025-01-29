@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="DevExpress.Reporting.Core" Version="24.2.3" />
     <PackageReference Include="FluentValidation" Version="11.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0" />
@@ -17,6 +18,10 @@
     <ProjectReference Include="..\SyncPoint365.Repository.Interfaces\SyncPoint365.Repository.Common.csproj" />
     <ProjectReference Include="..\SyncPoint365.Repository\SyncPoint365.Repository.csproj" />
     <ProjectReference Include="..\SyncPoint365.Service.Interfaces\SyncPoint365.Service.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Reports\" />
   </ItemGroup>
 
 </Project>
