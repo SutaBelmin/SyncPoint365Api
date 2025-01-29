@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using SyncPoint365.API.Config;
+using SyncPoint365.API.Helpers;
 using SyncPoint365.API.RESTModels;
-using SyncPoint365.Core.Entities;
-using SyncPoint365.Repository.Common.Interfaces;
+using SyncPoint365.Core.DTOs.Users;
+using SyncPoint365.Service.Common.Interfaces;
 using SyncPoint365.Service.Helpers;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace SyncPoint365.API.Controllers
 {
@@ -16,13 +14,19 @@ namespace SyncPoint365.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUsersRepository _usersRepository;
+        private readonly IUsersService _usersService;
+        private readonly IRefreshTokensService _refreshTokensService;
         private readonly IOptions<JWTSettings> _jwtSettings;
+        private readonly IMapper _mapper;
 
-        public AuthController(IUsersRepository usersRepository, IConfiguration configuration, IOptions<JWTSettings> jwtSettings)
+
+        public AuthController(IUsersService usersService, IRefreshTokensService refreshTokensService, IConfiguration configuration,
+            IOptions<JWTSettings> jwtSettings, IMapper mapper)
         {
-            _usersRepository = usersRepository;
+            _usersService = usersService;
+            _refreshTokensService = refreshTokensService;
             _jwtSettings = jwtSettings;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -31,7 +35,7 @@ namespace SyncPoint365.API.Controllers
         {
             try
             {
-                var user = await _usersRepository.GetUserByEmailAsync(model.Email, cancellationToken);
+                var user = await _usersService.GetUserByEmailAsync(model.Email, cancellationToken);
 
                 if (user == null || !Cryptography.VerifyPassword(model.Password, user.PasswordHash, user.PasswordSalt))
                 {
@@ -43,7 +47,12 @@ namespace SyncPoint365.API.Controllers
                     return Forbid();
                 }
 
-                return Ok(new { User = user, Token = GenerateToken(user) });
+                var accessToken = Auth.GenerateAccessToken(user, _jwtSettings.Value);
+                var refreshToken = Auth.GenerateRefreshToken(user, _jwtSettings.Value);
+
+                await _refreshTokensService.ManageRefreshToken(user.Id, refreshToken.RefreshToken, refreshToken.Expiration);
+                var userAuthDto = _mapper.Map<UserAuthDTO>(user);
+                return Ok(new { User = userAuthDto, AccessToken = accessToken, refreshToken.RefreshToken });
             }
             catch (UnauthorizedAccessException)
             {
@@ -51,34 +60,49 @@ namespace SyncPoint365.API.Controllers
             }
         }
 
-        private string GenerateToken(User user)
+        [HttpGet("Validate-Token")]
+        public async Task<IActionResult> CompareTokensAsync(string refreshToken)
         {
-            var claimsIdentity = new ClaimsIdentity(new[]
+            try
             {
-               new Claim("Id",user.Id.ToString()),
-               new Claim(ClaimTypes.Name, user.FirstName),
-               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-               new Claim(ClaimTypes.Role, user.Role.ToString()),
-               new Claim(ClaimTypes.Email, user.Email)
-           });
+                var userId = Auth.GetUserIdFromRefreshToken(refreshToken);
 
-            var key = Encoding.ASCII.GetBytes(_jwtSettings.Value.Key);
-            var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature);
+                if (userId == null)
+                {
+                    return Unauthorized("Invalid access token.");
+                }
 
-            var tokenDescriptor = new SecurityTokenDescriptor
+                var storedRefreshToken = await _refreshTokensService.GetRefreshTokenByUserIdAsync(userId.Value);
+                if (storedRefreshToken == null)
+                {
+                    return Unauthorized(new { code = "TOKEN_EMPTY", message = "Refresh token empty." });
+                }
+
+                if (storedRefreshToken.ExpirationDate < DateTime.Now)
+                {
+                    await _refreshTokensService.DeleteAsync(storedRefreshToken.Id);
+                    return Unauthorized(new { code = "TOKEN_EXPIRED", message = "Refresh token has expired." });
+                }
+
+                if (storedRefreshToken.Token == refreshToken)
+                {
+                    var user = await _usersService.GetByIdAsync(userId.Value);
+                    var userLoginDto = _mapper.Map<UserLoginDTO>(user);
+                    if (user == null)
+                    {
+                        return Unauthorized("User not found.");
+                    }
+
+                    var newAccessToken = Auth.GenerateAccessToken(userLoginDto, _jwtSettings.Value);
+                    return Ok(newAccessToken);
+                }
+
+                return Unauthorized("Refresh token does not match.");
+            }
+            catch (Exception ex)
             {
-                Subject = claimsIdentity,
-                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.Value.Duration),
-                Issuer = _jwtSettings.Value.Issuer,
-                Audience = _jwtSettings.Value.Audience,
-                SigningCredentials = signingCredentials
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
         }
-
     }
 }

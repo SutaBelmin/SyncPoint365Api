@@ -4,10 +4,10 @@
     {
         public string Main { get; set; } = default!;
     }
-
     public class JWTSettings
     {
-        public int Duration { get; set; } = default!;
+        public int AccessTokenDuration { get; set; } = default!;
+        public int RefreshTokenDuration { get; set; } = default!;
         public string Issuer { get; set; } = default!;
         public string Audience { get; set; } = default!;
         public string Key { get; set; } = default!;

@@ -42,11 +42,12 @@ namespace SyncPoint365.API
                 {
                     ValidAudience = jwtSettings.Audience,
                     ValidateAudience = true,
-                    RequireExpirationTime = false,
+                    RequireExpirationTime = true,
                     ValidIssuer = jwtSettings.Issuer,
                     ValidateIssuer = true,
-                    ValidateLifetime = false,
+                    ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
                 };
             });
