@@ -5,6 +5,7 @@ using SyncPoint365.Core.DTOs.AbsenceRequestTypes;
 using SyncPoint365.Core.DTOs.Cities;
 using SyncPoint365.Core.DTOs.CompanyDocuments;
 using SyncPoint365.Core.DTOs.CompanyNews;
+using SyncPoint365.Core.DTOs.CompanyHolidays;
 using SyncPoint365.Core.DTOs.Countries;
 using SyncPoint365.Core.DTOs.RefreshTokens;
 using SyncPoint365.Core.DTOs.Users;
@@ -36,6 +37,8 @@ namespace SyncPoint365.Service
 
             services.AddScoped<IValidator<CompanyNewsAddDTO>, CompanyNewsAddValidator>();
             services.AddScoped<IValidator<CompanyNewsUpdateDTO>, CompanyNewsUpdateValidator>();
+            services.AddScoped<IValidator<CompanyHolidayAddDTO>, CompanyHolidayAddVallidator>();
+            services.AddScoped<IValidator<CompanyHolidayUpdateDTO>, CompanyHolidayUpdateValidator>();
         }
 
         public static void AddApplication(this IServiceCollection services)
@@ -49,6 +52,7 @@ namespace SyncPoint365.Service
             services.AddScoped<IEnumsService, EnumsService>();
             services.AddScoped<ICompanyDocumentsService, CompanyDocumentsService>();
             services.AddScoped<IRefreshTokensService, RefreshTokensService>();
+            services.AddScoped<ICompanyHolidaysService, CompanyHolidaysService>();
         }
 
         public static void AddMapping(this IServiceCollection services)
