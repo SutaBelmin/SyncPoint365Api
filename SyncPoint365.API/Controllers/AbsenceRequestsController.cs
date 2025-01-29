@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SyncPoint365.API.Helpers;
 using SyncPoint365.API.RESTModels;
 using SyncPoint365.Core.DTOs.AbsenceRequests;
+using SyncPoint365.Core.Enums;
 using SyncPoint365.Core.Helpers;
 using SyncPoint365.Service.Common.Interfaces;
 
@@ -25,6 +27,14 @@ namespace SyncPoint365.API.Controllers
         public async Task<IActionResult> GetAbsenceRequestTypesPagedListAsync(int? absenceRequestTypeId = null, int? userId = null, int? absenceRequestStatusId = null, DateTime? dateFrom = null, DateTime? dateTo = null,
             int? year = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
         {
+            var loggedUser = HttpContext.User;
+            var loggedUserRole = Auth.GetLoggedUserRole(loggedUser);
+            var loggedUserId = Auth.GetLoggedUserId(loggedUser);
+
+            if (loggedUserRole == Role.Employee.ToString())
+            {
+                userId = loggedUserId;
+            }
 
             var items = await _absenceRequestsService.GetAbsenceRequestsPagedListAsync(absenceRequestTypeId, userId, absenceRequestStatusId, dateFrom, dateTo, year, orderBy, page, pageSize, cancellationToken: cancellationToken);
 
