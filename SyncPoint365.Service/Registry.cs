@@ -53,6 +53,8 @@ namespace SyncPoint365.Service
             services.AddScoped<ICompanyDocumentsService, CompanyDocumentsService>();
             services.AddScoped<IRefreshTokensService, RefreshTokensService>();
             services.AddScoped<ICompanyHolidaysService, CompanyHolidaysService>();
+            services.AddScoped<IUserReportsService, UserReportsService>();
+
         }
 
         public static void AddMapping(this IServiceCollection services)
