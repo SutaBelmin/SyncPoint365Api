@@ -23,6 +23,18 @@ namespace SyncPoint365.API.Controllers
 
 
         [HttpGet]
+        [Route("list", Name = "SyncPoint365-GetAbsenceRequestsListAsync")]
+        public async Task<IActionResult> GetAbsenceRequestListAsync(int? userId, DateTime? dateFrom, DateTime? dateTo, CancellationToken cancellationToken = default)
+        {
+            var items = await _absenceRequestsService.GetAbsenceRequestListAsync(userId, dateFrom, dateTo, cancellationToken);
+
+            if (items == null)
+                return NotFound();
+
+            return Ok(items);
+        }
+
+        [HttpGet]
         [Route("paged", Name = "SyncPoint365-GetAbsenceRequestsPagedListAsync")]
         public async Task<IActionResult> GetAbsenceRequestTypesPagedListAsync(int? absenceRequestTypeId = null, int? userId = null, int? absenceRequestStatusId = null, DateTime? dateFrom = null, DateTime? dateTo = null,
             int? year = null, string? orderBy = null, int page = Constants.Pagination.PageNumber, int pageSize = Constants.Pagination.PageSize, CancellationToken cancellationToken = default)
@@ -43,6 +55,7 @@ namespace SyncPoint365.API.Controllers
 
             return Ok(GetPagedResult(items));
         }
+
 
         [HttpPut]
         [Route("Change-Absence-Request-Status", Name = "SyncPoint365-ChangeAbsenceRequestStatus")]
