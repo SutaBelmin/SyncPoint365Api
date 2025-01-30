@@ -26,6 +26,15 @@ namespace SyncPoint365.API.Controllers
         [Route("list", Name = "SyncPoint365-GetAbsenceRequestsListAsync")]
         public async Task<IActionResult> GetAbsenceRequestListAsync(int? userId, DateTime? dateFrom, DateTime? dateTo, CancellationToken cancellationToken = default)
         {
+            var loggedUser = HttpContext.User;
+            var loggedUserRole = Auth.GetLoggedUserRole(loggedUser);
+            var loggedUserId = Auth.GetLoggedUserId(loggedUser);
+
+            if (loggedUserRole == Role.Employee.ToString())
+            {
+                userId = loggedUserId;
+            }
+
             var items = await _absenceRequestsService.GetAbsenceRequestListAsync(userId, dateFrom, dateTo, cancellationToken);
 
             if (items == null)
