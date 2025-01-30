@@ -15,6 +15,7 @@ namespace SyncPoint365.Repository
             services.AddScoped<ICitiesRepository, CitiesRepository>();
             services.AddScoped<ICompanyDocumentsRepository, CompanyDocumentsRepository>();
             services.AddScoped<IRefreshTokensRepository, RefreshTokensRepository>();
+            services.AddScoped<ICompanyNewsRepository, CompanyNewsRepository>();
         }
     }
 }
