@@ -2,21 +2,14 @@
 
 namespace SyncPoint365.Core.DTOs.Reports
 {
-    //public class UserReportDTO
-    //{
-    //    public string Title { get; set; } = default!;
-    //    public int UserId { get; set; } = default!;
-    //    public UserDTO User { get; set; } = default!;
-    //}
-    //public class EmployeesReportModel
-    //{
-    //    public List<UserReportDTO> Employees { get; set; } = default!;
-    //}
-
     public class EmployeesReportModel
     {
-        public string Title { get; set; } = default!;
+        public EmployeeReportHeaderModel EmployeeReportHeader { get; set; }
+        public List<UserDTO> Employees { get; set; }
+    }
 
-        public List<UserDTO> Employees { get; set; } = new List<UserDTO>();
+    public class EmployeeReportHeaderModel
+    {
+        public DateTime DateCreated { get; set; }
     }
 }

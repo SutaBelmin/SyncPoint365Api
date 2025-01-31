@@ -58,6 +58,10 @@ namespace SyncPoint365.Repository.Repositories
                                                              .ToPagedListAsync(page == -1 ? 1 : page, page == -1 ? int.MaxValue : pageSize);
         }
 
+        public Task<List<User>> GetAllUsersAsync(CancellationToken cancellationToken = default)
+        {
+            return DbSet.ToListAsync(cancellationToken);
+        }
     }
 }
 

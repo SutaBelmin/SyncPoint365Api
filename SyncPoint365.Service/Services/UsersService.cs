@@ -226,70 +226,18 @@ namespace SyncPoint365.Service.Services
 
             return Path.Combine(_configuration["FileSettings:UploadsDirectory"]!, $"{userId}{extension}");
         }
-
-        //public async Task<XtraReport> GenerateEmployeesReport()
-        //{
-        //    var reportData = await GetEmployeesReportDataAsync();
-        //    var report = new UserReport();
-        //    report.DataSource = reportData;
-        //    return report;
-        //}
-
-        //public async Task<List<EmployeesReportModel>> GetEmployeesReportDataAsync()
-        //{
-        //    var users = await _repository.GetAsync();
-        //    var usersList = users.Select(user => new EmployeesReportModel
-        //    {
-        //        FirstName = user..FirstName,
-        //        LastName = user.LastName,
-        //        Role = user.Role,
-        //        Email = user.Email,
-        //        Phone = user.Phone
-        //    }).ToList();
-        //}
-
-        //public async Task<XtraReport> GenerateEmployeesReport()
-        //{
-        //    var reportData = await GetEmployeesReportDataAsync();
-
-        //    var report = new UserReport();
-        //    report.DataSource = reportData.Employees;
-
-        //    return report;
-        //}
-
-        //public async Task<EmployeesReportModel> GetEmployeesReportDataAsync()
-        //{
-        //    var users = await _repository.GetAsync();
-
-        //    var employeesModel = new EmployeesReportModel
-        //    {
-        //        Title = "Employees Report",
-        //        Employees = users.Select(user => new UserDTO
-        //        {
-        //            FirstName = user.FirstName,
-        //            LastName = user.LastName,
-        //            Role = user.Role,
-        //            Email = user.Email,
-        //            Phone = user.Phone
-        //        }).ToList()
-        //    };
-
-        //    return employeesModel;
-        //}
-
         public async Task<EmployeesReportModel> GenerateUserReportAsync()
         {
-            // Fetch all users (or employees) from the repository
-            var users = await _repository.GetAsync(); // Assuming you have a method to get all users
+            var users = await _repository.GetAllUsersAsync();
 
-            // Map the users to UserDTO
             var userDtos = _mapper.Map<List<UserDTO>>(users);
-
-            // Create the report model
+            var dateCreated = DateTime.Now;
             var reportModel = new EmployeesReportModel
             {
-                Title = "Employee Report",
+                EmployeeReportHeader = new EmployeeReportHeaderModel()
+                {
+                    DateCreated = dateCreated
+                },
                 Employees = userDtos
             };
             return reportModel;
