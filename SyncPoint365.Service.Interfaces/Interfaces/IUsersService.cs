@@ -1,3 +1,4 @@
+using SyncPoint365.Core.DTOs.Reports;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Helpers;
 using X.PagedList;
@@ -13,5 +14,7 @@ namespace SyncPoint365.Service.Common.Interfaces
 
         Task<bool> ChangeUserStatusAsync(int id, int loggedUserId, CancellationToken cancellationToken = default);
         Task<bool> ChangePasswordAsync(int id, string password, CancellationToken cancellationToken);
+        //Task<> GenerateEmployeesReport();
+        Task<EmployeesReportModel> GenerateUserReportAsync();
     }
 }

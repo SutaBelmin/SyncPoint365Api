@@ -5,7 +5,6 @@
         public UserReport()
         {
             InitializeComponent();
-
         }
     }
 }

@@ -5,6 +5,7 @@ using SyncPoint365.API.RESTModels;
 using SyncPoint365.Core.DTOs.Users;
 using SyncPoint365.Core.Helpers;
 using SyncPoint365.Service.Common.Interfaces;
+using SyncPoint365.Service.Reports;
 
 namespace SyncPoint365.API.Controllers
 {
@@ -94,6 +95,44 @@ namespace SyncPoint365.API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
+        //[HttpGet]
+        //[Route("Generate-Employees-Report", Name = "SyncPoint365-GenerateEmployeesReport")]
+        //public async Task<IActionResult> GenerateEmployeesReportAsync()
+        //{
+        //    var reportData = await _usersService.GenerateEmployeesReport();
+        //    var report = new UserReport();
+        //    report.DataSource = reportData.Employees;
+
+        //    report.Parameters["Title"].Value = reportData.Title;
+
+        //    using (MemoryStream ms = new MemoryStream())
+        //    {
+        //        report.ExportToPdf(ms);
+        //        return File(ms.ToArray(), "application/pdf", "EmployeesReport.pdf");
+        //    }
+        //}
+
+        [HttpGet]
+        [Route("Generate-User-Report", Name = "SyncPoint365-GenerateUserReport")]
+        public async Task<IActionResult> GenerateUserReportAsync()
+        {
+            // Fetch the report data from the service
+            var reportData = await _usersService.GenerateUserReportAsync();
+
+            // Create the report and set the data source
+            var report = new UserReport();
+            report.DataSource = reportData.Employees; // Bind the list of employees to the report
+            //report.Parameters["Title"].Value = reportData.Title; // Pass the title as a parameter (if needed)
+
+            // Export the report to PDF
+            using (var ms = new MemoryStream())
+            {
+                report.ExportToPdf(ms);
+                return File(ms.ToArray(), "application/pdf", "EmployeeReport.pdf");
             }
         }
 
