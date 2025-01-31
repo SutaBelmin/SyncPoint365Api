@@ -23,6 +23,14 @@ namespace SyncPoint365.Service.Services
             _repository = repository;
             _mapper = mapper;
         }
+
+        public async Task<IEnumerable<AbsenceRequestDTO>> GetAbsenceRequestListAsync(int? userId, DateTime? dateFrom, DateTime? dateTo, CancellationToken cancellationToken = default)
+        {
+            var absenceRequests = await _repository.GetAbsenceRequestListAsync(userId, dateFrom, dateTo, cancellationToken);
+
+            return _mapper.Map<IEnumerable<AbsenceRequestDTO>>(absenceRequests);
+        }
+
         public async Task<IPagedList<AbsenceRequestDTO>> GetAbsenceRequestsPagedListAsync(int? absenceRequestTypeId, int? userId, int? absenceRequestStatusId,
             DateTime? dateFrom, DateTime? dateTo, int? year, string? orderBy, int page, int pageSize, CancellationToken cancellationToken = default)
         {
@@ -49,5 +57,6 @@ namespace SyncPoint365.Service.Services
 
             return absenceRequest.AbsenceRequestStatus;
         }
+
     }
 }
